@@ -9,6 +9,22 @@ namespace FluentCards.Serialization;
 /// </summary>
 public static class AdaptiveCardSerializer
 {
+    private static readonly JsonSerializerOptions DefaultOptions = new()
+    {
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        WriteIndented = false,
+        TypeInfoResolver = FluentCardsJsonContext.Default
+    };
+
+    private static readonly JsonSerializerOptions IndentedOptions = new()
+    {
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        WriteIndented = true,
+        TypeInfoResolver = FluentCardsJsonContext.Default
+    };
+
     /// <summary>
     /// Serializes an AdaptiveCard to JSON string using source-generated context.
     /// </summary>
@@ -17,15 +33,7 @@ public static class AdaptiveCardSerializer
     /// <returns>JSON string representation of the card.</returns>
     public static string Serialize(AdaptiveCard card, bool indented = false)
     {
-        // Create options with the desired indentation setting
-        var options = new JsonSerializerOptions
-        {
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            WriteIndented = indented,
-            TypeInfoResolver = FluentCardsJsonContext.Default
-        };
-        
+        var options = indented ? IndentedOptions : DefaultOptions;
         return JsonSerializer.Serialize(card, options);
     }
     

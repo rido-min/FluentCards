@@ -186,7 +186,9 @@ public class ValidationTests
         var issues = card.Validate();
 
         // Assert
-        Assert.Contains(issues, i => i.Contains("body[0].items[0]") && i.Contains("Input element missing required 'id' property"));
+        var nestedIssue = issues.FirstOrDefault(i => i.Contains("body[0].items[0]"));
+        Assert.NotNull(nestedIssue);
+        Assert.Contains("Input element missing required 'id' property", nestedIssue);
     }
 
     [Fact]
