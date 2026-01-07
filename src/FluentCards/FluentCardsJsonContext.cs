@@ -9,6 +9,13 @@ namespace FluentCards;
 [JsonSerializable(typeof(AdaptiveCard))]
 [JsonSerializable(typeof(TextBlock))]
 [JsonSerializable(typeof(OpenUrlAction))]
+[JsonSerializable(typeof(SubmitAction))]
+[JsonSerializable(typeof(ShowCardAction))]
+[JsonSerializable(typeof(ToggleVisibilityAction))]
+[JsonSerializable(typeof(ExecuteAction))]
+[JsonSerializable(typeof(TargetElement))]
+[JsonSerializable(typeof(ActionStyle))]
+[JsonSerializable(typeof(AssociatedInputs))]
 [JsonSourceGenerationOptions(
     PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,

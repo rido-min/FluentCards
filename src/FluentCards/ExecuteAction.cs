@@ -1,0 +1,24 @@
+using System.Text.Json;
+
+namespace FluentCards;
+
+/// <summary>
+/// When invoked, executes an action with a verb and optional data (used in Adaptive Cards 1.4+).
+/// </summary>
+public class ExecuteAction : AdaptiveAction
+{
+    /// <summary>
+    /// A string that describes the semantic verb for the action.
+    /// </summary>
+    public string? Verb { get; set; }
+    
+    /// <summary>
+    /// Data to send with the action.
+    /// </summary>
+    public JsonElement? Data { get; set; }
+    
+    /// <summary>
+    /// Controls which inputs are associated with the action.
+    /// </summary>
+    public AssociatedInputs? AssociatedInputs { get; set; }
+}
