@@ -1,12 +1,3 @@
-namespace FluentCards;
-
-/// <summary>
-/// Specifies the style for text input.
-/// </summary>
-public enum TextInputStyle
-{
-    /// <summary>
-    /// Normal text input.
 using System.Text.Json.Serialization;
 
 namespace FluentCards;
@@ -33,13 +24,11 @@ public enum TextInputStyle
     Url,
 
     /// <summary>
-    /// Email address input.
     /// Email input.
     /// </summary>
     Email,
 
     /// <summary>
-    /// Password input (hidden text).
     /// Password input (masked).
     /// </summary>
     Password
