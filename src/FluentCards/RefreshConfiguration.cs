@@ -11,7 +11,7 @@ public class RefreshConfiguration
     /// The action to invoke when refreshing the card.
     /// </summary>
     [JsonPropertyName("action")]
-    public ExecuteAction? Action { get; set; }
+    public AdaptiveAction? Action { get; set; }
 
     /// <summary>
     /// A list of user IDs for which the refresh should trigger.
