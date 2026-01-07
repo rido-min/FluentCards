@@ -235,16 +235,15 @@ public class ToggleVisibilityActionTests
         Assert.Contains("\"elementId\": \"element1\"", json);
         // IsVisible should be omitted when null
         var lines = json.Split('\n');
-        var elementIdLine = lines.First(l => l.Contains("element1"));
+        var elementIdLine = lines.FirstOrDefault(l => l.Contains("element1"));
+        Assert.NotNull(elementIdLine);
+        
         var elementIdLineIndex = Array.IndexOf(lines, elementIdLine);
         
         // Check the surrounding lines don't have isVisible
         for (int i = Math.Max(0, elementIdLineIndex - 2); i < Math.Min(lines.Length, elementIdLineIndex + 3); i++)
         {
-            if (lines[i].Contains("isVisible"))
-            {
-                Assert.Fail("isVisible should be omitted when null");
-            }
+            Assert.DoesNotContain("isVisible", lines[i]);
         }
     }
 
