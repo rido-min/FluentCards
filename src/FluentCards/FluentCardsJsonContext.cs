@@ -30,6 +30,11 @@ namespace FluentCards;
 [JsonSerializable(typeof(TargetElement))]
 [JsonSerializable(typeof(ActionStyle))]
 [JsonSerializable(typeof(AssociatedInputs))]
+[JsonSerializable(typeof(RefreshConfiguration))]
+[JsonSerializable(typeof(AuthenticationConfiguration))]
+[JsonSerializable(typeof(TokenExchangeResource))]
+[JsonSerializable(typeof(AuthCardButton))]
+[JsonSerializable(typeof(CardMetadata))]
 [JsonSourceGenerationOptions(
     PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,

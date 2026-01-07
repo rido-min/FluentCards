@@ -43,7 +43,7 @@ public class Image : AdaptiveElement
     /// The height of the image.
     /// </summary>
     [JsonPropertyName("height")]
-    public string? Height { get; set; }
+    public new string? Height { get; set; }
 
     /// <summary>
     /// Action to invoke when the image is selected.

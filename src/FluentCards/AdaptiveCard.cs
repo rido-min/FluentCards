@@ -32,4 +32,22 @@ public class AdaptiveCard
     /// The Actions to show in the card's action bar.
     /// </summary>
     public List<AdaptiveAction>? Actions { get; set; }
+
+    /// <summary>
+    /// Defines auto-refresh configuration for the card (Adaptive Cards 1.4+).
+    /// </summary>
+    [JsonPropertyName("refresh")]
+    public RefreshConfiguration? Refresh { get; set; }
+
+    /// <summary>
+    /// Defines authentication configuration for the card (Adaptive Cards 1.4+).
+    /// </summary>
+    [JsonPropertyName("authentication")]
+    public AuthenticationConfiguration? Authentication { get; set; }
+
+    /// <summary>
+    /// Additional metadata for the card.
+    /// </summary>
+    [JsonPropertyName("metadata")]
+    public CardMetadata? Metadata { get; set; }
 }

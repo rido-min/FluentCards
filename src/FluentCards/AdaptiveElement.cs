@@ -35,4 +35,25 @@ public abstract class AdaptiveElement
     /// When true, draw a separating line at the top of the element.
     /// </summary>
     public bool? Separator { get; set; }
+
+    /// <summary>
+    /// Specifies the height of the element. Can be "auto" or "stretch".
+    /// </summary>
+    public string? Height { get; set; }
+
+    /// <summary>
+    /// Describes what to show when this element is unsupported. Can be "drop" or another element.
+    /// </summary>
+    [JsonConverter(typeof(FallbackConverter))]
+    public object? Fallback { get; set; }
+
+    /// <summary>
+    /// A series of key/value pairs indicating features that the item requires with corresponding minimum version.
+    /// </summary>
+    public Dictionary<string, string>? Requires { get; set; }
+
+    /// <summary>
+    /// When true, the text should be displayed right-to-left.
+    /// </summary>
+    public bool? Rtl { get; set; }
 }
