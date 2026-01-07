@@ -27,12 +27,19 @@ public class InputTime : AdaptiveElement
 
     /// <summary>
     /// The minimum time allowed (ISO 8601 time format).
+/// Time picker input.
+/// </summary>
+public class InputTime : InputElement
+{
+    /// <summary>
+    /// Minimum time (HH:MM format).
     /// </summary>
     [JsonPropertyName("min")]
     public string? Min { get; set; }
 
     /// <summary>
     /// The maximum time allowed (ISO 8601 time format).
+    /// Maximum time (HH:MM format).
     /// </summary>
     [JsonPropertyName("max")]
     public string? Max { get; set; }
@@ -48,4 +55,14 @@ public class InputTime : AdaptiveElement
     /// </summary>
     [JsonPropertyName("errorMessage")]
     public string? ErrorMessage { get; set; }
+    /// Placeholder text.
+    /// </summary>
+    [JsonPropertyName("placeholder")]
+    public string? Placeholder { get; set; }
+
+    /// <summary>
+    /// Initial value (HH:MM format).
+    /// </summary>
+    [JsonPropertyName("value")]
+    public string? Value { get; set; }
 }

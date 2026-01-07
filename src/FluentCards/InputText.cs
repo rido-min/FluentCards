@@ -15,12 +15,33 @@ public class InputText : AdaptiveElement
 
     /// <summary>
     /// Placeholder text to display when the input is empty.
+/// Single or multi-line text input field.
+/// </summary>
+public class InputText : InputElement
+{
+    /// <summary>
+    /// Display as multi-line text box.
+    /// </summary>
+    [JsonPropertyName("isMultiline")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public bool IsMultiline { get; set; }
+
+    /// <summary>
+    /// Maximum number of characters.
+    /// </summary>
+    [JsonPropertyName("maxLength")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public int? MaxLength { get; set; }
+
+    /// <summary>
+    /// Placeholder text.
     /// </summary>
     [JsonPropertyName("placeholder")]
     public string? Placeholder { get; set; }
 
     /// <summary>
     /// The default value for the input.
+    /// Initial value.
     /// </summary>
     [JsonPropertyName("value")]
     public string? Value { get; set; }
@@ -39,6 +60,7 @@ public class InputText : AdaptiveElement
 
     /// <summary>
     /// The style of the text input.
+    /// Style of the text input.
     /// </summary>
     [JsonPropertyName("style")]
     [JsonConverter(typeof(CamelCaseEnumConverter<TextInputStyle>))]
@@ -67,4 +89,14 @@ public class InputText : AdaptiveElement
     /// </summary>
     [JsonPropertyName("inlineAction")]
     public AdaptiveAction? InlineAction { get; set; }
+    /// Action displayed inline with input.
+    /// </summary>
+    [JsonPropertyName("inlineAction")]
+    public AdaptiveAction? InlineAction { get; set; }
+
+    /// <summary>
+    /// Regex pattern for validation.
+    /// </summary>
+    [JsonPropertyName("regex")]
+    public string? Regex { get; set; }
 }

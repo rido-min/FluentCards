@@ -46,7 +46,7 @@ public enum BackgroundImageFillMode
     Cover,
 
     /// <summary>
-    /// Repeat the image.
+    /// Repeat the image horizontally.
     /// </summary>
     RepeatHorizontally,
 
