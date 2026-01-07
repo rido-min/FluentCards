@@ -271,9 +271,11 @@ public class ContainerTests
 
         // Assert
         Assert.NotNull(deserializedCard);
-        var container = deserializedCard.Body![0] as Container;
+        Assert.NotNull(deserializedCard.Body);
+        var container = deserializedCard.Body[0] as Container;
         Assert.NotNull(container);
-        Assert.Equal(3, container.Items!.Count);
+        Assert.NotNull(container.Items);
+        Assert.Equal(3, container.Items.Count);
         Assert.IsType<TextBlock>(container.Items[0]);
         Assert.IsType<Image>(container.Items[1]);
         Assert.IsType<TextBlock>(container.Items[2]);

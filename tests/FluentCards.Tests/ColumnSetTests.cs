@@ -135,16 +135,22 @@ public class ColumnSetTests
         Assert.Equal(3, columnSet.Columns.Count);
 
         Assert.Equal("1", columnSet.Columns[0].Width);
-        var first = columnSet.Columns[0].Items![0] as TextBlock;
-        Assert.Equal("First", first!.Text);
+        Assert.NotNull(columnSet.Columns[0].Items);
+        var first = columnSet.Columns[0].Items[0] as TextBlock;
+        Assert.NotNull(first);
+        Assert.Equal("First", first.Text);
 
         Assert.Equal("2", columnSet.Columns[1].Width);
-        var second = columnSet.Columns[1].Items![0] as TextBlock;
-        Assert.Equal("Second", second!.Text);
+        Assert.NotNull(columnSet.Columns[1].Items);
+        var second = columnSet.Columns[1].Items[0] as TextBlock;
+        Assert.NotNull(second);
+        Assert.Equal("Second", second.Text);
 
         Assert.Equal("1", columnSet.Columns[2].Width);
-        var third = columnSet.Columns[2].Items![0] as TextBlock;
-        Assert.Equal("Third", third!.Text);
+        Assert.NotNull(columnSet.Columns[2].Items);
+        var third = columnSet.Columns[2].Items[0] as TextBlock;
+        Assert.NotNull(third);
+        Assert.Equal("Third", third.Text);
     }
 
     [Fact]
@@ -179,10 +185,13 @@ public class ColumnSetTests
 
         // Assert
         Assert.NotNull(deserializedCard);
-        var columnSet = deserializedCard.Body![0] as ColumnSet;
+        Assert.NotNull(deserializedCard.Body);
+        var columnSet = deserializedCard.Body[0] as ColumnSet;
         Assert.NotNull(columnSet);
-        var column = columnSet.Columns![0];
-        Assert.Equal(3, column.Items!.Count);
+        Assert.NotNull(columnSet.Columns);
+        var column = columnSet.Columns[0];
+        Assert.NotNull(column.Items);
+        Assert.Equal(3, column.Items.Count);
         Assert.IsType<TextBlock>(column.Items[0]);
         Assert.IsType<Image>(column.Items[1]);
         Assert.IsType<TextBlock>(column.Items[2]);
@@ -347,13 +356,18 @@ public class ColumnSetTests
 
         // Assert
         Assert.NotNull(deserializedCard);
-        var columnSet = deserializedCard.Body![0] as ColumnSet;
+        Assert.NotNull(deserializedCard.Body);
+        var columnSet = deserializedCard.Body[0] as ColumnSet;
         Assert.NotNull(columnSet);
-        var column = columnSet.Columns![0];
-        var container = column.Items![0] as Container;
+        Assert.NotNull(columnSet.Columns);
+        var column = columnSet.Columns[0];
+        Assert.NotNull(column.Items);
+        var container = column.Items[0] as Container;
         Assert.NotNull(container);
-        var textBlock = container.Items![0] as TextBlock;
-        Assert.Equal("Nested in Container in Column", textBlock!.Text);
+        Assert.NotNull(container.Items);
+        var textBlock = container.Items[0] as TextBlock;
+        Assert.NotNull(textBlock);
+        Assert.Equal("Nested in Container in Column", textBlock.Text);
     }
 
     [Fact]
@@ -434,7 +448,8 @@ public class ColumnSetTests
         Assert.NotNull(card.Body);
         var container = card.Body[0] as Container;
         Assert.NotNull(container);
-        Assert.Equal(2, container.Items!.Count);
+        Assert.NotNull(container.Items);
+        Assert.Equal(2, container.Items.Count);
         Assert.IsType<TextBlock>(container.Items[0]);
         Assert.IsType<Image>(container.Items[1]);
     }
@@ -481,7 +496,8 @@ public class ColumnSetTests
         Assert.NotNull(card.Body);
         var columnSet = card.Body[0] as ColumnSet;
         Assert.NotNull(columnSet);
-        Assert.Equal(2, columnSet.Columns!.Count);
+        Assert.NotNull(columnSet.Columns);
+        Assert.Equal(2, columnSet.Columns.Count);
         Assert.Equal("auto", columnSet.Columns[0].Width);
         Assert.Equal("stretch", columnSet.Columns[1].Width);
     }

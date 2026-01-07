@@ -35,7 +35,9 @@ public class Image : AdaptiveElement
     public string? Width { get; set; }
 
     /// <summary>
-    /// The desired height of the image (e.g., "50px"). Note: This is different from AdaptiveElement.Height.
+    /// The desired height of the image (e.g., "50px"). 
+    /// Note: This is different from AdaptiveElement.Height which controls layout height ("auto" or "stretch").
+    /// This property sets the actual pixel height of the image.
     /// </summary>
     [JsonPropertyName("height")]
     public new string? Height { get; set; }
