@@ -9,7 +9,7 @@ namespace FluentCards;
 [JsonSourceGenerationOptions(
     PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-    WriteIndented = false)]
+    WriteIndented = true)]
 [JsonSerializable(typeof(AdaptiveCard))]
 [JsonSerializable(typeof(List<AdaptiveElement>))]
 [JsonSerializable(typeof(List<AdaptiveAction>))]
