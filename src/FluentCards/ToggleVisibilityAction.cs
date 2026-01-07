@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using FluentCards.Serialization;
 
 namespace FluentCards;
 
@@ -10,5 +11,6 @@ public class ToggleVisibilityAction : AdaptiveAction
     /// <summary>
     /// The list of elements to toggle visibility. Can be a string (element ID) or a TargetElement object.
     /// </summary>
+    [JsonConverter(typeof(TargetElementListConverter))]
     public List<object>? TargetElements { get; set; }
 }

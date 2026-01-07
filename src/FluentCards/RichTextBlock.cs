@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using FluentCards.Serialization;
 
 namespace FluentCards;
 
@@ -11,6 +12,7 @@ public class RichTextBlock : AdaptiveElement
     /// The inline text elements (TextRun objects or plain strings).
     /// </summary>
     [JsonPropertyName("inlines")]
+    [JsonConverter(typeof(InlinesConverter))]
     public List<object>? Inlines { get; set; }
 
     /// <summary>

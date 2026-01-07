@@ -6,7 +6,13 @@ namespace FluentCards;
 /// <summary>
 /// JSON serialization context for FluentCards with source generation support.
 /// </summary>
+[JsonSourceGenerationOptions(
+    PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
+    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+    WriteIndented = false)]
 [JsonSerializable(typeof(AdaptiveCard))]
+[JsonSerializable(typeof(List<AdaptiveElement>))]
+[JsonSerializable(typeof(List<AdaptiveAction>))]
 [JsonSerializable(typeof(TextBlock))]
 [JsonSerializable(typeof(Image))]
 [JsonSerializable(typeof(Media))]
@@ -44,10 +50,12 @@ namespace FluentCards;
 [JsonSerializable(typeof(Choice))]
 [JsonSerializable(typeof(TextInputStyle))]
 [JsonSerializable(typeof(ChoiceInputStyle))]
-[JsonSourceGenerationOptions(
-    PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
-    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-    WriteIndented = true)]
+[JsonSerializable(typeof(Container))]
+[JsonSerializable(typeof(ColumnSet))]
+[JsonSerializable(typeof(Column))]
+[JsonSerializable(typeof(List<object>))]
+[JsonSerializable(typeof(JsonElement))]
 public partial class FluentCardsJsonContext : JsonSerializerContext
 {
 }
+

@@ -1,4 +1,6 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
+using FluentCards.Serialization;
 
 namespace FluentCards;
 
@@ -15,6 +17,7 @@ public class ExecuteAction : AdaptiveAction
     /// <summary>
     /// Data to send with the action.
     /// </summary>
+    [JsonConverter(typeof(ActionDataConverter))]
     public JsonElement? Data { get; set; }
     
     /// <summary>
