@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\FluentCards\FluentCards.csproj" />
+    <ProjectReference Include="..\..\samples\FluentCards.Samples\FluentCards.Samples.csproj" />
   </ItemGroup>
 
 </Project>
