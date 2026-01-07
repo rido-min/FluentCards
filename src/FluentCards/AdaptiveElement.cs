@@ -14,6 +14,14 @@ namespace FluentCards;
 [JsonDerivedType(typeof(FactSet), "FactSet")]
 [JsonDerivedType(typeof(ActionSet), "ActionSet")]
 [JsonDerivedType(typeof(Table), "Table")]
+[JsonDerivedType(typeof(Container), "Container")]
+[JsonDerivedType(typeof(ColumnSet), "ColumnSet")]
+[JsonDerivedType(typeof(InputText), "Input.Text")]
+[JsonDerivedType(typeof(InputNumber), "Input.Number")]
+[JsonDerivedType(typeof(InputDate), "Input.Date")]
+[JsonDerivedType(typeof(InputTime), "Input.Time")]
+[JsonDerivedType(typeof(InputToggle), "Input.Toggle")]
+[JsonDerivedType(typeof(InputChoiceSet), "Input.ChoiceSet")]
 public abstract class AdaptiveElement
 {
     /// <summary>

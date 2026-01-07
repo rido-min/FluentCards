@@ -27,11 +27,24 @@ public class Image : AdaptiveElement
     public ImageSize? Size { get; set; }
 
     /// <summary>
+    /// The style of the image.
+    /// </summary>
+    [JsonPropertyName("style")]
+    [JsonConverter(typeof(CamelCaseEnumConverter<ImageStyle>))]
+    public ImageStyle? Style { get; set; }
+
+    /// <summary>
     /// The horizontal alignment of the image.
     /// </summary>
     [JsonPropertyName("horizontalAlignment")]
     [JsonConverter(typeof(CamelCaseEnumConverter<HorizontalAlignment>))]
     public HorizontalAlignment? HorizontalAlignment { get; set; }
+
+    /// <summary>
+    /// The background color for the image.
+    /// </summary>
+    [JsonPropertyName("backgroundColor")]
+    public string? BackgroundColor { get; set; }
 
     /// <summary>
     /// The width of the image.
