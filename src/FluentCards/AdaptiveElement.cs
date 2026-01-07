@@ -7,6 +7,12 @@ namespace FluentCards;
 /// </summary>
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
 [JsonDerivedType(typeof(TextBlock), "TextBlock")]
+[JsonDerivedType(typeof(InputText), "Input.Text")]
+[JsonDerivedType(typeof(InputNumber), "Input.Number")]
+[JsonDerivedType(typeof(InputDate), "Input.Date")]
+[JsonDerivedType(typeof(InputTime), "Input.Time")]
+[JsonDerivedType(typeof(InputToggle), "Input.Toggle")]
+[JsonDerivedType(typeof(InputChoiceSet), "Input.ChoiceSet")]
 public abstract class AdaptiveElement
 {
     /// <summary>
