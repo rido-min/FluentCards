@@ -32,3 +32,30 @@ if (deserializedCard != null)
     Console.WriteLine($"  Body elements: {deserializedCard.Body?.Count ?? 0}");
     Console.WriteLine($"  Actions: {deserializedCard.Actions?.Count ?? 0}");
 }
+
+// Demonstrate validation
+Console.WriteLine("\n=== Validation Test ===");
+var issues = AdaptiveCardValidator.Validate(card);
+if (issues.Count == 0)
+{
+    Console.WriteLine("✓ Card is valid!");
+}
+else
+{
+    Console.WriteLine($"⚠ Found {issues.Count} validation issue(s):");
+    foreach (var issue in issues)
+    {
+        Console.WriteLine($"  [{issue.Severity}] {issue.Path}: {issue.Message}");
+    }
+}
+
+// Demonstrate validation with invalid card
+Console.WriteLine("\n=== Validation with Invalid Card ===");
+var invalidCard = new AdaptiveCard { Version = "" };
+var invalidIssues = AdaptiveCardValidator.Validate(invalidCard);
+Console.WriteLine($"Found {invalidIssues.Count} validation issue(s):");
+foreach (var issue in invalidIssues)
+{
+    Console.WriteLine($"  [{issue.Severity}] {issue.Code} at '{issue.Path}': {issue.Message}");
+}
+
