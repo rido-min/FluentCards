@@ -8,6 +8,11 @@ namespace FluentCards;
 /// </summary>
 [JsonSerializable(typeof(AdaptiveCard))]
 [JsonSerializable(typeof(TextBlock))]
+[JsonSerializable(typeof(Image))]
+[JsonSerializable(typeof(Container))]
+[JsonSerializable(typeof(Column))]
+[JsonSerializable(typeof(ColumnSet))]
+[JsonSerializable(typeof(BackgroundImage))]
 [JsonSerializable(typeof(OpenUrlAction))]
 [JsonSourceGenerationOptions(
     PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,

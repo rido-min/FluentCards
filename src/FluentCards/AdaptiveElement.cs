@@ -7,6 +7,9 @@ namespace FluentCards;
 /// </summary>
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
 [JsonDerivedType(typeof(TextBlock), "TextBlock")]
+[JsonDerivedType(typeof(Image), "Image")]
+[JsonDerivedType(typeof(Container), "Container")]
+[JsonDerivedType(typeof(ColumnSet), "ColumnSet")]
 public abstract class AdaptiveElement
 {
     /// <summary>
@@ -22,10 +25,16 @@ public abstract class AdaptiveElement
     /// <summary>
     /// Controls the amount of spacing between this element and the preceding element.
     /// </summary>
-    public string? Spacing { get; set; }
+    [JsonConverter(typeof(CamelCaseEnumConverter<Spacing>))]
+    public Spacing? Spacing { get; set; }
 
     /// <summary>
     /// When true, draw a separating line at the top of the element.
     /// </summary>
     public bool? Separator { get; set; }
+
+    /// <summary>
+    /// Specifies the height of the element. Can be "auto" or "stretch".
+    /// </summary>
+    public string? Height { get; set; }
 }
