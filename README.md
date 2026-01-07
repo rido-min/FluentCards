@@ -9,6 +9,9 @@ A .NET library for building [Adaptive Cards](https://adaptivecards.io/) using a 
 - ⚡ **Source Generators**: High-performance JSON serialization using `System.Text.Json` source generators
 - 🎯 **AOT Compatible**: Ready for Native AOT compilation
 - 📦 **Minimal Dependencies**: Built on .NET 8.0 with no external dependencies
+- ✅ **Built-in Validation**: Comprehensive validation for card structure and schema compliance
+- 📚 **Rich Samples**: Extensive examples demonstrating common patterns and best practices
+- 📖 **Complete XML Documentation**: Full IntelliSense support with detailed API documentation
 
 ## Installation
 
@@ -114,13 +117,162 @@ string json = card.ToJson();
 AdaptiveCard? card = AdaptiveCardExtensions.FromJson(json);
 ```
 
+### Validation
+
+FluentCards includes built-in validation to ensure your cards meet the Adaptive Cards schema requirements:
+
+```csharp
+// Validate a card
+var card = AdaptiveCardBuilder.Create()
+    .WithVersion("1.5")
+    .AddTextBlock(tb => tb.WithText("Hello World"))
+    .Build();
+
+var issues = AdaptiveCardValidator.Validate(card);
+if (issues.Count == 0)
+{
+    Console.WriteLine("Card is valid!");
+}
+else
+{
+    foreach (var issue in issues)
+    {
+        Console.WriteLine($"[{issue.Severity}] {issue.Path}: {issue.Message}");
+    }
+}
+
+// Validate and throw on errors
+try
+{
+    AdaptiveCardValidator.ValidateAndThrow(card);
+    // Card is valid
+}
+catch (AdaptiveCardValidationException ex)
+{
+    Console.WriteLine($"Validation failed: {ex.Message}");
+    foreach (var error in ex.Errors)
+    {
+        Console.WriteLine($"  - [{error.Path}] {error.Message}");
+    }
+}
+```
+
+Validation checks include:
+- Required properties (version, type, URLs, input IDs)
+- Schema version compatibility
+- Empty elements and cards
+- URL format validation
+- Nested element validation
+- Action count limits
+
+### Input Forms
+
+Create interactive forms with validation:
+
+```csharp
+var card = AdaptiveCardBuilder.Create()
+    .WithVersion("1.5")
+    .AddTextBlock(tb => tb
+        .WithText("Contact Form")
+        .WithSize(TextSize.Large)
+        .WithWeight(TextWeight.Bolder))
+    .AddInputText(i => i
+        .WithId("name")
+        .WithLabel("Name")
+        .WithPlaceholder("Enter your name")
+        .IsRequired(true)
+        .WithErrorMessage("Name is required"))
+    .AddInputText(i => i
+        .WithId("email")
+        .WithLabel("Email")
+        .WithStyle(TextInputStyle.Email)
+        .IsRequired(true))
+    .AddInputText(i => i
+        .WithId("message")
+        .WithLabel("Message")
+        .IsMultiline(true)
+        .WithMaxLength(500))
+    .AddAction(a => a
+        .Submit("Send")
+        .WithStyle(ActionStyle.Positive))
+    .Build();
+```
+
+### Layouts
+
+Create complex layouts with containers and columns:
+
+```csharp
+var card = AdaptiveCardBuilder.Create()
+    .WithVersion("1.5")
+    .AddColumnSet(cs => cs
+        .AddColumn(col => col
+            .WithWidth("auto")
+            .AddImage(img => img
+                .WithUrl("https://example.com/image.png")
+                .WithSize(ImageSize.Medium)))
+        .AddColumn(col => col
+            .WithWidth("stretch")
+            .AddTextBlock(tb => tb
+                .WithText("Product Name")
+                .WithWeight(TextWeight.Bolder))
+            .AddTextBlock(tb => tb
+                .WithText("Product description goes here")
+                .WithWrap(true))))
+    .AddAction(a => a
+        .OpenUrl("https://example.com")
+        .WithTitle("Learn More"))
+    .Build();
+```
+
+## Samples
+
+The library includes comprehensive samples demonstrating common patterns:
+
+- **BasicCardSample**: Simple cards with text, images, and actions
+- **FormCardSample**: Interactive forms with various input types
+- **LayoutCardSample**: Advanced layouts using containers, columns, and fact sets
+- **RichContentSample**: Rich content including tables, media, and formatted text
+
+View the sample code in the [samples/FluentCards.Samples](samples/FluentCards.Samples) directory.
+
 ## Supported Elements
 
-### Current Support (Phase 1)
+FluentCards supports the full Adaptive Cards schema:
 
-- ✅ **AdaptiveCard**: Root card container
+### Display Elements
 - ✅ **TextBlock**: Rich text display with formatting
-- ✅ **OpenUrlAction**: Open URL actions
+- ✅ **Image**: Display images from URLs
+- ✅ **Container**: Group elements together
+- ✅ **ColumnSet** and **Column**: Multi-column layouts
+- ✅ **FactSet**: Display name-value pairs
+- ✅ **RichTextBlock**: Mixed inline formatting with TextRun
+- ✅ **ImageSet**: Display multiple images in a gallery
+- ✅ **Table**: Tabular data display
+- ✅ **Media**: Audio and video playback
+- ✅ **ActionSet**: Group actions inline
+
+### Input Elements
+- ✅ **Input.Text**: Single or multi-line text input
+- ✅ **Input.Number**: Numeric input
+- ✅ **Input.Date**: Date picker
+- ✅ **Input.Time**: Time picker
+- ✅ **Input.Toggle**: Checkbox/toggle
+- ✅ **Input.ChoiceSet**: Radio buttons or dropdown
+
+### Actions
+- ✅ **Action.OpenUrl**: Open a URL
+- ✅ **Action.Submit**: Submit form data
+- ✅ **Action.ShowCard**: Show a nested card
+- ✅ **Action.ToggleVisibility**: Show/hide elements
+- ✅ **Action.Execute**: Execute a command
+
+### Advanced Features
+- ✅ **Refresh**: Auto-refresh configuration
+- ✅ **Authentication**: SSO authentication
+- ✅ **Fallback**: Graceful degradation
+- ✅ **Requires**: Version requirements
+- ✅ **Metadata**: Card metadata
 
 ### Enums
 
@@ -128,6 +280,9 @@ AdaptiveCard? card = AdaptiveCardExtensions.FromJson(json);
 - **TextWeight**: `Lighter`, `Default`, `Bolder`
 - **TextColor**: `Default`, `Dark`, `Light`, `Accent`, `Good`, `Attention`, `Warning`
 - **HorizontalAlignment**: `Left`, `Center`, `Right`
+- **ContainerStyle**: `Default`, `Emphasis`, `Good`, `Attention`, `Warning`, `Accent`
+- **ImageSize**: `Auto`, `Stretch`, `Small`, `Medium`, `Large`
+- **ActionStyle**: `Default`, `Positive`, `Destructive`
 
 ## Project Structure
 
@@ -169,15 +324,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## Contributing
 
 Contributions are welcome! Please feel free to submit issues and pull requests.
-
-## Roadmap
-
-Future phases will include:
-
-- Additional card elements (Image, Container, ColumnSet, etc.)
-- More action types (Submit, ShowCard, ToggleVisibility)
-- Input elements (Text, Number, Date, Choice, Toggle)
-- Advanced features (Fallback, Refresh, Authentication)
 
 ## References
 

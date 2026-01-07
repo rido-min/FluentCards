@@ -8,6 +8,13 @@ namespace FluentCards.Serialization;
 /// </summary>
 public class InlinesConverter : JsonConverter<List<object>?>
 {
+    /// <summary>
+    /// Reads and converts JSON to a list of inline elements (strings or TextRun objects).
+    /// </summary>
+    /// <param name="reader">The JSON reader.</param>
+    /// <param name="typeToConvert">The type to convert.</param>
+    /// <param name="options">Serialization options.</param>
+    /// <returns>A list of objects containing strings or TextRun instances.</returns>
     public override List<object>? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         if (reader.TokenType == JsonTokenType.Null)
@@ -36,6 +43,12 @@ public class InlinesConverter : JsonConverter<List<object>?>
         return result;
     }
     
+    /// <summary>
+    /// Writes a list of inline elements to JSON.
+    /// </summary>
+    /// <param name="writer">The JSON writer.</param>
+    /// <param name="value">The list of inline elements to write.</param>
+    /// <param name="options">Serialization options.</param>
     public override void Write(Utf8JsonWriter writer, List<object>? value, JsonSerializerOptions options)
     {
         if (value == null)
