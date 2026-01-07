@@ -141,6 +141,45 @@ public class ContainerBuilder
     }
 
     /// <summary>
+    /// Adds a FactSet to the container.
+    /// </summary>
+    /// <param name="configure">Action to configure the FactSet.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public ContainerBuilder AddFactSet(Action<FactSetBuilder> configure)
+    {
+        var builder = new FactSetBuilder();
+        configure(builder);
+        _container.Items!.Add(builder.Build());
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a RichTextBlock to the container.
+    /// </summary>
+    /// <param name="configure">Action to configure the RichTextBlock.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public ContainerBuilder AddRichTextBlock(Action<RichTextBlockBuilder> configure)
+    {
+        var builder = new RichTextBlockBuilder();
+        configure(builder);
+        _container.Items!.Add(builder.Build());
+        return this;
+    }
+
+    /// <summary>
+    /// Adds an ActionSet to the container.
+    /// </summary>
+    /// <param name="configure">Action to configure the ActionSet.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public ContainerBuilder AddActionSet(Action<ActionSetBuilder> configure)
+    {
+        var builder = new ActionSetBuilder();
+        configure(builder);
+        _container.Items!.Add(builder.Build());
+        return this;
+    }
+
+    /// <summary>
     /// Adds an AdaptiveElement to the container.
     /// </summary>
     /// <param name="element">The element to add.</param>
