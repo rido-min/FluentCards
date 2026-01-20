@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FluentCards Web Renderer</title>
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="header">
+        <h1>FluentCards Web Renderer</h1>
+        <p>Interactive demonstration of Adaptive Cards rendered in browser using .NET backend</p>
+    </div>
+    
+    <div class="container">
+        <div class="card-selector">
+            <h2>Select a Card Type</h2>
+            <div class="card-buttons" id="cardButtons">
+                <button class="card-btn" data-card="welcome">Welcome Card</button>
+                <button class="card-btn" data-card="form">Contact Form</button>
+                <button class="card-btn" data-card="layout">Layout Demo</button>
+                <button class="card-btn" data-card="product">Product Card</button>
+            </div>
+        </div>
+        
+        <div class="card-container">
+            <div id="cardInfo" class="card-info" style="display: none;">
+                <h3 id="cardTitle"></h3>
+                <p id="cardDescription"></p>
+            </div>
+            <div id="cardHost"></div>
+        </div>
+    </div>
+
+    <!-- Load Adaptive Cards library -->
+    <script src="https://unpkg.com/adaptivecards@1.2.0/dist/adaptiveCards.js"></script>
+    <script>
+        // Verify library loaded
+        if (typeof AdaptiveCards === 'undefined') {
+            console.error('AdaptiveCards failed to load');
+        } else {
+            console.log('AdaptiveCards loaded successfully:', AdaptiveCards);
+        }
+    </script>
+    
+    <!-- Application JavaScript -->
+    <script src="app.js?v=4"></script>
+</body>
+</html>

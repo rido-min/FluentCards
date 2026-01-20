@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adaptive Cards Simple Test</title>
+    <script src="https://unpkg.com/adaptivecards@2.3.0/dist/adaptivecards.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        button {
+            background: #0078d4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #106ebe;
+        }
+        .card-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            min-height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Adaptive Cards Simple Test</h1>
+    
+    <div class="test-container">
+        <h2>Setup Status</h2>
+        <div id="setupStatus">Checking...</div>
+    </div>
+    
+    <div class="card-container">
+        <h2>Rendered Card</h2>
+        <div id="cardHost">Loading...</div>
+    </div>
+    
+    <div class="test-container">
+        <h2>Controls</h2>
+        <button onclick="renderSimpleCard()">Render Simple Card</button>
+        <button onclick="renderAPIcard()">Render API Card</button>
+    </div>
+
+    <script>
+        let setupStatus = document.getElementById('setupStatus');
+        let cardHost = document.getElementById('cardHost');
+        
+        function updateStatus(message, isError = false) {
+            console.log(message);
+            setupStatus.innerHTML = message;
+            setupStatus.style.color = isError ? 'red' : 'green';
+        }
+        
+        function renderSimpleCard() {
+            updateStatus('Rendering simple card...');
+            
+            try {
+                // Check library
+                if (typeof AdaptiveCards === 'undefined') {
+                    updateStatus('ERROR: AdaptiveCards not loaded!', true);
+                    return;
+                }
+                
+                updateStatus('AdaptiveCards loaded successfully');
+                
+                // Create card
+                const card = new AdaptiveCards.AdaptiveCard();
+                updateStatus('Card created successfully');
+                
+                // Set up action handler
+                card.onExecuteAction = function(action) {
+                    updateStatus('Action clicked: ' + action.title);
+                };
+                
+                // Simple card with no markdown to avoid warnings
+                const simpleCard = {
+                    type: "AdaptiveCard",
+                    version: "1.2",
+                    body: [
+                        {
+                            type: "TextBlock",
+                            text: "Hello World!",
+                            size: "large",
+                            weight: "bolder"
+                        },
+                        {
+                            type: "TextBlock",
+                            text: "This is a simple Adaptive Card test.",
+                            wrap: true
+                        }
+                    ],
+                    actions: [
+                        {
+                            type: "Action.OpenUrl",
+                            title: "Learn More",
+                            url: "https://adaptivecards.io"
+                        }
+                    ]
+                };
+                
+                card.parse(simpleCard);
+                updateStatus('Card parsed successfully');
+                
+                const rendered = card.render();
+                if (rendered) {
+                    cardHost.innerHTML = '';
+                    cardHost.appendChild(rendered);
+                    updateStatus('Card rendered successfully!');
+                } else {
+                    updateStatus('ERROR: Card render returned null', true);
+                }
+                
+            } catch (error) {
+                updateStatus('ERROR: ' + error.message, true);
+                console.error('Full error:', error);
+            }
+        }
+        
+        async function renderAPIcard() {
+            updateStatus('Loading card from API...');
+            
+            try {
+                const response = await fetch('/api/cards/welcome');
+                if (!response.ok) {
+                    throw new Error('HTTP error: ' + response.status);
+                }
+                
+                const cardJson = await response.json();
+                updateStatus('API card loaded successfully');
+                
+                // Create card
+                const card = new AdaptiveCards.AdaptiveCard();
+                card.onExecuteAction = function(action) {
+                    updateStatus('API Action clicked: ' + action.title);
+                };
+                
+                // Parse and render
+                card.parse(cardJson);
+                const rendered = card.render();
+                
+                if (rendered) {
+                    cardHost.innerHTML = '';
+                    cardHost.appendChild(rendered);
+                    updateStatus('API card rendered successfully!');
+                } else {
+                    updateStatus('ERROR: API card render returned null', true);
+                }
+                
+            } catch (error) {
+                updateStatus('ERROR: ' + error.message, true);
+                console.error('Full error:', error);
+            }
+        }
+        
+        // Initialize
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                if (typeof AdaptiveCards !== 'undefined') {
+                    updateStatus('AdaptiveCards v' + AdaptiveCards.version + ' loaded successfully');
+                    updateStatus('Try clicking "Render Simple Card" button');
+                } else {
+                    updateStatus('ERROR: AdaptiveCards failed to load!', true);
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+@FluentCards.WebRenderer.Backend_HostAddress = http://localhost:5208
+
+GET {{FluentCards.WebRenderer.Backend_HostAddress}}/api/cards/types
+Accept: application/json
+
+###

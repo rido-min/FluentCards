@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adaptive Cards Test</title>
+    <script src="https://unpkg.com/adaptivecards@2.3.0/dist/adaptivecards.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        button {
+            background: #0078d4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #106ebe;
+        }
+    </style>
+</head>
+<body>
+    <h1>Adaptive Cards Basic Test</h1>
+    
+    <div class="test-container">
+        <h2>Test Results</h2>
+        <div id="testResults">Loading...</div>
+    </div>
+    
+    <div class="test-container">
+        <h2>Card Renderer</h2>
+        <div id="cardHost"></div>
+    </div>
+    
+    <div class="test-container">
+        <h2>Controls</h2>
+        <button onclick="testBasicCard()">Test Basic Card</button>
+        <button onclick="testActionCard()">Test Action Card</button>
+        <button onclick="testAPI()">Test API Card</button>
+        <button onclick="clearHost()">Clear</button>
+    </div>
+
+    <script>
+        let testResults = document.getElementById('testResults');
+        let cardHost = document.getElementById('cardHost');
+        
+        function log(message) {
+            console.log(message);
+            testResults.innerHTML += '<div>' + message + '</div>';
+        }
+        
+        function testBasicCard() {
+            log('Testing basic card...');
+            
+            try {
+                if (typeof AdaptiveCards === 'undefined') {
+                    log('ERROR: AdaptiveCards not loaded!');
+                    return;
+                }
+                
+                log('AdaptiveCards loaded: ' + typeof AdaptiveCards);
+                log('AdaptiveCard constructor: ' + typeof AdaptiveCards.AdaptiveCard);
+                
+                const card = new AdaptiveCards.AdaptiveCard();
+                log('Card created successfully');
+                
+                const simpleCard = {
+                    type: "AdaptiveCard",
+                    version: "1.0",
+                    body: [
+                        {
+                            type: "TextBlock",
+                            text: "Hello from Adaptive Cards!",
+                            size: "large",
+                            weight: "bolder"
+                        }
+                    ]
+                };
+                
+                card.parse(simpleCard);
+                log('Card parsed successfully');
+                
+                const rendered = card.render();
+                log('Card rendered: ' + (rendered ? 'SUCCESS' : 'FAILED'));
+                log('Rendered type: ' + typeof rendered);
+                
+                if (rendered) {
+                    cardHost.innerHTML = '';
+                    cardHost.appendChild(rendered);
+                    log('Card added to DOM');
+                }
+                
+            } catch (error) {
+                log('ERROR: ' + error.message);
+                log('Stack: ' + error.stack);
+            }
+        }
+        
+        function testActionCard() {
+            log('Testing action card...');
+            
+            try {
+                const card = new AdaptiveCards.AdaptiveCard();
+                card.onExecuteAction = function(action) {
+                    log('Action executed: ' + JSON.stringify(action));
+                };
+                
+                const actionCard = {
+                    type: "AdaptiveCard",
+                    version: "1.0",
+                    body: [
+                        {
+                            type: "TextBlock",
+                            text: "Click the button below!"
+                        }
+                    ],
+                    actions: [
+                        {
+                            type: "Action.OpenUrl",
+                            title: "Click Me",
+                            url: "https://example.com"
+                        }
+                    ]
+                };
+                
+                card.parse(actionCard);
+                const rendered = card.render();
+                
+                if (rendered) {
+                    cardHost.innerHTML = '';
+                    cardHost.appendChild(rendered);
+                    log('Action card rendered successfully');
+                }
+                
+            } catch (error) {
+                log('ERROR: ' + error.message);
+            }
+        }
+        
+        async function testAPI() {
+            log('Testing API card...');
+            
+            try {
+                const response = await fetch('/api/cards/welcome');
+                if (!response.ok) {
+                    throw new Error('HTTP error: ' + response.status);
+                }
+                
+                const cardJson = await response.json();
+                log('API card loaded: ' + JSON.stringify(cardJson, null, 2));
+                
+                const card = new AdaptiveCards.AdaptiveCard();
+                card.onExecuteAction = function(action) {
+                    log('API Action executed: ' + JSON.stringify(action));
+                };
+                
+                card.parse(cardJson);
+                const rendered = card.render();
+                
+                if (rendered) {
+                    cardHost.innerHTML = '';
+                    cardHost.appendChild(rendered);
+                    log('API card rendered successfully');
+                }
+                
+            } catch (error) {
+                log('ERROR: ' + error.message);
+            }
+        }
+        
+        function clearHost() {
+            cardHost.innerHTML = '';
+            testResults.innerHTML = 'Cleared';
+        }
+        
+        // Initialize on load
+        window.addEventListener('load', function() {
+            log('Page loaded');
+            log('AdaptiveCards available: ' + (typeof AdaptiveCards !== 'undefined'));
+            
+            if (typeof AdaptiveCards !== 'undefined') {
+                // Enable markdown support
+                AdaptiveCards.AdaptiveCard.config.processMarkdown = true;
+                log('Markdown support enabled');
+                log('AdaptiveCards version: LOADED');
+                
+                // Auto-test basic card
+                setTimeout(testBasicCard, 500);
+            } else {
+                log('AdaptiveCards version: NOT FOUND');
+            }
+        });
+    </script>
+</body>
+</html>

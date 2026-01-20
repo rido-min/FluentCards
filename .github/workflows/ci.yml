@@ -2,13 +2,13 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
-    tags: [ 'v*' ]
+    branches: [main]
+    tags: ["v*"]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 env:
-  DOTNET_VERSION: '8.0.x'
+  DOTNET_VERSION: "10.0.x"
   CONFIGURATION: Release
 
 permissions:
@@ -20,47 +20,47 @@ jobs:
     permissions:
       contents: read
     steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
-    - name: Restore dependencies
-      run: dotnet restore
+      - name: Restore dependencies
+        run: dotnet restore
 
-    - name: Build
-      run: dotnet build --configuration ${{ env.CONFIGURATION }} --no-restore
+      - name: Build
+        run: dotnet build --configuration ${{ env.CONFIGURATION }} --no-restore
 
-    - name: Test
-      run: dotnet test --configuration ${{ env.CONFIGURATION }} --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage
+      - name: Test
+        run: dotnet test --configuration ${{ env.CONFIGURATION }} --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage
 
-    - name: Upload coverage reports
-      uses: codecov/codecov-action@v4
-      with:
-        directory: ./coverage
-        fail_ci_if_error: false
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v4
+        with:
+          directory: ./coverage
+          fail_ci_if_error: false
 
   aot-test:
     runs-on: ubuntu-latest
     permissions:
       contents: read
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
-    - name: Build with trimming analysis
-      run: dotnet build src/FluentCards/FluentCards.csproj --configuration Release /p:EnableTrimAnalyzer=true
+      - name: Build with trimming analysis
+        run: dotnet build src/FluentCards/FluentCards.csproj --configuration Release /p:EnableTrimAnalyzer=true
 
-    - name: Verify AOT compatibility
-      run: dotnet publish samples/FluentCards.Samples/FluentCards.Samples.csproj -c Release -r linux-x64 --self-contained -p:PublishAot=true -p:StripSymbols=true || echo "AOT warnings logged"
+      - name: Verify AOT compatibility
+        run: dotnet publish samples/FluentCards.Samples/FluentCards.Samples.csproj -c Release -r linux-x64 --self-contained -p:PublishAot=true -p:StripSymbols=true || echo "AOT warnings logged"
 
   benchmark:
     runs-on: ubuntu-latest
@@ -68,21 +68,21 @@ jobs:
     permissions:
       contents: read
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
-    - name: Run benchmarks
-      run: dotnet run --project benchmarks/FluentCards.Benchmarks/FluentCards.Benchmarks.csproj -c Release -- --filter "*" --exporters json
+      - name: Run benchmarks
+        run: dotnet run --project benchmarks/FluentCards.Benchmarks/FluentCards.Benchmarks.csproj -c Release -- --filter "*" --exporters json
 
-    - name: Upload benchmark results
-      uses: actions/upload-artifact@v4
-      with:
-        name: benchmark-results
-        path: BenchmarkDotNet.Artifacts/
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results
+          path: BenchmarkDotNet.Artifacts/
 
   pack:
     runs-on: ubuntu-latest
@@ -90,29 +90,29 @@ jobs:
     permissions:
       contents: read
     steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
-    - name: Pack
-      run: dotnet pack src/FluentCards/FluentCards.csproj --configuration Release --output ./nupkg
+      - name: Pack
+        run: dotnet pack src/FluentCards/FluentCards.csproj --configuration Release --output ./nupkg
 
-    - name: Upload NuGet package
-      uses: actions/upload-artifact@v4
-      with:
-        name: nuget-package
-        path: ./nupkg/*.nupkg
+      - name: Upload NuGet package
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-package
+          path: ./nupkg/*.nupkg
 
-    - name: Upload Symbol package
-      uses: actions/upload-artifact@v4
-      with:
-        name: symbol-package
-        path: ./nupkg/*.snupkg
+      - name: Upload Symbol package
+        uses: actions/upload-artifact@v4
+        with:
+          name: symbol-package
+          path: ./nupkg/*.snupkg
 
   publish:
     runs-on: ubuntu-latest
@@ -122,22 +122,22 @@ jobs:
     permissions:
       contents: read
     steps:
-    - name: Download NuGet package
-      uses: actions/download-artifact@v4
-      with:
-        name: nuget-package
-        path: ./nupkg
+      - name: Download NuGet package
+        uses: actions/download-artifact@v4
+        with:
+          name: nuget-package
+          path: ./nupkg
 
-    - name: Download Symbol package
-      uses: actions/download-artifact@v4
-      with:
-        name: symbol-package
-        path: ./nupkg
+      - name: Download Symbol package
+        uses: actions/download-artifact@v4
+        with:
+          name: symbol-package
+          path: ./nupkg
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
-    - name: Publish to NuGet
-      run: dotnet nuget push ./nupkg/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+      - name: Publish to NuGet
+        run: dotnet nuget push ./nupkg/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate

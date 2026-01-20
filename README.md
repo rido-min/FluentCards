@@ -233,8 +233,11 @@ The library includes comprehensive samples demonstrating common patterns:
 - **FormCardSample**: Interactive forms with various input types
 - **LayoutCardSample**: Advanced layouts using containers, columns, and fact sets
 - **RichContentSample**: Rich content including tables, media, and formatted text
+- **RenderAC**: Web renderer sample demonstrating browser-based Adaptive Cards rendering
 
-View the sample code in the [samples/FluentCards.Samples](samples/FluentCards.Samples) directory.
+View the sample code in:
+- [samples/FluentCards.Samples](samples/FluentCards.Samples) - Library usage examples
+- [samples/RenderAC](samples/RenderAC) - Web renderer sample with backend API
 
 ## Supported Elements
 
@@ -293,7 +296,8 @@ FluentCards/
 ├── tests/
 │   └── FluentCards.Tests/     # Unit tests
 └── samples/
-    └── FluentCards.Samples/   # Usage examples
+    ├── FluentCards.Samples/   # Usage examples
+    └── RenderAC/              # Web renderer sample
 ```
 
 ## Building from Source
