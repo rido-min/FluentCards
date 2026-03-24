@@ -24,7 +24,7 @@ describe('toJson', () => {
   it('includes $schema property', () => {
     const json = toJson(AdaptiveCardBuilder.create().build());
     assert.ok(json.includes('"$schema"'));
-    assert.ok(json.includes('adaptivecards.io'));
+    assert.ok(json.includes('"http://adaptivecards.io/schemas/adaptive-card.json"'));
   });
 
   it('omits undefined optional properties', () => {
