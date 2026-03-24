@@ -56,3 +56,6 @@ nunit-*.xml
 # BenchmarkDotNet
 BenchmarkDotNet.Artifacts/
 *.bench
+# Node / TypeScript
+node_modules/
+packages/*/dist/

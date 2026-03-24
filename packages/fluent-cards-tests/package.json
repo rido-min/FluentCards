@@ -1,0 +1,17 @@
+{
+  "name": "fluent-cards-tests",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "node --test --require tsx/cjs 'test/**/*.test.ts'",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "fluent-cards": "*"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.3",
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.3"
+  }
+}

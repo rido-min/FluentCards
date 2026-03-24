@@ -1,0 +1,13 @@
+{
+  "name": "fluent-cards",
+  "version": "1.0.0",
+  "description": "Fluent builder API for Adaptive Cards",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": ["adaptive-cards", "fluent", "builder"],
+  "license": "MIT"
+}
