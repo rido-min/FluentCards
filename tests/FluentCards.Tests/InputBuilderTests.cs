@@ -189,6 +189,44 @@ public class InputBuilderTests
     }
 
     [Fact]
+    public void InputChoiceSetBuilder_WithChoicesData_String_SetsDataQuery()
+    {
+        // Arrange & Act
+        var input = new InputChoiceSetBuilder()
+            .WithId("people-picker")
+            .WithLabel("Select users")
+            .IsMultiSelect()
+            .WithChoicesData("graph.microsoft.com/users")
+            .Build();
+
+        // Assert
+        Assert.NotNull(input.ChoicesData);
+        Assert.Equal("Data.Query", input.ChoicesData.Type);
+        Assert.Equal("graph.microsoft.com/users", input.ChoicesData.Dataset);
+    }
+
+    [Fact]
+    public void InputChoiceSetBuilder_WithChoicesData_Delegate_ConfiguresDataQuery()
+    {
+        // Arrange & Act
+        var input = new InputChoiceSetBuilder()
+            .WithId("people-picker")
+            .WithChoicesData(dq =>
+            {
+                dq.Dataset = "graph.microsoft.com/users";
+                dq.Count = 25;
+                dq.Skip = 0;
+            })
+            .Build();
+
+        // Assert
+        Assert.NotNull(input.ChoicesData);
+        Assert.Equal("graph.microsoft.com/users", input.ChoicesData.Dataset);
+        Assert.Equal(25, input.ChoicesData.Count);
+        Assert.Equal(0, input.ChoicesData.Skip);
+    }
+
+    [Fact]
     public void AdaptiveCardBuilder_AddInputs_AddsToBody()
     {
         // Arrange & Act

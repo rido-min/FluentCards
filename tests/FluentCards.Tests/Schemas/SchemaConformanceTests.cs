@@ -308,6 +308,22 @@ public class SchemaConformanceTests
     }
 
     [Fact]
+    public void InputChoiceSet_WithChoicesData_ConformsToSchema()
+    {
+        var card = AdaptiveCardBuilder.Create()
+            .WithVersion("1.6")
+            .AddInputChoiceSet(i => i
+                .WithId("people-picker")
+                .WithLabel("Select users")
+                .IsMultiSelect()
+                .WithValue("user1,user2")
+                .WithChoicesData("graph.microsoft.com/users"))
+            .Build();
+
+        SchemaValidator.AssertValid(card);
+    }
+
+    [Fact]
     public void AllActionTypes_ConformToSchema()
     {
         var card = AdaptiveCardBuilder.Create()

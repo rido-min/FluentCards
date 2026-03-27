@@ -9,6 +9,12 @@ namespace FluentCards;
 public class DataQuery
 {
     /// <summary>
+    /// Must be "Data.Query".
+    /// </summary>
+    [JsonPropertyName("type")]
+    public string Type { get; set; } = "Data.Query";
+
+    /// <summary>
     /// The dataset to query.
     /// </summary>
     [JsonPropertyName("dataset")]

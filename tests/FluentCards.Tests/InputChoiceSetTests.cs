@@ -363,6 +363,99 @@ public class InputChoiceSetTests
     }
 
     [Fact]
+    public void ChoiceSet_WithChoicesData_SerializesDataQuery()
+    {
+        // Arrange
+        var card = new AdaptiveCard
+        {
+            Body = new List<AdaptiveElement>
+            {
+                new InputChoiceSet
+                {
+                    Id = "people-picker",
+                    IsMultiSelect = true,
+                    Choices = new List<Choice>(),
+                    ChoicesData = new DataQuery
+                    {
+                        Dataset = "graph.microsoft.com/users"
+                    }
+                }
+            }
+        };
+
+        // Act
+        var json = card.ToJson();
+
+        // Assert
+        Assert.Contains("\"choices.data\":", json);
+        Assert.Contains("\"type\": \"Data.Query\"", json);
+        Assert.Contains("\"dataset\": \"graph.microsoft.com/users\"", json);
+    }
+
+    [Fact]
+    public void ChoiceSet_WithChoicesData_RoundtripPreservesDataQuery()
+    {
+        // Arrange
+        var originalCard = new AdaptiveCard
+        {
+            Body = new List<AdaptiveElement>
+            {
+                new InputChoiceSet
+                {
+                    Id = "people-picker",
+                    IsMultiSelect = true,
+                    Value = "user1,user2",
+                    Choices = new List<Choice>(),
+                    ChoicesData = new DataQuery
+                    {
+                        Dataset = "graph.microsoft.com/users"
+                    }
+                }
+            }
+        };
+
+        // Act
+        var json = originalCard.ToJson();
+        var deserializedCard = AdaptiveCardExtensions.FromJson(json);
+
+        // Assert
+        Assert.NotNull(deserializedCard);
+        var choiceSet = deserializedCard.Body![0] as InputChoiceSet;
+        Assert.NotNull(choiceSet);
+        Assert.NotNull(choiceSet.ChoicesData);
+        Assert.Equal("Data.Query", choiceSet.ChoicesData.Type);
+        Assert.Equal("graph.microsoft.com/users", choiceSet.ChoicesData.Dataset);
+        Assert.True(choiceSet.IsMultiSelect);
+        Assert.Equal("user1,user2", choiceSet.Value);
+    }
+
+    [Fact]
+    public void ChoiceSet_WithoutChoicesData_OmitsFromJson()
+    {
+        // Arrange
+        var card = new AdaptiveCard
+        {
+            Body = new List<AdaptiveElement>
+            {
+                new InputChoiceSet
+                {
+                    Id = "simple",
+                    Choices = new List<Choice>
+                    {
+                        new Choice { Title = "Yes", Value = "y" }
+                    }
+                }
+            }
+        };
+
+        // Act
+        var json = card.ToJson();
+
+        // Assert
+        Assert.DoesNotContain("choices.data", json);
+    }
+
+    [Fact]
     public void ChoiceSet_WithWrapTrue_Serializes()
     {
         // Arrange

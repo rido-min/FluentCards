@@ -45,4 +45,11 @@ public class InputChoiceSet : InputElement
     [JsonPropertyName("wrap")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public bool Wrap { get; set; }
+
+    /// <summary>
+    /// Allows dynamic fetching of choices from a data source.
+    /// </summary>
+    /// <remarks>Added in Adaptive Cards 1.6.</remarks>
+    [JsonPropertyName("choices.data")]
+    public DataQuery? ChoicesData { get; set; }
 }

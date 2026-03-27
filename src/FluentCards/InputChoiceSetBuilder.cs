@@ -163,6 +163,32 @@ public class InputChoiceSetBuilder
     }
 
     /// <summary>
+    /// Sets a dynamic data query for fetching choices from a data source.
+    /// </summary>
+    /// <param name="dataset">The dataset to query (e.g., "graph.microsoft.com/users").</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    /// <remarks>Added in Adaptive Cards 1.6.</remarks>
+    public InputChoiceSetBuilder WithChoicesData(string dataset)
+    {
+        _input.ChoicesData = new DataQuery { Dataset = dataset };
+        return this;
+    }
+
+    /// <summary>
+    /// Sets a dynamic data query for fetching choices from a data source.
+    /// </summary>
+    /// <param name="configure">A delegate to configure the data query.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    /// <remarks>Added in Adaptive Cards 1.6.</remarks>
+    public InputChoiceSetBuilder WithChoicesData(Action<DataQuery> configure)
+    {
+        var dataQuery = new DataQuery();
+        configure(dataQuery);
+        _input.ChoicesData = dataQuery;
+        return this;
+    }
+
+    /// <summary>
     /// Builds and returns the configured InputChoiceSet.
     /// </summary>
     /// <returns>The configured InputChoiceSet instance.</returns>
