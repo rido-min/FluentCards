@@ -151,6 +151,79 @@ public class SerializationTests
     }
 
     [Fact]
+    public void BackgroundImage_Serialization_ContainsBackgroundImageObject()
+    {
+        // Arrange
+        var card = new AdaptiveCard
+        {
+            BackgroundImage = new BackgroundImage
+            {
+                Url = "https://example.com/bg.png",
+                FillMode = BackgroundImageFillMode.Cover,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            }
+        };
+
+        // Act
+        var json = card.ToJson();
+
+        // Assert
+        Assert.Contains("\"backgroundImage\":", json);
+        Assert.Contains("\"url\": \"https://example.com/bg.png\"", json);
+        Assert.Contains("\"fillMode\": \"cover\"", json);
+        Assert.Contains("\"horizontalAlignment\": \"center\"", json);
+        Assert.Contains("\"verticalAlignment\": \"center\"", json);
+    }
+
+    [Fact]
+    public void BackgroundImage_RoundtripSerialization_PreservesBackgroundImage()
+    {
+        // Arrange
+        var originalCard = new AdaptiveCard
+        {
+            BackgroundImage = new BackgroundImage
+            {
+                Url = "https://example.com/bg.png",
+                FillMode = BackgroundImageFillMode.RepeatHorizontally,
+                HorizontalAlignment = HorizontalAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Bottom
+            }
+        };
+
+        // Act
+        var json = originalCard.ToJson();
+        var deserializedCard = AdaptiveCardExtensions.FromJson(json);
+
+        // Assert
+        Assert.NotNull(deserializedCard);
+        Assert.NotNull(deserializedCard.BackgroundImage);
+        Assert.Equal("https://example.com/bg.png", deserializedCard.BackgroundImage.Url);
+        Assert.Equal(BackgroundImageFillMode.RepeatHorizontally, deserializedCard.BackgroundImage.FillMode);
+        Assert.Equal(HorizontalAlignment.Right, deserializedCard.BackgroundImage.HorizontalAlignment);
+        Assert.Equal(VerticalAlignment.Bottom, deserializedCard.BackgroundImage.VerticalAlignment);
+    }
+
+    [Fact]
+    public void BackgroundImage_WhenNull_IsOmittedFromJson()
+    {
+        // Arrange
+        var card = new AdaptiveCard
+        {
+            Body = new List<AdaptiveElement>
+            {
+                new TextBlock { Text = "Hello" }
+            }
+        };
+
+        // Act
+        var json = card.ToJson();
+
+        // Assert
+        Assert.DoesNotContain("\"backgroundImage\":", json);
+    }
+
+    [Fact]
     public void EnumSerialization_UsesCamelCase()
     {
         // Arrange

@@ -117,6 +117,62 @@ public class BuilderTests
     }
 
     [Fact]
+    public void Builder_WithBackgroundImageUrl_SetsBackgroundImage()
+    {
+        // Arrange & Act
+        var card = AdaptiveCardBuilder.Create()
+            .WithBackgroundImage("https://example.com/bg.png")
+            .Build();
+
+        // Assert
+        Assert.NotNull(card.BackgroundImage);
+        Assert.Equal("https://example.com/bg.png", card.BackgroundImage.Url);
+        Assert.Null(card.BackgroundImage.FillMode);
+    }
+
+    [Fact]
+    public void Builder_WithBackgroundImageDelegate_SetsBackgroundImageWithFillMode()
+    {
+        // Arrange & Act
+        var card = AdaptiveCardBuilder.Create()
+            .WithBackgroundImage(bg => bg
+                .WithUrl("https://example.com/bg.png")
+                .WithFillMode(BackgroundImageFillMode.RepeatHorizontally)
+                .WithHorizontalAlignment(HorizontalAlignment.Left)
+                .WithVerticalAlignment(VerticalAlignment.Top))
+            .Build();
+
+        // Assert
+        Assert.NotNull(card.BackgroundImage);
+        Assert.Equal("https://example.com/bg.png", card.BackgroundImage.Url);
+        Assert.Equal(BackgroundImageFillMode.RepeatHorizontally, card.BackgroundImage.FillMode);
+        Assert.Equal(HorizontalAlignment.Left, card.BackgroundImage.HorizontalAlignment);
+        Assert.Equal(VerticalAlignment.Top, card.BackgroundImage.VerticalAlignment);
+    }
+
+    [Fact]
+    public void ActionBuilder_WithRequires_SetsRequiresDictionary()
+    {
+        // Arrange & Act
+        var card = AdaptiveCardBuilder.Create()
+            .AddAction(a => a
+                .OpenUrl("https://example.com")
+                .WithTitle("Visit")
+                .WithRequires("adaptiveCards", "1.2")
+                .WithRequires("hostCapability", "video"))
+            .Build();
+
+        // Assert
+        Assert.NotNull(card.Actions);
+        Assert.Single(card.Actions);
+        var action = card.Actions[0];
+        Assert.NotNull(action.Requires);
+        Assert.Equal(2, action.Requires.Count);
+        Assert.Equal("1.2", action.Requires["adaptiveCards"]);
+        Assert.Equal("video", action.Requires["hostCapability"]);
+    }
+
+    [Fact]
     public void TextBlockBuilder_Build_ReturnsTextBlock()
     {
         // Arrange

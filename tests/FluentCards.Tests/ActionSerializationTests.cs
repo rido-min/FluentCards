@@ -354,6 +354,91 @@ public class ActionSerializationTests
     }
 
     [Fact]
+    public void ActionWithRequires_Serialization_ContainsRequiresProperty()
+    {
+        // Arrange
+        var card = new AdaptiveCard
+        {
+            Actions = new List<AdaptiveAction>
+            {
+                new OpenUrlAction
+                {
+                    Title = "Visit",
+                    Url = "https://example.com",
+                    Requires = new Dictionary<string, string>
+                    {
+                        { "adaptiveCards", "1.2" },
+                        { "hostCapability", "video" }
+                    }
+                }
+            }
+        };
+
+        // Act
+        var json = card.ToJson();
+
+        // Assert
+        Assert.Contains("\"requires\":", json);
+        Assert.Contains("\"adaptiveCards\": \"1.2\"", json);
+        Assert.Contains("\"hostCapability\": \"video\"", json);
+    }
+
+    [Fact]
+    public void ActionWithRequires_RoundtripSerialization_PreservesRequires()
+    {
+        // Arrange
+        var originalCard = new AdaptiveCard
+        {
+            Actions = new List<AdaptiveAction>
+            {
+                new SubmitAction
+                {
+                    Title = "Submit",
+                    Requires = new Dictionary<string, string>
+                    {
+                        { "adaptiveCards", "1.5" },
+                        { "feature", "2.0" }
+                    }
+                }
+            }
+        };
+
+        // Act
+        var json = originalCard.ToJson();
+        var deserializedCard = AdaptiveCardExtensions.FromJson(json);
+
+        // Assert
+        Assert.NotNull(deserializedCard);
+        Assert.NotNull(deserializedCard.Actions);
+        Assert.Single(deserializedCard.Actions);
+        var action = deserializedCard.Actions[0] as SubmitAction;
+        Assert.NotNull(action);
+        Assert.NotNull(action.Requires);
+        Assert.Equal(2, action.Requires.Count);
+        Assert.Equal("1.5", action.Requires["adaptiveCards"]);
+        Assert.Equal("2.0", action.Requires["feature"]);
+    }
+
+    [Fact]
+    public void ActionWithoutRequires_DoesNotSerializeRequiresProperty()
+    {
+        // Arrange
+        var card = new AdaptiveCard
+        {
+            Actions = new List<AdaptiveAction>
+            {
+                new OpenUrlAction { Title = "Visit", Url = "https://example.com" }
+            }
+        };
+
+        // Act
+        var json = card.ToJson();
+
+        // Assert
+        Assert.DoesNotContain("\"requires\":", json);
+    }
+
+    [Fact]
     public void ComplexCardWithAllActionTypes_RoundtripCorrectly()
     {
         // Arrange
