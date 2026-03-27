@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+# Setup: one-time environment bootstrap (install deps, build tools)
+dotnet restore

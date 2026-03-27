@@ -56,3 +56,5 @@ nunit-*.xml
 # BenchmarkDotNet
 BenchmarkDotNet.Artifacts/
 *.bench
+# Bootstrap wizard state
+.github/.bootstrap-wizard-state.json
