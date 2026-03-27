@@ -471,6 +471,32 @@ public class AdaptiveCardBuilder
     }
 
     /// <summary>
+    /// Configures the background image for the card.
+    /// </summary>
+    /// <param name="configure">Action to configure the background image.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    /// <remarks>Added in Adaptive Cards 1.2.</remarks>
+    public AdaptiveCardBuilder WithBackgroundImage(Action<BackgroundImageBuilder> configure)
+    {
+        var builder = new BackgroundImageBuilder();
+        configure(builder);
+        _card.BackgroundImage = builder.Build();
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the background image URL for the card.
+    /// </summary>
+    /// <param name="url">The background image URL.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    /// <remarks>Added in Adaptive Cards 1.2.</remarks>
+    public AdaptiveCardBuilder WithBackgroundImage(string url)
+    {
+        _card.BackgroundImage = new BackgroundImage { Url = url };
+        return this;
+    }
+
+    /// <summary>
     /// Builds and returns the configured AdaptiveCard.
     /// </summary>
     /// <returns>The configured AdaptiveCard instance.</returns>

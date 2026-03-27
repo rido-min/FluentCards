@@ -102,6 +102,13 @@ public class AdaptiveCard
     public CardMetadata? Metadata { get; set; }
 
     /// <summary>
+    /// Specifies a background image for the card.
+    /// </summary>
+    /// <remarks>Added in Adaptive Cards 1.2.</remarks>
+    [JsonPropertyName("backgroundImage")]
+    public BackgroundImage? BackgroundImage { get; set; }
+
+    /// <summary>
     /// Applies a known <see cref="AdaptiveCardVersion"/>, setting both <see cref="Version"/> and <see cref="Schema"/>.
     /// </summary>
     /// <param name="version">The version to apply.</param>

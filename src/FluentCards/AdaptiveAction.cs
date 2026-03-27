@@ -54,4 +54,9 @@ public abstract class AdaptiveAction
     /// </summary>
     [JsonConverter(typeof(CamelCaseEnumConverter<ActionMode>))]
     public ActionMode? Mode { get; set; }
+
+    /// <summary>
+    /// A series of key/value pairs indicating features that the action requires with corresponding minimum version.
+    /// </summary>
+    public Dictionary<string, string>? Requires { get; set; }
 }

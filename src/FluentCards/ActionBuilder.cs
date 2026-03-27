@@ -192,6 +192,22 @@ public class ActionBuilder
     }
 
     /// <summary>
+    /// Sets the feature requirements for the action.
+    /// </summary>
+    /// <param name="feature">The feature name.</param>
+    /// <param name="version">The minimum required version.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public ActionBuilder WithRequires(string feature, string version)
+    {
+        if (_action != null)
+        {
+            _action.Requires ??= new Dictionary<string, string>();
+            _action.Requires[feature] = version;
+        }
+        return this;
+    }
+
+    /// <summary>
     /// Builds and returns the configured AdaptiveAction.
     /// </summary>
     /// <returns>The configured AdaptiveAction instance.</returns>

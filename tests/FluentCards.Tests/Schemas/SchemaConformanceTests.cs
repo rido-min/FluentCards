@@ -527,6 +527,37 @@ public class SchemaConformanceTests
         SchemaValidator.AssertValid(card, version);
     }
 
+    [Fact]
+    public void BackgroundImage_WithAllProperties_ConformsToSchema()
+    {
+        var card = AdaptiveCardBuilder.Create()
+            .WithVersion(AdaptiveCardVersion.V1_5)
+            .WithBackgroundImage(bg => bg
+                .WithUrl("https://example.com/bg.png")
+                .WithFillMode(BackgroundImageFillMode.Cover)
+                .WithHorizontalAlignment(HorizontalAlignment.Center)
+                .WithVerticalAlignment(VerticalAlignment.Center))
+            .AddTextBlock(tb => tb.WithText("Card with background"))
+            .Build();
+
+        SchemaValidator.AssertValid(card);
+    }
+
+    [Fact]
+    public void ActionWithRequires_ConformsToSchema()
+    {
+        var card = AdaptiveCardBuilder.Create()
+            .WithVersion(AdaptiveCardVersion.V1_5)
+            .AddTextBlock(tb => tb.WithText("Action with requires"))
+            .AddAction(a => a
+                .OpenUrl("https://example.com")
+                .WithTitle("Visit")
+                .WithRequires("adaptiveCards", "1.2"))
+            .Build();
+
+        SchemaValidator.AssertValid(card);
+    }
+
     [Theory]
     [InlineData(AdaptiveCardVersion.V1_0)]
     [InlineData(AdaptiveCardVersion.V1_1)]
