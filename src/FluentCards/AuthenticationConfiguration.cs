@@ -3,8 +3,9 @@ using System.Text.Json.Serialization;
 namespace FluentCards;
 
 /// <summary>
-/// Defines authentication configuration for Adaptive Cards (version 1.4+).
+/// Defines authentication configuration for Adaptive Cards.
 /// </summary>
+/// <remarks>Added in Adaptive Cards 1.4.</remarks>
 public class AuthenticationConfiguration
 {
     /// <summary>

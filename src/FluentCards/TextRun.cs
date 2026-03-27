@@ -5,6 +5,7 @@ namespace FluentCards;
 /// <summary>
 /// Represents an inline text run with formatting options.
 /// </summary>
+/// <remarks>Added in Adaptive Cards 1.2.</remarks>
 public class TextRun
 {
     /// <summary>

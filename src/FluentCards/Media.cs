@@ -5,7 +5,8 @@ namespace FluentCards;
 /// <summary>
 /// Displays audio or video content.
 /// </summary>
-public class Media : AdaptiveElement
+/// <remarks>Added in Adaptive Cards 1.1.</remarks>
+public class Media: AdaptiveElement
 {
     /// <summary>
     /// The media sources with fallback options.

@@ -3,6 +3,7 @@ namespace FluentCards;
 /// <summary>
 /// Specifies the mode of an action.
 /// </summary>
+/// <remarks>Added in Adaptive Cards 1.5.</remarks>
 public enum ActionMode
 {
     /// <summary>

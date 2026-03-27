@@ -5,6 +5,7 @@ namespace FluentCards;
 /// <summary>
 /// Represents a target element for Action.ToggleVisibility.
 /// </summary>
+/// <remarks>Added in Adaptive Cards 1.2.</remarks>
 public class TargetElement
 {
     /// <summary>

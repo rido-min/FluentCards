@@ -5,6 +5,7 @@ namespace FluentCards;
 /// <summary>
 /// Defines a token exchange resource for authentication.
 /// </summary>
+/// <remarks>Added in Adaptive Cards 1.4.</remarks>
 public class TokenExchangeResource
 {
     /// <summary>

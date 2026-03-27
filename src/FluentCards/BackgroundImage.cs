@@ -5,6 +5,7 @@ namespace FluentCards;
 /// <summary>
 /// Specifies a background image for a container.
 /// </summary>
+/// <remarks>Added in Adaptive Cards 1.2.</remarks>
 public class BackgroundImage
 {
     /// <summary>

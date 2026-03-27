@@ -5,6 +5,7 @@ namespace FluentCards;
 /// <summary>
 /// Represents a media source with MIME type and URL.
 /// </summary>
+/// <remarks>Added in Adaptive Cards 1.1.</remarks>
 public class MediaSource
 {
     /// <summary>
