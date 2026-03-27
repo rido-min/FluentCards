@@ -93,4 +93,14 @@ public class AdaptiveCard
     /// </summary>
     [JsonPropertyName("metadata")]
     public CardMetadata? Metadata { get; set; }
+
+    /// <summary>
+    /// Applies a known <see cref="AdaptiveCardVersion"/>, setting both <see cref="Version"/> and <see cref="Schema"/>.
+    /// </summary>
+    /// <param name="version">The version to apply.</param>
+    internal void ApplyVersion(AdaptiveCardVersion version)
+    {
+        Version = version.ToVersionString();
+        Schema = version.ToSchemaUrl();
+    }
 }

@@ -356,6 +356,20 @@ public class SchemaConformanceTests
     }
 
     [Fact]
+    public void WithVersionEnum_V1_6_ProducesSchemaValidCard()
+    {
+        // Arrange & Act — use the enum overload to verify it sets
+        // both version and $schema to values the schema accepts.
+        var card = AdaptiveCardBuilder.Create()
+            .WithVersion(AdaptiveCardVersion.V1_6)
+            .AddTextBlock(tb => tb.WithText("Built with enum API"))
+            .Build();
+
+        // Assert
+        SchemaValidator.AssertValid(card);
+    }
+
+    [Fact]
     public void ComplexCard_WithMultipleElements_ConformsToSchema()
     {
         var card = AdaptiveCardBuilder.Create()

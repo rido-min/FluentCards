@@ -17,13 +17,37 @@ public class AdaptiveCardBuilder
     }
 
     /// <summary>
-    /// Sets the version of the AdaptiveCard schema.
+    /// Sets the schema version and <c>$schema</c> URL from a known <see cref="AdaptiveCardVersion"/> value.
     /// </summary>
-    /// <param name="version">The schema version (e.g., "1.5").</param>
+    /// <param name="version">The schema version to apply.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public AdaptiveCardBuilder WithVersion(AdaptiveCardVersion version)
+    {
+        _card.ApplyVersion(version);
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the schema version from a version string (e.g. <c>"1.5"</c>).
+    /// Known versions also update the <c>$schema</c> URL; unrecognized strings set only the version.
+    /// </summary>
+    /// <param name="version">The version string (e.g. <c>"1.5"</c>).</param>
     /// <returns>The builder instance for method chaining.</returns>
     public AdaptiveCardBuilder WithVersion(string version)
     {
-        _card.Version = version;
+        if (AdaptiveCardVersionExtensions.TryParse(version, out var known))
+        {
+            _card.ApplyVersion(known);
+        }
+        else
+        {
+            _card.Version = version;
+            // Reset to the generic schema URL to avoid a stale versioned URL
+            // from a prior WithVersion call (e.g. V1_5 → "2.0" would otherwise
+            // leave the 1.5 schema URL in place).
+            _card.Schema = "http://adaptivecards.io/schemas/adaptive-card.json";
+        }
+
         return this;
     }
 
