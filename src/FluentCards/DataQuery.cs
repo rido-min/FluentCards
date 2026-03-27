@@ -5,6 +5,7 @@ namespace FluentCards;
 /// <summary>
 /// Represents a data query for dynamic choice sets (typeahead/filtered).
 /// </summary>
+/// <remarks>Added in Adaptive Cards 1.6.</remarks>
 public class DataQuery
 {
     /// <summary>

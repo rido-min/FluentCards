@@ -5,6 +5,7 @@ namespace FluentCards;
 /// <summary>
 /// Represents a caption source for media elements.
 /// </summary>
+/// <remarks>Added in Adaptive Cards 1.6.</remarks>
 public class CaptionSource
 {
     /// <summary>

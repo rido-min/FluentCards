@@ -19,7 +19,8 @@ public enum ChoiceInputStyle
     Expanded,
 
     /// <summary>
-    /// Searchable dropdown (Adaptive Cards 1.5+).
+    /// Searchable dropdown.
     /// </summary>
+    /// <remarks>Added in Adaptive Cards 1.6.</remarks>
     Filtered
 }

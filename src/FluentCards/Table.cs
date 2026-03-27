@@ -3,9 +3,10 @@ using System.Text.Json.Serialization;
 namespace FluentCards;
 
 /// <summary>
-/// Displays tabular data (Adaptive Cards 1.5+).
+/// Displays tabular data.
 /// </summary>
-public class Table : AdaptiveElement
+/// <remarks>Added in Adaptive Cards 1.5.</remarks>
+public class Table: AdaptiveElement
 {
     /// <summary>
     /// The column definitions for the table.

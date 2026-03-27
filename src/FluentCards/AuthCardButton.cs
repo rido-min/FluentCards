@@ -5,6 +5,7 @@ namespace FluentCards;
 /// <summary>
 /// Defines a button in an authentication card.
 /// </summary>
+/// <remarks>Added in Adaptive Cards 1.4.</remarks>
 public class AuthCardButton
 {
     /// <summary>

@@ -3,6 +3,7 @@ namespace FluentCards;
 /// <summary>
 /// Specifies the position of an input label.
 /// </summary>
+/// <remarks>Added in Adaptive Cards 1.6.</remarks>
 public enum InputLabelPosition
 {
     /// <summary>

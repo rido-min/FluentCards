@@ -3,8 +3,9 @@ using System.Text.Json.Serialization;
 namespace FluentCards;
 
 /// <summary>
-/// Defines auto-refresh configuration for Adaptive Cards (version 1.4+).
+/// Defines auto-refresh configuration for Adaptive Cards.
 /// </summary>
+/// <remarks>Added in Adaptive Cards 1.4.</remarks>
 public class RefreshConfiguration
 {
     /// <summary>

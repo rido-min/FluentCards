@@ -36,6 +36,7 @@ public class AdaptiveCard
     /// <summary>
     /// Action to invoke when the card is selected.
     /// </summary>
+    /// <remarks>Added in Adaptive Cards 1.1.</remarks>
     [JsonPropertyName("selectAction")]
     public AdaptiveAction? SelectAction { get; set; }
 
@@ -48,12 +49,14 @@ public class AdaptiveCard
     /// <summary>
     /// Specifies the minimum height of the card.
     /// </summary>
+    /// <remarks>Added in Adaptive Cards 1.2.</remarks>
     [JsonPropertyName("minHeight")]
     public string? MinHeight { get; set; }
 
     /// <summary>
     /// When true, content in this card should be presented right to left.
     /// </summary>
+    /// <remarks>Added in Adaptive Cards 1.5.</remarks>
     [JsonPropertyName("rtl")]
     public bool? Rtl { get; set; }
 
@@ -72,25 +75,29 @@ public class AdaptiveCard
     /// <summary>
     /// Defines how the content should be aligned vertically within the container.
     /// </summary>
+    /// <remarks>Added in Adaptive Cards 1.2.</remarks>
     [JsonPropertyName("verticalContentAlignment")]
     [JsonConverter(typeof(CamelCaseEnumConverter<VerticalAlignment>))]
     public VerticalAlignment? VerticalContentAlignment { get; set; }
 
     /// <summary>
-    /// Defines auto-refresh configuration for the card (Adaptive Cards 1.4+).
+    /// Defines auto-refresh configuration for the card.
     /// </summary>
+    /// <remarks>Added in Adaptive Cards 1.4.</remarks>
     [JsonPropertyName("refresh")]
     public RefreshConfiguration? Refresh { get; set; }
 
     /// <summary>
-    /// Defines authentication configuration for the card (Adaptive Cards 1.4+).
+    /// Defines authentication configuration for the card.
     /// </summary>
+    /// <remarks>Added in Adaptive Cards 1.4.</remarks>
     [JsonPropertyName("authentication")]
     public AuthenticationConfiguration? Authentication { get; set; }
 
     /// <summary>
     /// Additional metadata for the card.
     /// </summary>
+    /// <remarks>Added in Adaptive Cards 1.6.</remarks>
     [JsonPropertyName("metadata")]
     public CardMetadata? Metadata { get; set; }
 

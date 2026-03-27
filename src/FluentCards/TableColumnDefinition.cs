@@ -5,6 +5,7 @@ namespace FluentCards;
 /// <summary>
 /// Defines a column in a table.
 /// </summary>
+/// <remarks>Added in Adaptive Cards 1.5.</remarks>
 public class TableColumnDefinition
 {
     /// <summary>

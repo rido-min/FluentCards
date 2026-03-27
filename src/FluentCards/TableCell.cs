@@ -5,6 +5,7 @@ namespace FluentCards;
 /// <summary>
 /// Represents a cell in a table.
 /// </summary>
+/// <remarks>Added in Adaptive Cards 1.5.</remarks>
 public class TableCell
 {
     /// <summary>
