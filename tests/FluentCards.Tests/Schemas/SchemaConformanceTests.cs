@@ -404,4 +404,123 @@ public class SchemaConformanceTests
 
         SchemaValidator.AssertValid(card);
     }
+
+    // ── Multi-Version Conformance Tests ──────────────────────────────────────
+
+    [Fact]
+    public void V1_2Card_WithCoreElements_ConformsToV1_2Schema()
+    {
+        var card = AdaptiveCardBuilder.Create()
+            .WithVersion(AdaptiveCardVersion.V1_2)
+            .AddTextBlock(tb => tb.WithText("Hello from 1.2"))
+            .AddImage(img => img.WithUrl("https://example.com/photo.png").WithAltText("Photo"))
+            .AddColumnSet(cs => cs
+                .AddColumn(col => col
+                    .WithWidth("auto")
+                    .AddTextBlock(tb => tb.WithText("Left")))
+                .AddColumn(col => col
+                    .WithWidth("stretch")
+                    .AddTextBlock(tb => tb.WithText("Right"))))
+            .AddFactSet(fs => fs
+                .AddFact("Key", "Value"))
+            .AddRichTextBlock(rtb => rtb
+                .AddTextRun(tr => tr.WithText("Rich text")))
+            .AddAction(a => a.ToggleVisibility("Toggle").WithTitle("Toggle"))
+            .Build();
+
+        // Manually set target elements for the toggle action
+        var toggleAction = (ToggleVisibilityAction)card.Actions![0];
+        toggleAction.TargetElements = new List<object> { "target-id" };
+
+        SchemaValidator.AssertValid(card, AdaptiveCardVersion.V1_2);
+    }
+
+    [Fact]
+    public void V1_3Card_WithV1_3Features_ConformsToV1_3Schema()
+    {
+        var card = AdaptiveCardBuilder.Create()
+            .WithVersion(AdaptiveCardVersion.V1_3)
+            .AddTextBlock(tb => tb.WithText("Version 1.3 card"))
+            .AddInputText(i => i
+                .WithId("name")
+                .WithLabel("Your Name")
+                .IsRequired(true)
+                .WithErrorMessage("Name is required"))
+            .AddAction(a => a.Submit("Send"))
+            .Build();
+
+        SchemaValidator.AssertValid(card, AdaptiveCardVersion.V1_3);
+    }
+
+    [Fact]
+    public void V1_4Card_WithExecuteAction_ConformsToV1_4Schema()
+    {
+        var card = AdaptiveCardBuilder.Create()
+            .WithVersion(AdaptiveCardVersion.V1_4)
+            .AddTextBlock(tb => tb.WithText("Execute action card"))
+            .AddAction(a => a.Execute("Run").WithTitle("Run"))
+            .Build();
+
+        SchemaValidator.AssertValid(card, AdaptiveCardVersion.V1_4);
+    }
+
+    [Fact]
+    public void V1_5Card_WithTable_ConformsToV1_5Schema()
+    {
+        var card = AdaptiveCardBuilder.Create()
+            .WithVersion(AdaptiveCardVersion.V1_5)
+            .AddTable(t => t
+                .WithFirstRowAsHeader(true)
+                .WithShowGridLines(true)
+                .AddColumn(new TableColumnDefinition { Width = "1" })
+                .AddColumn(new TableColumnDefinition { Width = "2" })
+                .AddRow(new TableRow
+                {
+                    Cells = new List<TableCell>
+                    {
+                        new() { Items = new List<AdaptiveElement> { new TextBlock { Text = "Name" } } },
+                        new() { Items = new List<AdaptiveElement> { new TextBlock { Text = "Role" } } }
+                    }
+                })
+                .AddRow(new TableRow
+                {
+                    Cells = new List<TableCell>
+                    {
+                        new() { Items = new List<AdaptiveElement> { new TextBlock { Text = "Alice" } } },
+                        new() { Items = new List<AdaptiveElement> { new TextBlock { Text = "Engineer" } } }
+                    }
+                }))
+            .Build();
+
+        SchemaValidator.AssertValid(card, AdaptiveCardVersion.V1_5);
+    }
+
+    [Theory]
+    [InlineData(AdaptiveCardVersion.V1_2)]
+    [InlineData(AdaptiveCardVersion.V1_3)]
+    [InlineData(AdaptiveCardVersion.V1_4)]
+    [InlineData(AdaptiveCardVersion.V1_5)]
+    [InlineData(AdaptiveCardVersion.V1_6)]
+    public void MinimalCard_ConformsToMatchingSchema(AdaptiveCardVersion version)
+    {
+        var card = AdaptiveCardBuilder.Create()
+            .WithVersion(version)
+            .AddTextBlock(tb => tb.WithText("Hello"))
+            .Build();
+
+        SchemaValidator.AssertValid(card, version);
+    }
+
+    [Theory]
+    [InlineData(AdaptiveCardVersion.V1_0)]
+    [InlineData(AdaptiveCardVersion.V1_1)]
+    public void UnsupportedVersion_ThrowsArgumentException(AdaptiveCardVersion version)
+    {
+        var card = AdaptiveCardBuilder.Create()
+            .WithVersion("1.2")
+            .AddTextBlock(tb => tb.WithText("Hello"))
+            .Build();
+
+        Assert.Throws<ArgumentException>(() => SchemaValidator.AssertValid(card, version));
+    }
 }
