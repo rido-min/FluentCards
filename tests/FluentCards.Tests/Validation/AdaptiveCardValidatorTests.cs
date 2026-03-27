@@ -817,4 +817,228 @@ public class AdaptiveCardValidatorTests
         Assert.Equal(ValidationSeverity.Warning, warning.Severity);
         Assert.Equal("body[0].images[0].url", warning.Path);
     }
+
+    [Fact]
+    public void Validate_TableInV1_2Card_ReturnsVersionMismatchWarning()
+    {
+        // Arrange — Table requires V1.5; card declares V1.2
+        var card = AdaptiveCardBuilder.Create()
+            .WithVersion("1.2")
+            .AddTable(t => t.AddColumn(new TableColumnDefinition()))
+            .Build();
+
+        // Act
+        var issues = AdaptiveCardValidator.Validate(card);
+
+        // Assert
+        var warning = Assert.Single(issues, i => i.Code == "VERSION_MISMATCH");
+        Assert.Equal(ValidationSeverity.Warning, warning.Severity);
+        Assert.Contains("Table", warning.Message);
+        Assert.Contains("1.5", warning.Message);
+        Assert.Contains("1.2", warning.Message);
+    }
+
+    [Fact]
+    public void Validate_ExecuteActionInV1_2Card_ReturnsVersionMismatchWarning()
+    {
+        // Arrange — Action.Execute requires V1.4; card declares V1.2
+        var card = AdaptiveCardBuilder.Create()
+            .WithVersion("1.2")
+            .AddTextBlock(tb => tb.WithText("Hello"))
+            .AddAction(a => a.Execute("Run"))
+            .Build();
+
+        // Act
+        var issues = AdaptiveCardValidator.Validate(card);
+
+        // Assert
+        var warning = Assert.Single(issues, i => i.Code == "VERSION_MISMATCH");
+        Assert.Equal(ValidationSeverity.Warning, warning.Severity);
+        Assert.Contains("Action.Execute", warning.Message);
+        Assert.Contains("1.4", warning.Message);
+        Assert.Contains("1.2", warning.Message);
+    }
+
+    [Fact]
+    public void Validate_RefreshInV1_2Card_ReturnsVersionMismatchWarning()
+    {
+        // Arrange — refresh property requires V1.4; card declares V1.2
+        var card = AdaptiveCardBuilder.Create()
+            .WithVersion("1.2")
+            .AddTextBlock(tb => tb.WithText("Hello"))
+            .WithRefresh(r => r.WithAction(a => a.Execute()))
+            .Build();
+
+        // Act
+        var issues = AdaptiveCardValidator.Validate(card);
+
+        // Assert
+        var refreshWarning = Assert.Single(issues, i => i.Code == "VERSION_MISMATCH" && i.Path == "refresh");
+        Assert.Equal(ValidationSeverity.Warning, refreshWarning.Severity);
+        Assert.Contains("refresh", refreshWarning.Message);
+        Assert.Contains("1.4", refreshWarning.Message);
+    }
+
+    [Fact]
+    public void Validate_TableInV1_5Card_ReturnsNoVersionMismatch()
+    {
+        // Arrange — Table requires V1.5; card declares V1.5 — no mismatch
+        var card = AdaptiveCardBuilder.Create()
+            .WithVersion("1.5")
+            .AddTable(t => t.AddColumn(new TableColumnDefinition()))
+            .Build();
+
+        // Act
+        var issues = AdaptiveCardValidator.Validate(card);
+
+        // Assert
+        Assert.DoesNotContain(issues, i => i.Code == "VERSION_MISMATCH");
+    }
+
+    [Fact]
+    public void Validate_AllV1_0ElementsInV1_0Card_NoVersionMismatch()
+    {
+        // Arrange — only V1.0 elements in a V1.0 card
+        var card = AdaptiveCardBuilder.Create()
+            .WithVersion("1.0")
+            .AddTextBlock(tb => tb.WithText("Hello"))
+            .AddImage(img => img.WithUrl("https://example.com/img.png"))
+            .AddAction(a => a.OpenUrl("https://example.com", "Go"))
+            .Build();
+
+        // Act
+        var issues = AdaptiveCardValidator.Validate(card);
+
+        // Assert
+        Assert.DoesNotContain(issues, i => i.Code == "VERSION_MISMATCH");
+    }
+
+    [Fact]
+    public void Validate_UnknownVersion_SkipsVersionMismatchCheck()
+    {
+        // Arrange — version "2.0" is unknown; should skip version mismatch even with newer elements
+        var card = AdaptiveCardBuilder.Create()
+            .WithVersion("2.0")
+            .AddTable(t => t.AddColumn(new TableColumnDefinition()))
+            .Build();
+
+        // Act
+        var issues = AdaptiveCardValidator.Validate(card);
+
+        // Assert — UNKNOWN_VERSION warning expected, but no VERSION_MISMATCH
+        Assert.Contains(issues, i => i.Code == "UNKNOWN_VERSION");
+        Assert.DoesNotContain(issues, i => i.Code == "VERSION_MISMATCH");
+    }
+
+    [Fact]
+    public void Validate_NestedTableInContainer_ReturnsVersionMismatchWarning()
+    {
+        // Arrange — Table nested inside a Container; card declares V1.2
+        var table = new TableBuilder()
+            .AddColumn(new TableColumnDefinition())
+            .Build();
+
+        var card = AdaptiveCardBuilder.Create()
+            .WithVersion("1.2")
+            .AddContainer(c => c.AddElement(table))
+            .Build();
+
+        // Act
+        var issues = AdaptiveCardValidator.Validate(card);
+
+        // Assert
+        var warning = Assert.Single(issues, i => i.Code == "VERSION_MISMATCH");
+        Assert.Equal(ValidationSeverity.Warning, warning.Severity);
+        Assert.Contains("Table", warning.Message);
+        Assert.Equal("body[0].items[0]", warning.Path);
+    }
+
+    [Fact]
+    public void Validate_RtlPropertyInV1_2Card_ReturnsVersionMismatchWarning()
+    {
+        // Arrange — rtl property requires V1.5; card declares V1.2
+        var card = AdaptiveCardBuilder.Create()
+            .WithVersion("1.2")
+            .AddTextBlock(tb => tb.WithText("مرحبا"))
+            .WithRtl()
+            .Build();
+
+        // Act
+        var issues = AdaptiveCardValidator.Validate(card);
+
+        // Assert
+        var warning = Assert.Single(issues, i => i.Code == "VERSION_MISMATCH" && i.Path == "rtl");
+        Assert.Equal(ValidationSeverity.Warning, warning.Severity);
+        Assert.Contains("rtl", warning.Message);
+        Assert.Contains("1.5", warning.Message);
+        Assert.Contains("1.2", warning.Message);
+    }
+
+    [Fact]
+    public void Validate_MetadataInV1_5Card_ReturnsVersionMismatchWarning()
+    {
+        // Arrange — metadata property requires V1.6; card declares V1.5
+        var card = AdaptiveCardBuilder.Create()
+            .WithVersion("1.5")
+            .AddTextBlock(tb => tb.WithText("Hello"))
+            .WithMetadata("https://example.com/card")
+            .Build();
+
+        // Act
+        var issues = AdaptiveCardValidator.Validate(card);
+
+        // Assert
+        var warning = Assert.Single(issues, i => i.Code == "VERSION_MISMATCH" && i.Path == "metadata");
+        Assert.Equal(ValidationSeverity.Warning, warning.Severity);
+        Assert.Contains("metadata", warning.Message);
+        Assert.Contains("1.6", warning.Message);
+        Assert.Contains("1.5", warning.Message);
+    }
+
+    [Fact]
+    public void Validate_ShowCardWithNewerElements_ReturnsVersionMismatch()
+    {
+        // Arrange — ShowCard contains a Table (V1.5) in a V1.2 card
+        var card = AdaptiveCardBuilder.Create()
+            .WithVersion("1.2")
+            .AddTextBlock(tb => tb.WithText("Hello"))
+            .AddAction(a => a.ShowCard("Details"))
+            .Build();
+
+        var showCard = (ShowCardAction)card.Actions![0];
+        showCard.Card = AdaptiveCardBuilder.Create()
+            .WithVersion("1.2")
+            .AddTable(t => t.AddColumn(new TableColumnDefinition()))
+            .Build();
+
+        // Act
+        var issues = AdaptiveCardValidator.Validate(card);
+
+        // Assert — Table inside ShowCard should trigger VERSION_MISMATCH using top-level card version
+        var warning = Assert.Single(issues, i => i.Code == "VERSION_MISMATCH");
+        Assert.Equal(ValidationSeverity.Warning, warning.Severity);
+        Assert.Contains("Table", warning.Message);
+        Assert.Contains("1.5", warning.Message);
+        Assert.Equal("actions[0].card.body[0]", warning.Path);
+    }
+
+    [Fact]
+    public void Validate_MultipleVersionMismatches_ReturnsAllWarnings()
+    {
+        // Arrange — Table (V1.5) and refresh (V1.4) both newer than V1.2
+        var card = AdaptiveCardBuilder.Create()
+            .WithVersion("1.2")
+            .AddTable(t => t.AddColumn(new TableColumnDefinition()))
+            .WithRefresh(r => r.WithAction(a => a.Execute()))
+            .Build();
+
+        // Act
+        var issues = AdaptiveCardValidator.Validate(card);
+
+        // Assert — should return multiple VERSION_MISMATCH warnings, one for each mismatch
+        var mismatches = issues.Where(i => i.Code == "VERSION_MISMATCH").ToList();
+        Assert.True(mismatches.Count >= 2, $"Expected at least 2 VERSION_MISMATCH warnings but found {mismatches.Count}.");
+        Assert.Contains(mismatches, m => m.Message.Contains("Table"));
+        Assert.Contains(mismatches, m => m.Message.Contains("refresh"));
+    }
 }

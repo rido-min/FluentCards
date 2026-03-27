@@ -17,6 +17,13 @@ public static class AdaptiveCardValidator
         
         ValidateCard(card, issues, ids);
         
+        // Version mismatch checking — only for recognized versions
+        if (!string.IsNullOrEmpty(card.Version) &&
+            AdaptiveCardVersionExtensions.TryParse(card.Version, out var cardVersion))
+        {
+            ValidateVersionMismatch(card, cardVersion, issues);
+        }
+        
         return issues;
     }
     
@@ -70,7 +77,7 @@ public static class AdaptiveCardValidator
                 Message = "The 'version' property is required. Use a value like '1.5' to specify the schema version."
             });
         }
-        else if (!IsValidVersion(card.Version))
+        else if (!AdaptiveCardVersionExtensions.TryParse(card.Version, out _))
         {
             issues.Add(new ValidationIssue
             {
@@ -115,8 +122,6 @@ public static class AdaptiveCardValidator
         ValidateSelectAction(card.SelectAction, issues, "selectAction");
     }
     
-    private static bool IsValidVersion(string version) =>
-        version is "1.0" or "1.1" or "1.2" or "1.3" or "1.4" or "1.5" or "1.6";
     
     private static void ValidateElements(IEnumerable<AdaptiveElement> elements, List<ValidationIssue> issues, string path, HashSet<string> ids)
     {
@@ -490,4 +495,235 @@ public static class AdaptiveCardValidator
             });
         }
     }
+
+    /// <summary>
+    /// Walks the card tree and emits VERSION_MISMATCH warnings for elements, actions,
+    /// or card-level properties that require a newer schema version than declared.
+    /// </summary>
+    private static void ValidateVersionMismatch(AdaptiveCard card, AdaptiveCardVersion cardVersion, List<ValidationIssue> issues)
+    {
+        // Card-level properties
+        if (card.Refresh != null)
+            CheckCardPropertyVersion("refresh", cardVersion, issues);
+        if (card.Authentication != null)
+            CheckCardPropertyVersion("authentication", cardVersion, issues);
+        if (card.Rtl.HasValue)
+            CheckCardPropertyVersion("rtl", cardVersion, issues);
+        if (card.Metadata != null)
+            CheckCardPropertyVersion("metadata", cardVersion, issues);
+        if (card.SelectAction != null)
+            CheckCardPropertyVersion("selectAction", cardVersion, issues);
+        if (!string.IsNullOrEmpty(card.MinHeight))
+            CheckCardPropertyVersion("minHeight", cardVersion, issues);
+        if (card.VerticalContentAlignment.HasValue)
+            CheckCardPropertyVersion("verticalContentAlignment", cardVersion, issues);
+
+        // Body elements
+        if (card.Body != null)
+            CheckElementVersions(card.Body, cardVersion, issues, "body");
+
+        // Top-level actions
+        if (card.Actions != null)
+            CheckActionVersions(card.Actions, cardVersion, issues, "actions");
+    }
+
+    /// <summary>
+    /// Checks whether a card-level property requires a newer schema version than the card declares.
+    /// </summary>
+    private static void CheckCardPropertyVersion(string propertyName, AdaptiveCardVersion cardVersion, List<ValidationIssue> issues)
+    {
+        var requiredVersion = VersionInfo.GetCardPropertyVersion(propertyName);
+        if (requiredVersion > cardVersion)
+        {
+            issues.Add(new ValidationIssue
+            {
+                Severity = ValidationSeverity.Warning,
+                Path = propertyName,
+                Code = "VERSION_MISMATCH",
+                Message = $"Property '{propertyName}' requires Adaptive Cards {requiredVersion.ToVersionString()} but card version is {cardVersion.ToVersionString()}."
+            });
+        }
+    }
+
+    /// <summary>
+    /// Checks whether a selectAction's action type requires a newer schema version than the card declares.
+    /// </summary>
+    private static void CheckSelectActionVersion(AdaptiveAction? action, AdaptiveCardVersion cardVersion, List<ValidationIssue> issues, string path)
+    {
+        if (action == null)
+            return;
+
+        var typeDiscriminator = GetActionTypeDiscriminator(action);
+        if (typeDiscriminator != null)
+        {
+            var requiredVersion = VersionInfo.GetElementVersion(typeDiscriminator);
+            if (requiredVersion > cardVersion)
+            {
+                issues.Add(new ValidationIssue
+                {
+                    Severity = ValidationSeverity.Warning,
+                    Path = path,
+                    Code = "VERSION_MISMATCH",
+                    Message = $"Action '{typeDiscriminator}' requires Adaptive Cards {requiredVersion.ToVersionString()} but card version is {cardVersion.ToVersionString()}."
+                });
+            }
+        }
+    }
+
+    /// <summary>
+    /// Recursively checks all elements in a collection for version mismatches against the declared card version.
+    /// </summary>
+    private static void CheckElementVersions(IEnumerable<AdaptiveElement> elements, AdaptiveCardVersion cardVersion, List<ValidationIssue> issues, string path)
+    {
+        int index = 0;
+        foreach (var element in elements)
+        {
+            if (element == null) { index++; continue; }
+
+            var elementPath = $"{path}[{index}]";
+            var typeDiscriminator = GetElementTypeDiscriminator(element);
+
+            if (typeDiscriminator != null)
+            {
+                var requiredVersion = VersionInfo.GetElementVersion(typeDiscriminator);
+                if (requiredVersion > cardVersion)
+                {
+                    issues.Add(new ValidationIssue
+                    {
+                        Severity = ValidationSeverity.Warning,
+                        Path = elementPath,
+                        Code = "VERSION_MISMATCH",
+                        Message = $"Element '{typeDiscriminator}' requires Adaptive Cards {requiredVersion.ToVersionString()} but card version is {cardVersion.ToVersionString()}."
+                    });
+                }
+            }
+
+            // Walk into nested structures and check element-level selectActions
+            switch (element)
+            {
+                case Container container:
+                    if (container.Items != null)
+                        CheckElementVersions(container.Items, cardVersion, issues, $"{elementPath}.items");
+                    CheckSelectActionVersion(container.SelectAction, cardVersion, issues, $"{elementPath}.selectAction");
+                    break;
+                case ColumnSet columnSet:
+                    if (columnSet.Columns != null)
+                    {
+                        for (int i = 0; i < columnSet.Columns.Count; i++)
+                        {
+                            var column = columnSet.Columns[i];
+                            if (column.Items != null)
+                                CheckElementVersions(column.Items, cardVersion, issues, $"{elementPath}.columns[{i}].items");
+                            CheckSelectActionVersion(column.SelectAction, cardVersion, issues, $"{elementPath}.columns[{i}].selectAction");
+                        }
+                    }
+                    CheckSelectActionVersion(columnSet.SelectAction, cardVersion, issues, $"{elementPath}.selectAction");
+                    break;
+                case Table table:
+                    if (table.Rows != null)
+                    {
+                        for (int r = 0; r < table.Rows.Count; r++)
+                        {
+                            var row = table.Rows[r];
+                            if (row.Cells != null)
+                            {
+                                for (int c = 0; c < row.Cells.Count; c++)
+                                {
+                                    var cell = row.Cells[c];
+                                    if (cell.Items != null)
+                                        CheckElementVersions(cell.Items, cardVersion, issues, $"{elementPath}.rows[{r}].cells[{c}].items");
+                                    CheckSelectActionVersion(cell.SelectAction, cardVersion, issues, $"{elementPath}.rows[{r}].cells[{c}].selectAction");
+                                }
+                            }
+                        }
+                    }
+                    break;
+                case ActionSet actionSet:
+                    if (actionSet.Actions != null)
+                        CheckActionVersions(actionSet.Actions, cardVersion, issues, $"{elementPath}.actions");
+                    break;
+            }
+
+            index++;
+        }
+    }
+
+    /// <summary>
+    /// Recursively checks all actions in a collection for version mismatches against the declared card version.
+    /// </summary>
+    private static void CheckActionVersions(IEnumerable<AdaptiveAction> actions, AdaptiveCardVersion cardVersion, List<ValidationIssue> issues, string path)
+    {
+        int index = 0;
+        foreach (var action in actions)
+        {
+            if (action == null) { index++; continue; }
+
+            var actionPath = $"{path}[{index}]";
+            var typeDiscriminator = GetActionTypeDiscriminator(action);
+
+            if (typeDiscriminator != null)
+            {
+                var requiredVersion = VersionInfo.GetElementVersion(typeDiscriminator);
+                if (requiredVersion > cardVersion)
+                {
+                    issues.Add(new ValidationIssue
+                    {
+                        Severity = ValidationSeverity.Warning,
+                        Path = actionPath,
+                        Code = "VERSION_MISMATCH",
+                        Message = $"Action '{typeDiscriminator}' requires Adaptive Cards {requiredVersion.ToVersionString()} but card version is {cardVersion.ToVersionString()}."
+                    });
+                }
+            }
+
+            // Walk into ShowCard nested cards
+            if (action is ShowCardAction showCard && showCard.Card != null)
+            {
+                if (showCard.Card.Body != null)
+                    CheckElementVersions(showCard.Card.Body, cardVersion, issues, $"{actionPath}.card.body");
+                if (showCard.Card.Actions != null)
+                    CheckActionVersions(showCard.Card.Actions, cardVersion, issues, $"{actionPath}.card.actions");
+                CheckSelectActionVersion(showCard.Card.SelectAction, cardVersion, issues, $"{actionPath}.card.selectAction");
+            }
+
+            index++;
+        }
+    }
+
+    /// <summary>
+    /// Returns the JSON type discriminator string for the given element, or <c>null</c> if the type is unrecognized.
+    /// </summary>
+    private static string? GetElementTypeDiscriminator(AdaptiveElement element) => element switch
+    {
+        TextBlock => "TextBlock",
+        Image => "Image",
+        Container => "Container",
+        ColumnSet => "ColumnSet",
+        Table => "Table",
+        FactSet => "FactSet",
+        ImageSet => "ImageSet",
+        ActionSet => "ActionSet",
+        RichTextBlock => "RichTextBlock",
+        Media => "Media",
+        InputText => "Input.Text",
+        InputNumber => "Input.Number",
+        InputDate => "Input.Date",
+        InputTime => "Input.Time",
+        InputToggle => "Input.Toggle",
+        InputChoiceSet => "Input.ChoiceSet",
+        _ => null
+    };
+
+    /// <summary>
+    /// Returns the JSON type discriminator string for the given action, or <c>null</c> if the type is unrecognized.
+    /// </summary>
+    private static string? GetActionTypeDiscriminator(AdaptiveAction action) => action switch
+    {
+        OpenUrlAction => "Action.OpenUrl",
+        SubmitAction => "Action.Submit",
+        ShowCardAction => "Action.ShowCard",
+        ToggleVisibilityAction => "Action.ToggleVisibility",
+        ExecuteAction => "Action.Execute",
+        _ => null
+    };
 }
