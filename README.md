@@ -10,6 +10,7 @@ A .NET library for building [Adaptive Cards](https://adaptivecards.io/) using a 
 - 🎯 **AOT Compatible**: Ready for Native AOT compilation
 - 📦 **Minimal Dependencies**: Built on .NET 8.0 with no external dependencies
 - ✅ **Built-in Validation**: Comprehensive validation for card structure and schema compliance
+- 🏷️ **Version-Aware**: `AdaptiveCardVersion` enum for type-safe version selection, automatic `$schema` URL synchronization, and `VERSION_MISMATCH` validation warnings
 - 📚 **Rich Samples**: Extensive examples demonstrating common patterns and best practices
 - 📖 **Complete XML Documentation**: Full IntelliSense support with detailed API documentation
 
@@ -25,7 +26,7 @@ dotnet add package FluentCards
 using FluentCards;
 
 var card = AdaptiveCardBuilder.Create()
-    .WithVersion("1.5")
+    .WithVersion(AdaptiveCardVersion.V1_5)  // auto-sets $schema URL
     .AddTextBlock(tb => tb
         .WithText("Hello, FluentCards!")
         .WithSize(TextSize.Large)
@@ -39,13 +40,15 @@ var card = AdaptiveCardBuilder.Create()
 Console.WriteLine(card.ToJson());
 ```
 
+The string overload `WithVersion("1.5")` is also supported and auto-sets the `$schema` URL for recognized versions.
+
 ### Output
 
 ```json
 {
   "type": "AdaptiveCard",
   "version": "1.5",
-  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "$schema": "https://adaptivecards.io/schemas/1.5.0/adaptive-card.json",
   "body": [
     {
       "type": "TextBlock",
@@ -71,8 +74,26 @@ Use the `AdaptiveCardBuilder` to create cards with a fluent API:
 
 ```csharp
 var card = AdaptiveCardBuilder.Create()
+    .WithVersion(AdaptiveCardVersion.V1_5)  // auto-sets $schema URL
+    .AddTextBlock(tb => tb.WithText("Hello World"))
+    .Build();
+```
+
+You can also use the string overload — it auto-sets the `$schema` URL for recognized versions:
+
+```csharp
+var card = AdaptiveCardBuilder.Create()
     .WithVersion("1.5")
-    .WithSchema("http://adaptivecards.io/schemas/adaptive-card.json")
+    .AddTextBlock(tb => tb.WithText("Hello World"))
+    .Build();
+```
+
+To set a custom schema URL, use `WithSchema()` which overrides the auto-generated URL:
+
+```csharp
+var card = AdaptiveCardBuilder.Create()
+    .WithVersion(AdaptiveCardVersion.V1_5)
+    .WithSchema("https://example.com/custom-schema.json")
     .AddTextBlock(tb => tb.WithText("Hello World"))
     .Build();
 ```
@@ -167,19 +188,47 @@ Validation checks include:
 - Min/max consistency for numeric, date, and time inputs
 - Duplicate element ID detection
 - SelectAction type restrictions (ShowCard not allowed)
+- Version mismatch detection (features requiring a newer schema version than declared)
+
+### Version-Aware Validation
+
+The validator detects when a card uses features that require a newer Adaptive Cards version than what is declared, emitting `VERSION_MISMATCH` warnings:
+
+```csharp
+// A card declaring version 1.2 but using Table (introduced in 1.5)
+var card = AdaptiveCardBuilder.Create()
+    .WithVersion(AdaptiveCardVersion.V1_2)
+    .AddTable(t => t
+        .AddColumn(c => c.WithWidth(1))
+        .AddRow(r => r.AddCell(cell => cell
+            .AddTextBlock(tb => tb.WithText("Data")))))
+    .Build();
+
+var validator = new AdaptiveCardValidator();
+var issues = validator.Validate(card);
+
+foreach (var issue in issues)
+{
+    Console.WriteLine($"[{issue.Severity}] {issue.Code}: {issue.Message}");
+    // [Warning] VERSION_MISMATCH: Table requires Adaptive Cards 1.5
+    //   but card declares version 1.2
+}
+```
+
+Version mismatch checks are warnings only — serialization is never affected. The `VersionInfo` class maps every element type, action type, and card property to its introduction version.
 
 ### Schema Conformance Testing
 
-FluentCards includes test-time validation against the official Adaptive Cards 1.6.0 JSON schema, ensuring generated JSON always conforms to the spec:
+FluentCards includes test-time validation against the official Adaptive Cards JSON schemas, ensuring generated JSON always conforms to the spec. The test matrix validates against schemas for versions 1.2, 1.3, 1.4, 1.5, and 1.6:
 
 ```csharp
 // In your test project, add the FluentCards.Tests package or reference the SchemaValidator helper
 var card = AdaptiveCardBuilder.Create()
-    .WithVersion("1.6")
+    .WithVersion(AdaptiveCardVersion.V1_6)
     .AddTextBlock(tb => tb.WithText("Hello World"))
     .Build();
 
-// Validates card JSON against the embedded 1.6.0 schema
+// Validates card JSON against the embedded schema for the declared version
 SchemaValidator.AssertValid(card);
 ```
 

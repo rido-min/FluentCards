@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `AdaptiveCardVersion` enum (`V1_0`–`V1_6`) with `ToVersionString()`, `ToSchemaUrl()`, and `TryParse()` for type-safe schema version selection
+- `WithVersion(AdaptiveCardVersion)` builder overload with automatic `$schema` URL synchronization
+- `VersionInfo` static class mapping all element types, action types, and card properties to their introduction version
+- `VERSION_MISMATCH` validation warnings when card uses features newer than declared version
+- Multi-version schema conformance tests (1.2–1.6)
+- `<remarks>Added in Adaptive Cards X.Y.</remarks>` XML doc annotations on all post-1.0 types and properties
 - Initial release of FluentCards library
 - Fluent builder API for creating Adaptive Cards
 - Full Adaptive Cards 1.6.0 schema support
@@ -16,6 +22,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Test-time JSON schema validation against the official 1.6.0 schema
 - XML documentation for IntelliSense support
 - Sample code demonstrating common patterns
+
+### Changed
+- `WithVersion(string)` now auto-sets `$schema` URL for recognized version strings
+- `AdaptiveCardValidator.IsValidVersion()` replaced with `AdaptiveCardVersionExtensions.TryParse()`
+
+### Fixed
+- `ChoiceInputStyle.Filtered` version annotation corrected from 1.5 to 1.6 (per official schema)
+- `selectAction` version corrected from 1.0 to 1.1
+- `minHeight` and `verticalContentAlignment` versions corrected from 1.0 to 1.2
 
 ### Schema 1.6.0 Coverage
 - Added `FontType`, `TextBlockStyle`, `InputLabelPosition`, `InputStyle`, `ActionMode`, typed `Spacing` enums
