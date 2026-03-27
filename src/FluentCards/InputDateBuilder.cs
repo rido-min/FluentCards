@@ -96,6 +96,39 @@ public class InputDateBuilder
     }
 
     /// <summary>
+    /// Sets the position of the label relative to the input.
+    /// </summary>
+    /// <param name="position">The label position.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public InputDateBuilder WithLabelPosition(InputLabelPosition position)
+    {
+        _input.LabelPosition = position;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the width of the label when displayed inline.
+    /// </summary>
+    /// <param name="width">The label width (e.g., "40%" or a pixel value).</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public InputDateBuilder WithLabelWidth(string width)
+    {
+        _input.LabelWidth = width;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the visual style of the input.
+    /// </summary>
+    /// <param name="style">The input style.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public InputDateBuilder WithInputStyle(InputStyle style)
+    {
+        _input.InputStyle = style;
+        return this;
+    }
+
+    /// <summary>
     /// Builds and returns the configured InputDate.
     /// </summary>
     /// <returns>The configured InputDate instance.</returns>

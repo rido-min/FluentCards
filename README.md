@@ -158,12 +158,30 @@ catch (AdaptiveCardValidationException ex)
 ```
 
 Validation checks include:
-- Required properties (version, type, URLs, input IDs)
+- Required properties (version, type, text, URLs, input IDs, toggle title, facts, actions, inlines, sources, images, target elements)
 - Schema version compatibility
-- Empty elements and cards
+- Empty elements, containers, and cards
 - URL format validation
-- Nested element validation
+- Nested element validation (Container, ColumnSet, Table, ActionSet, ImageSet)
 - Action count limits
+- Min/max consistency for numeric, date, and time inputs
+- Duplicate element ID detection
+- SelectAction type restrictions (ShowCard not allowed)
+
+### Schema Conformance Testing
+
+FluentCards includes test-time validation against the official Adaptive Cards 1.6.0 JSON schema, ensuring generated JSON always conforms to the spec:
+
+```csharp
+// In your test project, add the FluentCards.Tests package or reference the SchemaValidator helper
+var card = AdaptiveCardBuilder.Create()
+    .WithVersion("1.6")
+    .AddTextBlock(tb => tb.WithText("Hello World"))
+    .Build();
+
+// Validates card JSON against the embedded 1.6.0 schema
+SchemaValidator.AssertValid(card);
+```
 
 ### Input Forms
 
@@ -238,7 +256,7 @@ View the sample code in the [samples/FluentCards.Samples](samples/FluentCards.Sa
 
 ## Supported Elements
 
-FluentCards supports the full Adaptive Cards schema:
+FluentCards supports the full Adaptive Cards 1.6.0 schema:
 
 ### Display Elements
 - ✅ **TextBlock**: Rich text display with formatting
@@ -279,10 +297,17 @@ FluentCards supports the full Adaptive Cards schema:
 - **TextSize**: `Small`, `Default`, `Medium`, `Large`, `ExtraLarge`
 - **TextWeight**: `Lighter`, `Default`, `Bolder`
 - **TextColor**: `Default`, `Dark`, `Light`, `Accent`, `Good`, `Attention`, `Warning`
+- **FontType**: `Default`, `Monospace`
+- **TextBlockStyle**: `Default`, `Heading`
 - **HorizontalAlignment**: `Left`, `Center`, `Right`
+- **VerticalAlignment**: `Top`, `Center`, `Bottom`
 - **ContainerStyle**: `Default`, `Emphasis`, `Good`, `Attention`, `Warning`, `Accent`
 - **ImageSize**: `Auto`, `Stretch`, `Small`, `Medium`, `Large`
 - **ActionStyle**: `Default`, `Positive`, `Destructive`
+- **ActionMode**: `Primary`, `Secondary`
+- **Spacing**: `Default`, `None`, `Small`, `Medium`, `Large`, `ExtraLarge`, `Padding`
+- **InputLabelPosition**: `Inline`, `Above`
+- **InputStyle**: `Default`, `RevealOnHover`
 
 ## Project Structure
 

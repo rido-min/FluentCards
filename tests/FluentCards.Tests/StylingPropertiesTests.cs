@@ -43,7 +43,7 @@ public class StylingPropertiesTests
                 new TextBlock
                 {
                     Text = "Text with spacing",
-                    Spacing = "large"
+                    Spacing = Spacing.Large
                 }
             }
         };
@@ -208,7 +208,7 @@ public class StylingPropertiesTests
                     Id = "styled-element",
                     Text = "Fully styled",
                     Separator = true,
-                    Spacing = "medium",
+                    Spacing = Spacing.Medium,
                     IsVisible = true,
                     Height = "auto",
                     Rtl = false
@@ -240,7 +240,7 @@ public class StylingPropertiesTests
                 {
                     Text = "Test",
                     Separator = true,
-                    Spacing = "large",
+                    Spacing = Spacing.Large,
                     IsVisible = false,
                     Height = "stretch",
                     Rtl = true
@@ -258,7 +258,7 @@ public class StylingPropertiesTests
         var textBlock = deserializedCard.Body[0] as TextBlock;
         Assert.NotNull(textBlock);
         Assert.True(textBlock.Separator);
-        Assert.Equal("large", textBlock.Spacing);
+        Assert.Equal(Spacing.Large, textBlock.Spacing);
         Assert.False(textBlock.IsVisible);
         Assert.Equal("stretch", textBlock.Height);
         Assert.True(textBlock.Rtl);

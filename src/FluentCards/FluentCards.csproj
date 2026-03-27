@@ -12,7 +12,7 @@
     <PackageId>FluentCards</PackageId>
     <Version>1.0.0</Version>
     <Description>A .NET library for building Adaptive Cards using a fluent builder pattern with strong typing and JSON serialization powered by Source Generators.</Description>
-    <PackageReleaseNotes>Initial release with full Adaptive Cards 1.5 schema support, fluent builder API, AOT-compatible serialization, validation system, and comprehensive samples.</PackageReleaseNotes>
+    <PackageReleaseNotes>Initial release with full Adaptive Cards 1.6.0 schema support, fluent builder API, AOT-compatible serialization, validation system, and comprehensive samples.</PackageReleaseNotes>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
 

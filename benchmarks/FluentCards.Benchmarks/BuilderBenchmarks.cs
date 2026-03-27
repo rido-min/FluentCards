@@ -81,4 +81,74 @@ public class BuilderBenchmarks
                     .AddTextBlock(tb => tb.WithText("Action"))))
             .Build();
     }
+
+    [Benchmark(Description = "Build card with v1.6 properties")]
+    public AdaptiveCard BuildCardWithV16Properties()
+    {
+        return AdaptiveCardBuilder.Create()
+            .WithVersion("1.6")
+            .WithLang("en")
+            .WithMinHeight("200px")
+            .WithFallbackText("Upgrade your client")
+            .WithVerticalContentAlignment(VerticalAlignment.Center)
+            .AddTextBlock(tb => tb
+                .WithText("Heading")
+                .WithStyle(TextBlockStyle.Heading)
+                .WithFontType(FontType.Monospace)
+                .WithIsSubtle(true))
+            .AddInputText(i => i
+                .WithId("name")
+                .WithLabel("Name")
+                .WithLabelPosition(InputLabelPosition.Above)
+                .WithLabelWidth("40%")
+                .WithInputStyle(InputStyle.RevealOnHover)
+                .IsRequired(true))
+            .AddMedia(m => m
+                .AddSource("https://example.com/video.mp4", "video/mp4")
+                .AddCaptionSource("English", "https://example.com/en.vtt", "text/vtt"))
+            .AddAction(a => a
+                .Submit("Submit")
+                .WithMode(ActionMode.Primary)
+                .WithTooltip("Submit form"))
+            .Build();
+    }
+
+    [Benchmark(Description = "Build card with all element types")]
+    public AdaptiveCard BuildCardWithAllElements()
+    {
+        return AdaptiveCardBuilder.Create()
+            .WithVersion("1.6")
+            .AddTextBlock(tb => tb.WithText("All Elements"))
+            .AddImage(img => img.WithUrl("https://example.com/img.png"))
+            .AddContainer(c => c.AddTextBlock(tb => tb.WithText("In container")))
+            .AddColumnSet(cs => cs
+                .AddColumn(col => col
+                    .WithWidth("stretch")
+                    .WithSpacing(Spacing.Medium)
+                    .WithSeparator(true)
+                    .AddTextBlock(tb => tb.WithText("Column"))))
+            .AddFactSet(fs => fs.AddFact("Key", "Value"))
+            .AddRichTextBlock(rtb => rtb
+                .AddTextRun(tr => tr.WithText("Rich text")))
+            .AddImageSet(imgSet => imgSet
+                .WithImageSize(ImageSize.Small)
+                .AddImage(img => img.WithUrl("https://example.com/img1.png"))
+                .AddImage(img => img.WithUrl("https://example.com/img2.png")))
+            .AddTable(t => t
+                .WithFirstRowAsHeader(true)
+                .AddColumn(new TableColumnDefinition { Width = "1" })
+                .AddRow(new TableRow
+                {
+                    Cells = new List<TableCell>
+                    {
+                        new TableCell { Items = new List<AdaptiveElement> { new TextBlock { Text = "Cell" } } }
+                    }
+                }))
+            .AddActionSet(acs => acs
+                .AddAction(a => a.OpenUrl("https://example.com").WithTitle("Open")))
+            .AddMedia(m => m.AddSource("https://example.com/vid.mp4", "video/mp4"))
+            .AddAction(a => a.Submit("Submit"))
+            .AddAction(a => a.OpenUrl("https://example.com").WithTitle("Open"))
+            .Build();
+    }
 }

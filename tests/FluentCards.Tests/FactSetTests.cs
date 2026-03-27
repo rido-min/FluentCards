@@ -197,7 +197,7 @@ public class FactSetTests
                 {
                     Id = "facts1",
                     IsVisible = false,
-                    Spacing = "medium",
+                    Spacing = Spacing.Medium,
                     Separator = true,
                     Facts = new List<Fact>
                     {

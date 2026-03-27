@@ -20,7 +20,7 @@ public class ActionDataConverterTests
         var json = JsonSerializer.Serialize(action, FluentCardsJsonContext.Default.SubmitAction);
 
         // Assert
-        Assert.Contains("\"data\":{\"key\":\"value\",\"number\":42}", json.Replace(" ", "").Replace("\n", ""));
+        Assert.Contains("\"data\":{\"key\":\"value\",\"number\":42}", json.Replace(" ", "").Replace("\r", "").Replace("\n", ""));
     }
 
     [Fact]
@@ -44,8 +44,8 @@ public class ActionDataConverterTests
         var json = JsonSerializer.Serialize(action, FluentCardsJsonContext.Default.ExecuteAction);
 
         // Assert
-        Assert.Contains("\"user\":{\"name\":\"John\",\"age\":30}", json.Replace(" ", "").Replace("\n", ""));
-        Assert.Contains("\"active\":true", json.Replace(" ", "").Replace("\n", ""));
+        Assert.Contains("\"user\":{\"name\":\"John\",\"age\":30}", json.Replace(" ", "").Replace("\r", "").Replace("\n", ""));
+        Assert.Contains("\"active\":true", json.Replace(" ", "").Replace("\r", "").Replace("\n", ""));
     }
 
     [Fact]
@@ -62,7 +62,7 @@ public class ActionDataConverterTests
         var json = JsonSerializer.Serialize(action, FluentCardsJsonContext.Default.SubmitAction);
 
         // Assert
-        Assert.Contains("\"data\":[1,2,3,4,5]", json.Replace(" ", "").Replace("\n", ""));
+        Assert.Contains("\"data\":[1,2,3,4,5]", json.Replace(" ", "").Replace("\r", "").Replace("\n", ""));
     }
 
     [Fact]

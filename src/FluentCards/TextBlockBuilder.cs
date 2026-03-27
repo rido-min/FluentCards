@@ -96,6 +96,39 @@ public class TextBlockBuilder
     }
 
     /// <summary>
+    /// Sets the font type for the text.
+    /// </summary>
+    /// <param name="fontType">The font type.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public TextBlockBuilder WithFontType(FontType fontType)
+    {
+        _textBlock.FontType = fontType;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets whether the text displays with subtle styling.
+    /// </summary>
+    /// <param name="isSubtle">True for subtle styling.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public TextBlockBuilder WithIsSubtle(bool isSubtle = true)
+    {
+        _textBlock.IsSubtle = isSubtle;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the style of the text block.
+    /// </summary>
+    /// <param name="style">The text block style.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public TextBlockBuilder WithStyle(TextBlockStyle style)
+    {
+        _textBlock.Style = style;
+        return this;
+    }
+
+    /// <summary>
     /// Builds and returns the configured TextBlock.
     /// </summary>
     /// <returns>The configured TextBlock instance.</returns>

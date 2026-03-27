@@ -24,4 +24,10 @@ public class Media : AdaptiveElement
     /// </summary>
     [JsonPropertyName("altText")]
     public string? AltText { get; set; }
+
+    /// <summary>
+    /// Caption sources for the media (e.g., subtitles).
+    /// </summary>
+    [JsonPropertyName("captionSources")]
+    public List<CaptionSource>? CaptionSources { get; set; }
 }

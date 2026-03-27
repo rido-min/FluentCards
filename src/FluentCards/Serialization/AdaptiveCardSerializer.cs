@@ -17,16 +17,21 @@ public static class AdaptiveCardSerializer
     /// <returns>JSON string representation of the card.</returns>
     public static string Serialize(AdaptiveCard card, bool indented = false)
     {
-        // Create options with the desired indentation setting
+        if (indented)
+        {
+            return JsonSerializer.Serialize(card, FluentCardsJsonContext.Default.AdaptiveCard);
+        }
+
         var options = new JsonSerializerOptions
         {
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            WriteIndented = indented,
+            WriteIndented = false,
             TypeInfoResolver = FluentCardsJsonContext.Default
         };
-        
-        return JsonSerializer.Serialize(card, FluentCardsJsonContext.Default.AdaptiveCard);
+
+        return JsonSerializer.Serialize(card, options.GetTypeInfo(typeof(AdaptiveCard)) as JsonTypeInfo<AdaptiveCard>
+            ?? throw new InvalidOperationException("Failed to resolve AdaptiveCard type info."));
     }
     
     /// <summary>

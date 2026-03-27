@@ -68,4 +68,48 @@ public class Column
     /// </summary>
     [JsonPropertyName("id")]
     public string? Id { get; set; }
+
+    /// <summary>
+    /// If false, the column will be hidden.
+    /// </summary>
+    [JsonPropertyName("isVisible")]
+    public bool? IsVisible { get; set; }
+
+    /// <summary>
+    /// Controls the amount of spacing between this column and the preceding column.
+    /// </summary>
+    [JsonPropertyName("spacing")]
+    [JsonConverter(typeof(CamelCaseEnumConverter<Spacing>))]
+    public Spacing? Spacing { get; set; }
+
+    /// <summary>
+    /// When true, draw a separating line at the left of the column.
+    /// </summary>
+    [JsonPropertyName("separator")]
+    public bool? Separator { get; set; }
+
+    /// <summary>
+    /// Specifies the height of the column. Can be "auto" or "stretch".
+    /// </summary>
+    [JsonPropertyName("height")]
+    public string? Height { get; set; }
+
+    /// <summary>
+    /// Describes what to show when this column is unsupported.
+    /// </summary>
+    [JsonPropertyName("fallback")]
+    [JsonConverter(typeof(FallbackConverter))]
+    public object? Fallback { get; set; }
+
+    /// <summary>
+    /// A series of key/value pairs indicating features that the column requires.
+    /// </summary>
+    [JsonPropertyName("requires")]
+    public Dictionary<string, string>? Requires { get; set; }
+
+    /// <summary>
+    /// When true, content in this column should be presented right to left.
+    /// </summary>
+    [JsonPropertyName("rtl")]
+    public bool? Rtl { get; set; }
 }

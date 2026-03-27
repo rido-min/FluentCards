@@ -139,6 +139,85 @@ public class ColumnBuilder
     }
 
     /// <summary>
+    /// Sets the fallback behavior for the column.
+    /// </summary>
+    /// <param name="fallback">The fallback value ("drop" or another element).</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public ColumnBuilder WithFallback(object fallback)
+    {
+        _column.Fallback = fallback;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the height of the column.
+    /// </summary>
+    /// <param name="height">The height ("auto" or "stretch").</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public ColumnBuilder WithHeight(string height)
+    {
+        _column.Height = height;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets whether a separator line is drawn at the left of the column.
+    /// </summary>
+    /// <param name="separator">True to show separator.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public ColumnBuilder WithSeparator(bool separator = true)
+    {
+        _column.Separator = separator;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the spacing between this column and the preceding column.
+    /// </summary>
+    /// <param name="spacing">The spacing value.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public ColumnBuilder WithSpacing(Spacing spacing)
+    {
+        _column.Spacing = spacing;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets whether the column is visible.
+    /// </summary>
+    /// <param name="isVisible">True if visible, false if hidden.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public ColumnBuilder WithIsVisible(bool isVisible)
+    {
+        _column.IsVisible = isVisible;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the feature requirements for the column.
+    /// </summary>
+    /// <param name="key">The feature key.</param>
+    /// <param name="version">The minimum version required.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public ColumnBuilder WithRequires(string key, string version)
+    {
+        _column.Requires ??= new Dictionary<string, string>();
+        _column.Requires[key] = version;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets whether content in this column should be presented right to left.
+    /// </summary>
+    /// <param name="rtl">True for right-to-left.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public ColumnBuilder WithRtl(bool rtl = true)
+    {
+        _column.Rtl = rtl;
+        return this;
+    }
+
+    /// <summary>
     /// Builds and returns the configured Column.
     /// </summary>
     /// <returns>The configured Column instance.</returns>

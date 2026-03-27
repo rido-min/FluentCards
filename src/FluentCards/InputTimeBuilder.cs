@@ -96,6 +96,39 @@ public class InputTimeBuilder
     }
 
     /// <summary>
+    /// Sets the position of the label relative to the input.
+    /// </summary>
+    /// <param name="position">The label position.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public InputTimeBuilder WithLabelPosition(InputLabelPosition position)
+    {
+        _input.LabelPosition = position;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the width of the label when displayed inline.
+    /// </summary>
+    /// <param name="width">The label width (e.g., "40%" or a pixel value).</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public InputTimeBuilder WithLabelWidth(string width)
+    {
+        _input.LabelWidth = width;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the visual style of the input.
+    /// </summary>
+    /// <param name="style">The input style.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public InputTimeBuilder WithInputStyle(InputStyle style)
+    {
+        _input.InputStyle = style;
+        return this;
+    }
+
+    /// <summary>
     /// Builds and returns the configured InputTime.
     /// </summary>
     /// <returns>The configured InputTime instance.</returns>

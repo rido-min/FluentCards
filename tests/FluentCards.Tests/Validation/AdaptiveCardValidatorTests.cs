@@ -64,7 +64,7 @@ public class AdaptiveCardValidatorTests
     }
 
     [Fact]
-    public void Validate_EmptyTextBlock_ReturnsWarning()
+    public void Validate_EmptyTextBlock_ReturnsError()
     {
         // Arrange
         var card = AdaptiveCardBuilder.Create()
@@ -76,9 +76,9 @@ public class AdaptiveCardValidatorTests
         var issues = AdaptiveCardValidator.Validate(card);
 
         // Assert
-        var warning = Assert.Single(issues, i => i.Code == "EMPTY_TEXT");
-        Assert.Equal(ValidationSeverity.Warning, warning.Severity);
-        Assert.Equal("body[0].text", warning.Path);
+        var error = Assert.Single(issues, i => i.Code == "MISSING_TEXT");
+        Assert.Equal(ValidationSeverity.Error, error.Severity);
+        Assert.Equal("body[0].text", error.Path);
     }
 
     [Fact]
@@ -233,7 +233,7 @@ public class AdaptiveCardValidatorTests
         var issues = AdaptiveCardValidator.Validate(card);
 
         // Assert
-        Assert.Contains(issues, i => i.Code == "EMPTY_TEXT" && i.Path == "body[0].items[0].text");
+        Assert.Contains(issues, i => i.Code == "MISSING_TEXT" && i.Path == "body[0].items[0].text");
         Assert.Contains(issues, i => i.Code == "MISSING_INPUT_ID" && i.Path == "body[0].items[1].id");
     }
 
@@ -355,5 +355,466 @@ public class AdaptiveCardValidatorTests
         Assert.Contains("Adaptive Card validation failed with 2 errors", ex.Message);
         Assert.Contains("[path1] Error 1", ex.Message);
         Assert.Contains("[path2] Error 2", ex.Message);
+    }
+
+    [Fact]
+    public void Validate_FactSetWithNullFacts_ReturnsError()
+    {
+        // Arrange
+        var card = new AdaptiveCard
+        {
+            Version = "1.5",
+            Body = new List<AdaptiveElement> { new FactSet { Facts = null } }
+        };
+
+        // Act
+        var issues = AdaptiveCardValidator.Validate(card);
+
+        // Assert
+        var error = Assert.Single(issues, i => i.Code == "MISSING_FACTS");
+        Assert.Equal(ValidationSeverity.Error, error.Severity);
+        Assert.Equal("body[0].facts", error.Path);
+    }
+
+    [Fact]
+    public void Validate_FactSetWithEmptyFacts_ReturnsError()
+    {
+        // Arrange
+        var card = AdaptiveCardBuilder.Create()
+            .WithVersion("1.5")
+            .AddFactSet(fs => { })
+            .Build();
+
+        // Act
+        var issues = AdaptiveCardValidator.Validate(card);
+
+        // Assert
+        var error = Assert.Single(issues, i => i.Code == "MISSING_FACTS");
+        Assert.Equal(ValidationSeverity.Error, error.Severity);
+        Assert.Equal("body[0].facts", error.Path);
+    }
+
+    [Fact]
+    public void Validate_ActionSetWithNullActions_ReturnsError()
+    {
+        // Arrange
+        var card = new AdaptiveCard
+        {
+            Version = "1.5",
+            Body = new List<AdaptiveElement> { new ActionSet { Actions = null } }
+        };
+
+        // Act
+        var issues = AdaptiveCardValidator.Validate(card);
+
+        // Assert
+        var error = Assert.Single(issues, i => i.Code == "MISSING_ACTIONSET_ACTIONS");
+        Assert.Equal(ValidationSeverity.Error, error.Severity);
+        Assert.Equal("body[0].actions", error.Path);
+    }
+
+    [Fact]
+    public void Validate_ActionSetWithEmptyActions_ReturnsError()
+    {
+        // Arrange
+        var card = AdaptiveCardBuilder.Create()
+            .WithVersion("1.5")
+            .AddActionSet(a => { })
+            .Build();
+
+        // Act
+        var issues = AdaptiveCardValidator.Validate(card);
+
+        // Assert
+        var error = Assert.Single(issues, i => i.Code == "MISSING_ACTIONSET_ACTIONS");
+        Assert.Equal(ValidationSeverity.Error, error.Severity);
+        Assert.Equal("body[0].actions", error.Path);
+    }
+
+    [Fact]
+    public void Validate_RichTextBlockWithNullInlines_ReturnsError()
+    {
+        // Arrange
+        var card = new AdaptiveCard
+        {
+            Version = "1.5",
+            Body = new List<AdaptiveElement> { new RichTextBlock { Inlines = null } }
+        };
+
+        // Act
+        var issues = AdaptiveCardValidator.Validate(card);
+
+        // Assert
+        var error = Assert.Single(issues, i => i.Code == "MISSING_INLINES");
+        Assert.Equal(ValidationSeverity.Error, error.Severity);
+        Assert.Equal("body[0].inlines", error.Path);
+    }
+
+    [Fact]
+    public void Validate_RichTextBlockWithEmptyInlines_ReturnsError()
+    {
+        // Arrange
+        var card = AdaptiveCardBuilder.Create()
+            .WithVersion("1.5")
+            .AddRichTextBlock(rtb => { })
+            .Build();
+
+        // Act
+        var issues = AdaptiveCardValidator.Validate(card);
+
+        // Assert
+        var error = Assert.Single(issues, i => i.Code == "MISSING_INLINES");
+        Assert.Equal(ValidationSeverity.Error, error.Severity);
+        Assert.Equal("body[0].inlines", error.Path);
+    }
+
+    [Fact]
+    public void Validate_MediaWithNullSources_ReturnsError()
+    {
+        // Arrange
+        var card = new AdaptiveCard
+        {
+            Version = "1.5",
+            Body = new List<AdaptiveElement> { new Media { Sources = null } }
+        };
+
+        // Act
+        var issues = AdaptiveCardValidator.Validate(card);
+
+        // Assert
+        var error = Assert.Single(issues, i => i.Code == "MISSING_MEDIA_SOURCES");
+        Assert.Equal(ValidationSeverity.Error, error.Severity);
+        Assert.Equal("body[0].sources", error.Path);
+    }
+
+    [Fact]
+    public void Validate_MediaWithEmptySources_ReturnsError()
+    {
+        // Arrange
+        var card = AdaptiveCardBuilder.Create()
+            .WithVersion("1.5")
+            .AddMedia(m => { })
+            .Build();
+
+        // Act
+        var issues = AdaptiveCardValidator.Validate(card);
+
+        // Assert
+        var error = Assert.Single(issues, i => i.Code == "MISSING_MEDIA_SOURCES");
+        Assert.Equal(ValidationSeverity.Error, error.Severity);
+        Assert.Equal("body[0].sources", error.Path);
+    }
+
+    [Fact]
+    public void Validate_ImageSetWithNullImages_ReturnsError()
+    {
+        // Arrange
+        var card = new AdaptiveCard
+        {
+            Version = "1.5",
+            Body = new List<AdaptiveElement> { new ImageSet { Images = null } }
+        };
+
+        // Act
+        var issues = AdaptiveCardValidator.Validate(card);
+
+        // Assert
+        var error = Assert.Single(issues, i => i.Code == "MISSING_IMAGES");
+        Assert.Equal(ValidationSeverity.Error, error.Severity);
+        Assert.Equal("body[0].images", error.Path);
+    }
+
+    [Fact]
+    public void Validate_ImageSetWithEmptyImages_ReturnsError()
+    {
+        // Arrange
+        var card = AdaptiveCardBuilder.Create()
+            .WithVersion("1.5")
+            .AddImageSet(iset => { })
+            .Build();
+
+        // Act
+        var issues = AdaptiveCardValidator.Validate(card);
+
+        // Assert
+        var error = Assert.Single(issues, i => i.Code == "MISSING_IMAGES");
+        Assert.Equal(ValidationSeverity.Error, error.Severity);
+        Assert.Equal("body[0].images", error.Path);
+    }
+
+    [Fact]
+    public void Validate_InputToggleWithEmptyTitle_ReturnsError()
+    {
+        // Arrange — builder creates InputToggle with default empty Title
+        var card = AdaptiveCardBuilder.Create()
+            .WithVersion("1.5")
+            .AddInputToggle(t => t.WithId("toggle1"))
+            .Build();
+
+        // Act
+        var issues = AdaptiveCardValidator.Validate(card);
+
+        // Assert
+        var error = Assert.Single(issues, i => i.Code == "MISSING_TOGGLE_TITLE");
+        Assert.Equal(ValidationSeverity.Error, error.Severity);
+        Assert.Equal("body[0].title", error.Path);
+    }
+
+    [Fact]
+    public void Validate_ToggleVisibilityActionWithNullTargetElements_ReturnsError()
+    {
+        // Arrange
+        var card = AdaptiveCardBuilder.Create()
+            .WithVersion("1.5")
+            .AddTextBlock(tb => tb.WithText("Test"))
+            .Build();
+
+        card.Actions = new List<AdaptiveAction>
+        {
+            new ToggleVisibilityAction { TargetElements = null }
+        };
+
+        // Act
+        var issues = AdaptiveCardValidator.Validate(card);
+
+        // Assert
+        var error = Assert.Single(issues, i => i.Code == "MISSING_TARGET_ELEMENTS");
+        Assert.Equal(ValidationSeverity.Error, error.Severity);
+        Assert.Equal("actions[0].targetElements", error.Path);
+    }
+
+    [Fact]
+    public void Validate_ToggleVisibilityActionWithEmptyTargetElements_ReturnsError()
+    {
+        // Arrange
+        var card = AdaptiveCardBuilder.Create()
+            .WithVersion("1.5")
+            .AddTextBlock(tb => tb.WithText("Test"))
+            .Build();
+
+        card.Actions = new List<AdaptiveAction>
+        {
+            new ToggleVisibilityAction { TargetElements = new List<object>() }
+        };
+
+        // Act
+        var issues = AdaptiveCardValidator.Validate(card);
+
+        // Assert
+        var error = Assert.Single(issues, i => i.Code == "MISSING_TARGET_ELEMENTS");
+        Assert.Equal(ValidationSeverity.Error, error.Severity);
+        Assert.Equal("actions[0].targetElements", error.Path);
+    }
+
+    [Fact]
+    public void Validate_InputNumberMinGreaterThanMax_ReturnsError()
+    {
+        // Arrange
+        var card = AdaptiveCardBuilder.Create()
+            .WithVersion("1.5")
+            .AddInputNumber(n => n.WithId("num1").WithMin(100).WithMax(10))
+            .Build();
+
+        // Act
+        var issues = AdaptiveCardValidator.Validate(card);
+
+        // Assert
+        var error = Assert.Single(issues, i => i.Code == "MIN_GREATER_THAN_MAX");
+        Assert.Equal(ValidationSeverity.Error, error.Severity);
+        Assert.Equal("body[0]", error.Path);
+    }
+
+    [Fact]
+    public void Validate_InputDateMinGreaterThanMax_ReturnsError()
+    {
+        // Arrange
+        var card = AdaptiveCardBuilder.Create()
+            .WithVersion("1.5")
+            .AddInputDate(d => d.WithId("date1").WithMin("2025-12-31").WithMax("2025-01-01"))
+            .Build();
+
+        // Act
+        var issues = AdaptiveCardValidator.Validate(card);
+
+        // Assert
+        var error = Assert.Single(issues, i => i.Code == "MIN_GREATER_THAN_MAX");
+        Assert.Equal(ValidationSeverity.Error, error.Severity);
+        Assert.Equal("body[0]", error.Path);
+    }
+
+    [Fact]
+    public void Validate_InputTimeMinGreaterThanMax_ReturnsError()
+    {
+        // Arrange
+        var card = AdaptiveCardBuilder.Create()
+            .WithVersion("1.5")
+            .AddInputTime(t => t.WithId("time1").WithMin("23:00").WithMax("08:00"))
+            .Build();
+
+        // Act
+        var issues = AdaptiveCardValidator.Validate(card);
+
+        // Assert
+        var error = Assert.Single(issues, i => i.Code == "MIN_GREATER_THAN_MAX");
+        Assert.Equal(ValidationSeverity.Error, error.Severity);
+        Assert.Equal("body[0]", error.Path);
+    }
+
+    [Fact]
+    public void Validate_ShowCardActionAsSelectAction_ReturnsError()
+    {
+        // Arrange — ShowCardAction used as selectAction on a Container
+        var card = new AdaptiveCard
+        {
+            Version = "1.5",
+            Body = new List<AdaptiveElement>
+            {
+                new Container
+                {
+                    Items = new List<AdaptiveElement> { new TextBlock { Text = "Test" } },
+                    SelectAction = new ShowCardAction()
+                }
+            }
+        };
+
+        // Act
+        var issues = AdaptiveCardValidator.Validate(card);
+
+        // Assert
+        var error = Assert.Single(issues, i => i.Code == "INVALID_SELECT_ACTION");
+        Assert.Equal(ValidationSeverity.Error, error.Severity);
+        Assert.Equal("body[0].selectAction", error.Path);
+    }
+
+    [Fact]
+    public void Validate_DuplicateIds_ReturnsWarning()
+    {
+        // Arrange
+        var card = new AdaptiveCard
+        {
+            Version = "1.5",
+            Body = new List<AdaptiveElement>
+            {
+                new TextBlock { Id = "duplicate", Text = "First" },
+                new TextBlock { Id = "duplicate", Text = "Second" }
+            }
+        };
+
+        // Act
+        var issues = AdaptiveCardValidator.Validate(card);
+
+        // Assert
+        var warning = Assert.Single(issues, i => i.Code == "DUPLICATE_ID");
+        Assert.Equal(ValidationSeverity.Warning, warning.Severity);
+        Assert.Equal("body[1]", warning.Path);
+    }
+
+    [Fact]
+    public void Validate_EmptyContainer_ReturnsWarning()
+    {
+        // Arrange
+        var card = new AdaptiveCard
+        {
+            Version = "1.5",
+            Body = new List<AdaptiveElement>
+            {
+                new Container { Items = null }
+            }
+        };
+
+        // Act
+        var issues = AdaptiveCardValidator.Validate(card);
+
+        // Assert
+        var warning = Assert.Single(issues, i => i.Code == "EMPTY_CONTAINER");
+        Assert.Equal(ValidationSeverity.Warning, warning.Severity);
+        Assert.Equal("body[0].items", warning.Path);
+    }
+
+    [Fact]
+    public void Validate_EmptyContainerViaEmptyItems_ReturnsWarning()
+    {
+        // Arrange — Container with empty Items list (via builder)
+        var card = AdaptiveCardBuilder.Create()
+            .WithVersion("1.5")
+            .AddContainer(c => { })
+            .Build();
+
+        // Act
+        var issues = AdaptiveCardValidator.Validate(card);
+
+        // Assert
+        var warning = Assert.Single(issues, i => i.Code == "EMPTY_CONTAINER");
+        Assert.Equal(ValidationSeverity.Warning, warning.Severity);
+        Assert.Equal("body[0].items", warning.Path);
+    }
+
+    [Fact]
+    public void Validate_NestedTableValidation_ValidatesElementsInsideCells()
+    {
+        // Arrange — Table with a cell containing a TextBlock with empty text
+        var card = AdaptiveCardBuilder.Create()
+            .WithVersion("1.5")
+            .AddTable(t => t
+                .AddRow(new TableRow
+                {
+                    Cells = new List<TableCell>
+                    {
+                        new TableCell
+                        {
+                            Items = new List<AdaptiveElement>
+                            {
+                                new TextBlock { Text = "" }
+                            }
+                        }
+                    }
+                }))
+            .Build();
+
+        // Act
+        var issues = AdaptiveCardValidator.Validate(card);
+
+        // Assert
+        var error = Assert.Single(issues, i => i.Code == "MISSING_TEXT");
+        Assert.Equal(ValidationSeverity.Error, error.Severity);
+        Assert.Equal("body[0].rows[0].cells[0].items[0].text", error.Path);
+    }
+
+    [Fact]
+    public void Validate_NestedImageSetValidation_ValidatesImageUrls()
+    {
+        // Arrange — ImageSet with an image that has an empty URL
+        var card = AdaptiveCardBuilder.Create()
+            .WithVersion("1.5")
+            .AddImageSet(iset => iset
+                .AddImage(img => img.WithUrl("")))
+            .Build();
+
+        // Act
+        var issues = AdaptiveCardValidator.Validate(card);
+
+        // Assert
+        var error = Assert.Single(issues, i => i.Code == "MISSING_IMAGE_URL");
+        Assert.Equal(ValidationSeverity.Error, error.Severity);
+        Assert.Equal("body[0].images[0].url", error.Path);
+    }
+
+    [Fact]
+    public void Validate_NestedImageSetValidation_InvalidUrlReturnsWarning()
+    {
+        // Arrange — ImageSet with an image that has an invalid (non-absolute) URL
+        var card = AdaptiveCardBuilder.Create()
+            .WithVersion("1.5")
+            .AddImageSet(iset => iset
+                .AddImage(img => img.WithUrl("not-a-url")))
+            .Build();
+
+        // Act
+        var issues = AdaptiveCardValidator.Validate(card);
+
+        // Assert
+        var warning = Assert.Single(issues, i => i.Code == "INVALID_IMAGE_URL");
+        Assert.Equal(ValidationSeverity.Warning, warning.Severity);
+        Assert.Equal("body[0].images[0].url", warning.Path);
     }
 }

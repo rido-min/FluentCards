@@ -368,6 +368,85 @@ public class AdaptiveCardBuilder
     }
 
     /// <summary>
+    /// Sets the action to invoke when the card is selected.
+    /// </summary>
+    /// <param name="configure">Action to configure the select action.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public AdaptiveCardBuilder WithSelectAction(Action<ActionBuilder> configure)
+    {
+        var builder = new ActionBuilder();
+        configure(builder);
+        _card.SelectAction = builder.Build();
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the fallback text shown when the client doesn't support the version specified.
+    /// </summary>
+    /// <param name="fallbackText">The fallback text (may contain markdown).</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public AdaptiveCardBuilder WithFallbackText(string fallbackText)
+    {
+        _card.FallbackText = fallbackText;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the minimum height of the card.
+    /// </summary>
+    /// <param name="minHeight">The minimum height (e.g., "100px").</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public AdaptiveCardBuilder WithMinHeight(string minHeight)
+    {
+        _card.MinHeight = minHeight;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets whether content should be presented right to left.
+    /// </summary>
+    /// <param name="rtl">True for right-to-left, false for left-to-right.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public AdaptiveCardBuilder WithRtl(bool rtl = true)
+    {
+        _card.Rtl = rtl;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets what should be spoken for this entire card (simple text or SSML).
+    /// </summary>
+    /// <param name="speak">The speak text or SSML fragment.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public AdaptiveCardBuilder WithSpeak(string speak)
+    {
+        _card.Speak = speak;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the 2-letter ISO-639-1 language used in the card.
+    /// </summary>
+    /// <param name="lang">The language code (e.g., "en", "fr").</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public AdaptiveCardBuilder WithLang(string lang)
+    {
+        _card.Lang = lang;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the vertical content alignment for the card.
+    /// </summary>
+    /// <param name="alignment">The vertical alignment.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public AdaptiveCardBuilder WithVerticalContentAlignment(VerticalAlignment alignment)
+    {
+        _card.VerticalContentAlignment = alignment;
+        return this;
+    }
+
+    /// <summary>
     /// Builds and returns the configured AdaptiveCard.
     /// </summary>
     /// <returns>The configured AdaptiveCard instance.</returns>

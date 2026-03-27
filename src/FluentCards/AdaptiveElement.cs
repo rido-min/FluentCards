@@ -37,7 +37,8 @@ public abstract class AdaptiveElement
     /// <summary>
     /// Controls the amount of spacing between this element and the preceding element.
     /// </summary>
-    public string? Spacing { get; set; }
+    [JsonConverter(typeof(CamelCaseEnumConverter<Spacing>))]
+    public Spacing? Spacing { get; set; }
 
     /// <summary>
     /// When true, draw a separating line at the top of the element.

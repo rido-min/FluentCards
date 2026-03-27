@@ -15,7 +15,8 @@ Walks through the steps to publish a new version of the FluentCards NuGet packag
 ## Process
 
 ### Step 1: Update version
-<!-- TODO: Bump <Version> in src/FluentCards/FluentCards.csproj -->
+
+Version is defined using the GitVersion approach based on nbgv, to update the version follow https://dotnet.github.io/Nerdbank.GitVersioning/docs/nbgv-cli.html#preparing-a-release
 
 ### Step 2: Update CHANGELOG.md
 <!-- TODO: Move [Unreleased] items under a new [X.Y.Z] - YYYY-MM-DD heading -->

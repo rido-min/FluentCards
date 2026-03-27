@@ -188,7 +188,7 @@ public class ActionSetTests
                 {
                     Id = "actions1",
                     IsVisible = true,
-                    Spacing = "large",
+                    Spacing = Spacing.Large,
                     Separator = true,
                     Actions = new List<AdaptiveAction>
                     {

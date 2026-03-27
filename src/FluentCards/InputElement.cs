@@ -31,4 +31,24 @@ public abstract class InputElement : AdaptiveElement
     /// </summary>
     [JsonPropertyName("errorMessage")]
     public string? ErrorMessage { get; set; }
+
+    /// <summary>
+    /// Specifies the position of the label relative to the input.
+    /// </summary>
+    [JsonPropertyName("labelPosition")]
+    [JsonConverter(typeof(CamelCaseEnumConverter<InputLabelPosition>))]
+    public InputLabelPosition? LabelPosition { get; set; }
+
+    /// <summary>
+    /// Specifies the width of the label when displayed inline. Can be a percentage (e.g., "40%") or pixel value.
+    /// </summary>
+    [JsonPropertyName("labelWidth")]
+    public string? LabelWidth { get; set; }
+
+    /// <summary>
+    /// Specifies the visual style of the input.
+    /// </summary>
+    [JsonPropertyName("inputStyle")]
+    [JsonConverter(typeof(CamelCaseEnumConverter<InputStyle>))]
+    public InputStyle? InputStyle { get; set; }
 }

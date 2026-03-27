@@ -164,6 +164,34 @@ public class ActionBuilder
     }
 
     /// <summary>
+    /// Sets the fallback behavior for the action.
+    /// </summary>
+    /// <param name="fallback">The fallback value ("drop" or another action).</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public ActionBuilder WithFallback(object fallback)
+    {
+        if (_action != null)
+        {
+            _action.Fallback = fallback;
+        }
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the mode for the action (primary or secondary/overflow).
+    /// </summary>
+    /// <param name="mode">The action mode.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public ActionBuilder WithMode(ActionMode mode)
+    {
+        if (_action != null)
+        {
+            _action.Mode = mode;
+        }
+        return this;
+    }
+
+    /// <summary>
     /// Builds and returns the configured AdaptiveAction.
     /// </summary>
     /// <returns>The configured AdaptiveAction instance.</returns>

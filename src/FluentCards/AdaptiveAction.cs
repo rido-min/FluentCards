@@ -42,4 +42,16 @@ public abstract class AdaptiveAction
     /// Defines text that should be displayed as a tooltip.
     /// </summary>
     public string? Tooltip { get; set; }
+
+    /// <summary>
+    /// Describes what to do when an unknown action is encountered or the requires of this can't be met.
+    /// </summary>
+    [JsonConverter(typeof(FallbackConverter))]
+    public object? Fallback { get; set; }
+
+    /// <summary>
+    /// Determines whether the action should be displayed in the button area or in the overflow menu.
+    /// </summary>
+    [JsonConverter(typeof(CamelCaseEnumConverter<ActionMode>))]
+    public ActionMode? Mode { get; set; }
 }

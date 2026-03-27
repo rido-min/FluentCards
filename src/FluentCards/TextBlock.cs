@@ -31,6 +31,23 @@ public class TextBlock : AdaptiveElement
     public TextColor? Color { get; set; }
 
     /// <summary>
+    /// The type of font to use for rendering.
+    /// </summary>
+    [JsonConverter(typeof(CamelCaseEnumConverter<FontType>))]
+    public FontType? FontType { get; set; }
+
+    /// <summary>
+    /// If true, displays the text with subtle styling.
+    /// </summary>
+    public bool? IsSubtle { get; set; }
+
+    /// <summary>
+    /// The style of the text block.
+    /// </summary>
+    [JsonConverter(typeof(CamelCaseEnumConverter<TextBlockStyle>))]
+    public TextBlockStyle? Style { get; set; }
+
+    /// <summary>
     /// If true, allow text to wrap. Otherwise, text is clipped.
     /// </summary>
     public bool? Wrap { get; set; }

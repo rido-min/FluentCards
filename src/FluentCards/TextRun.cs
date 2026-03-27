@@ -41,6 +41,13 @@ public class TextRun
     public TextColor? Color { get; set; }
 
     /// <summary>
+    /// The type of font to use for rendering.
+    /// </summary>
+    [JsonPropertyName("fontType")]
+    [JsonConverter(typeof(CamelCaseEnumConverter<FontType>))]
+    public FontType? FontType { get; set; }
+
+    /// <summary>
     /// If true, displays the text with subtle styling.
     /// </summary>
     [JsonPropertyName("isSubtle")]

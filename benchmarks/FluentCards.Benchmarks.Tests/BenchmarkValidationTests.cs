@@ -24,5 +24,24 @@ public class BenchmarkValidationTests
         Assert.NotNull(benchmark.BuildNestedContainers());
         Assert.NotNull(benchmark.BuildFormCard());
         Assert.NotNull(benchmark.BuildColumnSetCard());
+        Assert.NotNull(benchmark.BuildCardWithV16Properties());
+        Assert.NotNull(benchmark.BuildCardWithAllElements());
+    }
+
+    [Fact]
+    public void ValidationBenchmarks_CanExecute()
+    {
+        var benchmark = new ValidationBenchmarks();
+        benchmark.Setup();
+
+        Assert.Empty(benchmark.ValidateSimple());
+        Assert.Empty(benchmark.ValidateComplex());
+        Assert.NotEmpty(benchmark.ValidateWithIssues());
+
+        var exception = Record.Exception(() => benchmark.ValidateAndThrowSimple());
+        Assert.Null(exception);
+
+        exception = Record.Exception(() => benchmark.ValidateAndThrowComplex());
+        Assert.Null(exception);
     }
 }

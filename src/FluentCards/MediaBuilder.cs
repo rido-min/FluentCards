@@ -64,6 +64,20 @@ public class MediaBuilder
     }
 
     /// <summary>
+    /// Adds a caption source to the media element.
+    /// </summary>
+    /// <param name="label">The label for the caption (e.g., language name).</param>
+    /// <param name="url">The URL of the caption source.</param>
+    /// <param name="mimeType">The MIME type of the caption source.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public MediaBuilder AddCaptionSource(string label, string url, string mimeType)
+    {
+        _media.CaptionSources ??= new List<CaptionSource>();
+        _media.CaptionSources.Add(new CaptionSource { Label = label, Url = url, MimeType = mimeType });
+        return this;
+    }
+
+    /// <summary>
     /// Builds and returns the configured Media.
     /// </summary>
     /// <returns>The configured Media instance.</returns>
