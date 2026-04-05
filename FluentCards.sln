@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentCards.Benchmarks", "b
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentCards.Benchmarks.Tests", "benchmarks\FluentCards.Benchmarks.Tests\FluentCards.Benchmarks.Tests.csproj", "{D47BA5F1-1DF6-4577-B7A1-E2109519A754}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamsCardRenderer", "samples\TeamsCardRenderer\TeamsCardRenderer.csproj", "{1DC0F590-1AA2-4A4D-8DF1-88AA9B1273BB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -91,6 +93,18 @@ Global
 		{D47BA5F1-1DF6-4577-B7A1-E2109519A754}.Release|x64.Build.0 = Release|Any CPU
 		{D47BA5F1-1DF6-4577-B7A1-E2109519A754}.Release|x86.ActiveCfg = Release|Any CPU
 		{D47BA5F1-1DF6-4577-B7A1-E2109519A754}.Release|x86.Build.0 = Release|Any CPU
+		{1DC0F590-1AA2-4A4D-8DF1-88AA9B1273BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1DC0F590-1AA2-4A4D-8DF1-88AA9B1273BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1DC0F590-1AA2-4A4D-8DF1-88AA9B1273BB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1DC0F590-1AA2-4A4D-8DF1-88AA9B1273BB}.Debug|x64.Build.0 = Debug|Any CPU
+		{1DC0F590-1AA2-4A4D-8DF1-88AA9B1273BB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1DC0F590-1AA2-4A4D-8DF1-88AA9B1273BB}.Debug|x86.Build.0 = Debug|Any CPU
+		{1DC0F590-1AA2-4A4D-8DF1-88AA9B1273BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1DC0F590-1AA2-4A4D-8DF1-88AA9B1273BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1DC0F590-1AA2-4A4D-8DF1-88AA9B1273BB}.Release|x64.ActiveCfg = Release|Any CPU
+		{1DC0F590-1AA2-4A4D-8DF1-88AA9B1273BB}.Release|x64.Build.0 = Release|Any CPU
+		{1DC0F590-1AA2-4A4D-8DF1-88AA9B1273BB}.Release|x86.ActiveCfg = Release|Any CPU
+		{1DC0F590-1AA2-4A4D-8DF1-88AA9B1273BB}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -101,5 +115,6 @@ Global
 		{6CE4AC3E-F1D7-4BC8-8826-CC7470605A31} = {5D20AA90-6969-D8BD-9DCD-8634F4692FDA}
 		{62F45DB9-0276-41F2-9EC8-081E4E746C92} = {66320409-64EC-F7C5-3DEF-65E7510DAAD1}
 		{D47BA5F1-1DF6-4577-B7A1-E2109519A754} = {66320409-64EC-F7C5-3DEF-65E7510DAAD1}
+		{1DC0F590-1AA2-4A4D-8DF1-88AA9B1273BB} = {5D20AA90-6969-D8BD-9DCD-8634F4692FDA}
 	EndGlobalSection
 EndGlobal

@@ -58,3 +58,7 @@ BenchmarkDotNet.Artifacts/
 *.bench
 # Bootstrap wizard state
 .github/.bootstrap-wizard-state.json
+
+# Node.js
+scripts/node_modules/
+scripts/package-lock.json
