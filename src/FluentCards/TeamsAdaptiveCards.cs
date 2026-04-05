@@ -10,58 +10,41 @@ public static class TeamsAdaptiveCards
     /// Creates an approval request card with Approve and Decline actions.
     /// Reflects the Teams approval sample pattern where a requester asks for sign-off on an item.
     /// </summary>
-    /// <param name="requesterName">The name of the person requesting approval.</param>
-    /// <param name="submittedDate">The date the request was submitted, formatted as a display string.</param>
-    /// <param name="title">The title of the approval request.</param>
-    /// <param name="category">The category of the item being approved.</param>
-    /// <param name="amount">The monetary amount associated with the request.</param>
-    /// <param name="businessUnit">The business unit submitting the request.</param>
-    /// <param name="dueDate">The due date for the approval decision, formatted as a display string.</param>
-    /// <param name="description">A description or justification for the approval request.</param>
-    /// <param name="requesterImageUrl">An optional URL for the requester's profile image.</param>
+    /// <param name="input">The structured input parameters for the approval card.</param>
     /// <returns>An Adaptive Card representing an approval request.</returns>
-    public static AdaptiveCard CreateApprovalCard(
-        string requesterName,
-        string submittedDate,
-        string title,
-        string category,
-        string amount,
-        string businessUnit,
-        string dueDate,
-        string description,
-        string? requesterImageUrl = null)
+    public static AdaptiveCard CreateApprovalCard(ApprovalCardInput input)
     {
         return AdaptiveCardBuilder.Create()
             .WithVersion("1.5")
             .AddColumnSet(cs => cs
                 .AddColumn("auto", col => col
                     .AddImage(img => img
-                        .WithUrl(requesterImageUrl ?? string.Empty)
+                        .WithUrl(input.RequesterImageUrl ?? string.Empty)
                         .WithSize(ImageSize.Small)
                         .WithStyle(ImageStyle.Person)))
                 .AddColumn("stretch", col => col
                     .WithVerticalContentAlignment(VerticalAlignment.Center)
                     .AddTextBlock(tb => tb
-                        .WithText(requesterName)
+                        .WithText(input.RequesterName)
                         .WithWeight(TextWeight.Bolder)
                         .WithWrap(true))
                     .AddTextBlock(tb => tb
-                        .WithText(submittedDate)
+                        .WithText(input.SubmittedDate)
                         .WithIsSubtle()
                         .WithSize(TextSize.Small)
                         .WithWrap(true))))
             .AddTextBlock(tb => tb
-                .WithText(title)
+                .WithText(input.Title)
                 .WithSize(TextSize.Large)
                 .WithWeight(TextWeight.Bolder)
                 .WithWrap(true))
             .AddFactSet(fs => fs
-                .AddFact("Category", category)
-                .AddFact("Amount", amount)
-                .AddFact("Business Unit", businessUnit)
-                .AddFact("Due Date", dueDate))
+                .AddFact("Category", input.Category)
+                .AddFact("Amount", input.Amount)
+                .AddFact("Business Unit", input.BusinessUnit)
+                .AddFact("Due Date", input.DueDate))
             .AddTextBlock(tb => tb
-                .WithText(description)
+                .WithText(input.Description)
                 .WithWrap(true)
                 .WithIsSubtle())
             .AddAction(a => a
@@ -77,28 +60,9 @@ public static class TeamsAdaptiveCards
     /// Creates a status update notification card showing the current state of a project or task.
     /// Reflects the Teams status-update sample pattern used in project tracking scenarios.
     /// </summary>
-    /// <param name="cardTitle">The heading title of the status update card.</param>
-    /// <param name="teamName">The name of the team or department posting the update.</param>
-    /// <param name="updateDate">The date of the update, formatted as a display string.</param>
-    /// <param name="project">The name of the project being reported on.</param>
-    /// <param name="status">The current status of the project (e.g., "🟡 At Risk").</param>
-    /// <param name="sprint">The current sprint identifier (e.g., "Sprint 14 of 16").</param>
-    /// <param name="completion">The percentage of completion as a display string (e.g., "68%").</param>
-    /// <param name="updatedBy">The name of the person posting the update.</param>
-    /// <param name="notes">Narrative notes describing the current state or blockers.</param>
-    /// <param name="projectUrl">A URL linking to the full project details.</param>
+    /// <param name="input">The structured input parameters for the status update card.</param>
     /// <returns>An Adaptive Card representing a status update notification.</returns>
-    public static AdaptiveCard CreateStatusUpdateCard(
-        string cardTitle,
-        string teamName,
-        string updateDate,
-        string project,
-        string status,
-        string sprint,
-        string completion,
-        string updatedBy,
-        string notes,
-        string projectUrl)
+    public static AdaptiveCard CreateStatusUpdateCard(StatusUpdateCardInput input)
     {
         return AdaptiveCardBuilder.Create()
             .WithVersion("1.5")
@@ -107,26 +71,26 @@ public static class TeamsAdaptiveCards
                 .AddColumnSet(cs => cs
                     .AddColumn("stretch", col => col
                         .AddTextBlock(tb => tb
-                            .WithText(cardTitle)
+                            .WithText(input.CardTitle)
                             .WithSize(TextSize.Large)
                             .WithWeight(TextWeight.Bolder)
                             .WithWrap(true))
                         .AddTextBlock(tb => tb
-                            .WithText($"{teamName} • {updateDate}")
+                            .WithText($"{input.TeamName} • {input.UpdateDate}")
                             .WithIsSubtle()
                             .WithSize(TextSize.Small)
                             .WithWrap(true)))))
             .AddFactSet(fs => fs
-                .AddFact("Project", project)
-                .AddFact("Status", status)
-                .AddFact("Sprint", sprint)
-                .AddFact("Completion", completion)
-                .AddFact("Updated By", updatedBy))
+                .AddFact("Project", input.Project)
+                .AddFact("Status", input.Status)
+                .AddFact("Sprint", input.Sprint)
+                .AddFact("Completion", input.Completion)
+                .AddFact("Updated By", input.UpdatedBy))
             .AddTextBlock(tb => tb
-                .WithText(notes)
+                .WithText(input.Notes)
                 .WithWrap(true))
             .AddAction(a => a
-                .OpenUrl(projectUrl)
+                .OpenUrl(input.ProjectUrl)
                 .WithTitle("View Project"))
             .Build();
     }
@@ -135,24 +99,9 @@ public static class TeamsAdaptiveCards
     /// Creates a task assignment notification card informing the recipient of a newly assigned task.
     /// Reflects the Teams task-update sample pattern used in work tracking integrations.
     /// </summary>
-    /// <param name="taskName">The name or title of the assigned task.</param>
-    /// <param name="project">The project the task belongs to.</param>
-    /// <param name="assignedBy">The name of the person who assigned the task.</param>
-    /// <param name="dueDate">The due date of the task, formatted as a display string.</param>
-    /// <param name="estimate">The time estimate for completing the task (e.g., "3 days").</param>
-    /// <param name="priority">The priority label of the task (e.g., "🔴 High").</param>
-    /// <param name="description">A detailed description of the work to be done.</param>
-    /// <param name="taskUrl">A URL linking to the full task details.</param>
+    /// <param name="input">The structured input parameters for the task update card.</param>
     /// <returns>An Adaptive Card representing a task assignment notification.</returns>
-    public static AdaptiveCard CreateTaskUpdateCard(
-        string taskName,
-        string project,
-        string assignedBy,
-        string dueDate,
-        string estimate,
-        string priority,
-        string description,
-        string taskUrl)
+    public static AdaptiveCard CreateTaskUpdateCard(TaskUpdateCardInput input)
     {
         return AdaptiveCardBuilder.Create()
             .WithVersion("1.5")
@@ -166,21 +115,21 @@ public static class TeamsAdaptiveCards
                 .AddColumn("auto", col => col
                     .WithVerticalContentAlignment(VerticalAlignment.Center)
                     .AddTextBlock(tb => tb
-                        .WithText(priority)
+                        .WithText(input.Priority)
                         .WithColor(TextColor.Attention)
                         .WithWeight(TextWeight.Bolder))))
             .AddFactSet(fs => fs
-                .AddFact("Task", taskName)
-                .AddFact("Project", project)
-                .AddFact("Assigned By", assignedBy)
-                .AddFact("Due Date", dueDate)
-                .AddFact("Estimate", estimate))
+                .AddFact("Task", input.TaskName)
+                .AddFact("Project", input.Project)
+                .AddFact("Assigned By", input.AssignedBy)
+                .AddFact("Due Date", input.DueDate)
+                .AddFact("Estimate", input.Estimate))
             .AddTextBlock(tb => tb
-                .WithText(description)
+                .WithText(input.Description)
                 .WithWrap(true)
                 .WithIsSubtle())
             .AddAction(a => a
-                .OpenUrl(taskUrl)
+                .OpenUrl(input.TaskUrl)
                 .WithTitle("View Task"))
             .AddAction(a => a
                 .Submit("Acknowledge")
@@ -192,26 +141,9 @@ public static class TeamsAdaptiveCards
     /// Creates a meeting reminder card with meeting details and a join link.
     /// Reflects the Teams meeting-invite sample pattern used in calendar integration scenarios.
     /// </summary>
-    /// <param name="meetingTitle">The title of the meeting.</param>
-    /// <param name="organizer">The name of the meeting organizer.</param>
-    /// <param name="date">The date of the meeting, formatted as a display string.</param>
-    /// <param name="time">The time range of the meeting, formatted as a display string (e.g., "2:00 PM – 3:00 PM (PST)").</param>
-    /// <param name="location">The location or platform where the meeting takes place.</param>
-    /// <param name="attendees">A display string describing the attendees (e.g., "12 people").</param>
-    /// <param name="agenda">A brief agenda or description of the meeting topics.</param>
-    /// <param name="joinUrl">A URL to join the meeting directly.</param>
-    /// <param name="detailsUrl">A URL linking to the full meeting or calendar details.</param>
+    /// <param name="input">The structured input parameters for the meeting reminder card.</param>
     /// <returns>An Adaptive Card representing a meeting reminder.</returns>
-    public static AdaptiveCard CreateMeetingReminderCard(
-        string meetingTitle,
-        string organizer,
-        string date,
-        string time,
-        string location,
-        string attendees,
-        string agenda,
-        string joinUrl,
-        string detailsUrl)
+    public static AdaptiveCard CreateMeetingReminderCard(MeetingReminderCardInput input)
     {
         return AdaptiveCardBuilder.Create()
             .WithVersion("1.5")
@@ -221,25 +153,25 @@ public static class TeamsAdaptiveCards
                 .WithWeight(TextWeight.Bolder)
                 .WithWrap(true))
             .AddTextBlock(tb => tb
-                .WithText(meetingTitle)
+                .WithText(input.MeetingTitle)
                 .WithSize(TextSize.Medium)
                 .WithWrap(true))
             .AddFactSet(fs => fs
-                .AddFact("Organizer", organizer)
-                .AddFact("Date", date)
-                .AddFact("Time", time)
-                .AddFact("Location", location)
-                .AddFact("Attendees", attendees))
+                .AddFact("Organizer", input.Organizer)
+                .AddFact("Date", input.Date)
+                .AddFact("Time", input.Time)
+                .AddFact("Location", input.Location)
+                .AddFact("Attendees", input.Attendees))
             .AddTextBlock(tb => tb
-                .WithText(agenda)
+                .WithText(input.Agenda)
                 .WithWrap(true)
                 .WithIsSubtle())
             .AddAction(a => a
-                .OpenUrl(joinUrl)
+                .OpenUrl(input.JoinUrl)
                 .WithTitle("Join Meeting")
                 .WithStyle(ActionStyle.Positive))
             .AddAction(a => a
-                .OpenUrl(detailsUrl)
+                .OpenUrl(input.DetailsUrl)
                 .WithTitle("View Details"))
             .Build();
     }
@@ -248,28 +180,9 @@ public static class TeamsAdaptiveCards
     /// Creates an expense report card for finance team review with Approve and Reject actions.
     /// Reflects the Teams expense-report sample pattern used in finance approval workflows.
     /// </summary>
-    /// <param name="employeeName">The full name of the employee who submitted the report.</param>
-    /// <param name="employeeJobTitle">The job title and department of the employee.</param>
-    /// <param name="reportId">The unique identifier for the expense report.</param>
-    /// <param name="submittedDate">The date the report was submitted, formatted as a display string.</param>
-    /// <param name="category">The expense category (e.g., "Conference &amp; Training").</param>
-    /// <param name="totalAmount">The total monetary amount of the report.</param>
-    /// <param name="currency">The currency code (e.g., "USD").</param>
-    /// <param name="description">A description of the expenses incurred.</param>
-    /// <param name="reportUrl">A URL linking to the full expense report.</param>
-    /// <param name="employeeImageUrl">An optional URL for the employee's profile image.</param>
+    /// <param name="input">The structured input parameters for the expense report card.</param>
     /// <returns>An Adaptive Card representing an expense report for review.</returns>
-    public static AdaptiveCard CreateExpenseReportCard(
-        string employeeName,
-        string employeeJobTitle,
-        string reportId,
-        string submittedDate,
-        string category,
-        string totalAmount,
-        string currency,
-        string description,
-        string reportUrl,
-        string? employeeImageUrl = null)
+    public static AdaptiveCard CreateExpenseReportCard(ExpenseReportCardInput input)
     {
         return AdaptiveCardBuilder.Create()
             .WithVersion("1.5")
@@ -287,28 +200,28 @@ public static class TeamsAdaptiveCards
             .AddColumnSet(cs => cs
                 .AddColumn("auto", col => col
                     .AddImage(img => img
-                        .WithUrl(employeeImageUrl ?? string.Empty)
+                        .WithUrl(input.EmployeeImageUrl ?? string.Empty)
                         .WithSize(ImageSize.Small)
                         .WithStyle(ImageStyle.Person)))
                 .AddColumn("stretch", col => col
                     .WithVerticalContentAlignment(VerticalAlignment.Center)
                     .AddTextBlock(tb => tb
-                        .WithText(employeeName)
+                        .WithText(input.EmployeeName)
                         .WithWeight(TextWeight.Bolder)
                         .WithWrap(true))
                     .AddTextBlock(tb => tb
-                        .WithText(employeeJobTitle)
+                        .WithText(input.EmployeeJobTitle)
                         .WithIsSubtle()
                         .WithSize(TextSize.Small)
                         .WithWrap(true))))
             .AddFactSet(fs => fs
-                .AddFact("Report ID", reportId)
-                .AddFact("Submitted", submittedDate)
-                .AddFact("Category", category)
-                .AddFact("Total Amount", totalAmount)
-                .AddFact("Currency", currency))
+                .AddFact("Report ID", input.ReportId)
+                .AddFact("Submitted", input.SubmittedDate)
+                .AddFact("Category", input.Category)
+                .AddFact("Total Amount", input.TotalAmount)
+                .AddFact("Currency", input.Currency))
             .AddTextBlock(tb => tb
-                .WithText(description)
+                .WithText(input.Description)
                 .WithWrap(true)
                 .WithIsSubtle())
             .AddAction(a => a
@@ -318,7 +231,7 @@ public static class TeamsAdaptiveCards
                 .Submit("Reject")
                 .WithStyle(ActionStyle.Destructive))
             .AddAction(a => a
-                .OpenUrl(reportUrl)
+                .OpenUrl(input.ReportUrl)
                 .WithTitle("View Report"))
             .Build();
     }
