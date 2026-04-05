@@ -1,15 +1,14 @@
-using FluentCards.Samples;
 using Xunit;
 
 namespace FluentCards.Tests.Samples;
 
-public class TeamsSampleTests
+public class TeamsAdaptiveCardTests
 {
     [Fact]
-    public void TeamsSamples_CreateApprovalCard_ProducesValidCard()
+    public void TeamsAdaptiveCards_CreateApprovalCard_ProducesValidCard()
     {
         // Act
-        var card = TeamsSamples.CreateApprovalCard();
+        var card = TeamsAdaptiveCards.CreateApprovalCard();
 
         // Assert
         Assert.NotNull(card);
@@ -26,10 +25,10 @@ public class TeamsSampleTests
     }
 
     [Fact]
-    public void TeamsSamples_CreateApprovalCard_HasApproveAndDeclineActions()
+    public void TeamsAdaptiveCards_CreateApprovalCard_HasApproveAndDeclineActions()
     {
         // Act
-        var card = TeamsSamples.CreateApprovalCard();
+        var card = TeamsAdaptiveCards.CreateApprovalCard();
 
         // Assert
         Assert.NotNull(card.Actions);
@@ -40,10 +39,10 @@ public class TeamsSampleTests
     }
 
     [Fact]
-    public void TeamsSamples_CreateStatusUpdateCard_ProducesValidCard()
+    public void TeamsAdaptiveCards_CreateStatusUpdateCard_ProducesValidCard()
     {
         // Act
-        var card = TeamsSamples.CreateStatusUpdateCard();
+        var card = TeamsAdaptiveCards.CreateStatusUpdateCard();
 
         // Assert
         Assert.NotNull(card);
@@ -60,10 +59,10 @@ public class TeamsSampleTests
     }
 
     [Fact]
-    public void TeamsSamples_CreateStatusUpdateCard_HasViewProjectAction()
+    public void TeamsAdaptiveCards_CreateStatusUpdateCard_HasViewProjectAction()
     {
         // Act
-        var card = TeamsSamples.CreateStatusUpdateCard();
+        var card = TeamsAdaptiveCards.CreateStatusUpdateCard();
 
         // Assert
         Assert.NotNull(card.Actions);
@@ -73,10 +72,10 @@ public class TeamsSampleTests
     }
 
     [Fact]
-    public void TeamsSamples_CreateTaskUpdateCard_ProducesValidCard()
+    public void TeamsAdaptiveCards_CreateTaskUpdateCard_ProducesValidCard()
     {
         // Act
-        var card = TeamsSamples.CreateTaskUpdateCard();
+        var card = TeamsAdaptiveCards.CreateTaskUpdateCard();
 
         // Assert
         Assert.NotNull(card);
@@ -93,10 +92,10 @@ public class TeamsSampleTests
     }
 
     [Fact]
-    public void TeamsSamples_CreateTaskUpdateCard_HasViewAndAcknowledgeActions()
+    public void TeamsAdaptiveCards_CreateTaskUpdateCard_HasViewAndAcknowledgeActions()
     {
         // Act
-        var card = TeamsSamples.CreateTaskUpdateCard();
+        var card = TeamsAdaptiveCards.CreateTaskUpdateCard();
 
         // Assert
         Assert.NotNull(card.Actions);
@@ -105,10 +104,10 @@ public class TeamsSampleTests
     }
 
     [Fact]
-    public void TeamsSamples_CreateMeetingReminderCard_ProducesValidCard()
+    public void TeamsAdaptiveCards_CreateMeetingReminderCard_ProducesValidCard()
     {
         // Act
-        var card = TeamsSamples.CreateMeetingReminderCard();
+        var card = TeamsAdaptiveCards.CreateMeetingReminderCard();
 
         // Assert
         Assert.NotNull(card);
@@ -124,10 +123,10 @@ public class TeamsSampleTests
     }
 
     [Fact]
-    public void TeamsSamples_CreateMeetingReminderCard_HasJoinMeetingAction()
+    public void TeamsAdaptiveCards_CreateMeetingReminderCard_HasJoinMeetingAction()
     {
         // Act
-        var card = TeamsSamples.CreateMeetingReminderCard();
+        var card = TeamsAdaptiveCards.CreateMeetingReminderCard();
 
         // Assert
         Assert.NotNull(card.Actions);
@@ -137,10 +136,10 @@ public class TeamsSampleTests
     }
 
     [Fact]
-    public void TeamsSamples_CreateExpenseReportCard_ProducesValidCard()
+    public void TeamsAdaptiveCards_CreateExpenseReportCard_ProducesValidCard()
     {
         // Act
-        var card = TeamsSamples.CreateExpenseReportCard();
+        var card = TeamsAdaptiveCards.CreateExpenseReportCard();
 
         // Assert
         Assert.NotNull(card);
@@ -158,10 +157,10 @@ public class TeamsSampleTests
     }
 
     [Fact]
-    public void TeamsSamples_CreateExpenseReportCard_HasApproveRejectAndViewActions()
+    public void TeamsAdaptiveCards_CreateExpenseReportCard_HasApproveRejectAndViewActions()
     {
         // Act
-        var card = TeamsSamples.CreateExpenseReportCard();
+        var card = TeamsAdaptiveCards.CreateExpenseReportCard();
 
         // Assert
         Assert.NotNull(card.Actions);
@@ -172,16 +171,16 @@ public class TeamsSampleTests
     }
 
     [Fact]
-    public void AllTeamsSamples_SerializeToValidJson()
+    public void AllTeamsAdaptiveCards_SerializeToValidJson()
     {
         // Arrange
         var cards = new[]
         {
-            TeamsSamples.CreateApprovalCard(),
-            TeamsSamples.CreateStatusUpdateCard(),
-            TeamsSamples.CreateTaskUpdateCard(),
-            TeamsSamples.CreateMeetingReminderCard(),
-            TeamsSamples.CreateExpenseReportCard()
+            TeamsAdaptiveCards.CreateApprovalCard(),
+            TeamsAdaptiveCards.CreateStatusUpdateCard(),
+            TeamsAdaptiveCards.CreateTaskUpdateCard(),
+            TeamsAdaptiveCards.CreateMeetingReminderCard(),
+            TeamsAdaptiveCards.CreateExpenseReportCard()
         };
 
         // Act & Assert

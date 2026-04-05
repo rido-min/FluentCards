@@ -276,11 +276,11 @@ public class SampleCardTests
             RichContentSample.CreateTableCard(),
             RichContentSample.CreateMediaCard(),
             RichContentSample.CreateComprehensiveCard(),
-            TeamsSamples.CreateApprovalCard(),
-            TeamsSamples.CreateStatusUpdateCard(),
-            TeamsSamples.CreateTaskUpdateCard(),
-            TeamsSamples.CreateMeetingReminderCard(),
-            TeamsSamples.CreateExpenseReportCard()
+            TeamsAdaptiveCards.CreateApprovalCard(),
+            TeamsAdaptiveCards.CreateStatusUpdateCard(),
+            TeamsAdaptiveCards.CreateTaskUpdateCard(),
+            TeamsAdaptiveCards.CreateMeetingReminderCard(),
+            TeamsAdaptiveCards.CreateExpenseReportCard()
         };
 
         // Act & Assert

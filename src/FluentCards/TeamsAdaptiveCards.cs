@@ -1,10 +1,10 @@
-namespace FluentCards.Samples;
+namespace FluentCards;
 
 /// <summary>
-/// Demonstrates creating Microsoft Teams-style Adaptive Cards using the FluentCards fluent API,
+/// Provides helper methods for creating Microsoft Teams-style Adaptive Cards using the FluentCards fluent API,
 /// reflecting common patterns from the Teams Adaptive Card Samples collection.
 /// </summary>
-public static class TeamsSamples
+public static class TeamsAdaptiveCards
 {
     /// <summary>
     /// Creates an approval request card with Approve and Decline actions.
