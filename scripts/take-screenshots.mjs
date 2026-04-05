@@ -61,11 +61,8 @@ async function main() {
       await page.goto(`${BASE_URL}/?card=${slug}`);
       await page.waitForSelector('[data-rendered="true"]', { timeout: 15000 });
 
-      // Small settle delay for iframe paint
-      await page.waitForTimeout(500);
-
       const outputPath = path.join(screenshotsDir, filename);
-      await page.locator('#ac-renderer').screenshot({ path: outputPath });
+      await page.locator('#card-container').screenshot({ path: outputPath });
       await page.close();
       console.log(`  Saved: docs/screenshots/${filename}`);
     }
