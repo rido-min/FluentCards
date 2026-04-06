@@ -187,6 +187,8 @@ jobs:
     needs: node
     steps:
     - uses: actions/checkout@v5
+      with:
+        fetch-depth: 0
 
     - name: Setup Node.js
       uses: actions/setup-node@v5
@@ -197,9 +199,17 @@ jobs:
       run: npm install
       working-directory: node
 
+    - name: Stamp version
+      run: npm run setversion
+      working-directory: node
+
     - name: Pack
       run: npm pack
       working-directory: node/fluent-cards
+
+    - name: Reset version
+      run: npm run resetversion
+      working-directory: node
 
     - name: Upload npm package
       uses: actions/upload-artifact@v5
