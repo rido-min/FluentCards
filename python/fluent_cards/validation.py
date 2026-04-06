@@ -8,6 +8,8 @@ from .enums import ValidationSeverity
 
 @dataclass(frozen=True)
 class ValidationIssue:
+    """Describes a single validation issue found in an Adaptive Card."""
+
     severity: ValidationSeverity
     path: str
     code: str
@@ -15,6 +17,8 @@ class ValidationIssue:
 
 
 class AdaptiveCardValidationError(Exception):
+    """Raised by validate_and_throw when an Adaptive Card contains validation errors."""
+
     def __init__(self, errors: list[ValidationIssue]):
         self.errors = errors
         self.message = _format_message(errors)
@@ -32,6 +36,14 @@ KNOWN_VERSIONS = {'1.0', '1.1', '1.2', '1.3', '1.4', '1.5', '1.6'}
 
 
 def validate(card: dict) -> list[ValidationIssue]:
+    """Validates an Adaptive Card and returns a list of validation issues.
+
+    Args:
+        card: The Adaptive Card dictionary to validate.
+
+    Returns:
+        A list of ValidationIssue instances describing any problems found.
+    """
     issues: list[ValidationIssue] = []
     ids: set[str] = set()
     _validate_card(card, issues, ids)
@@ -42,6 +54,14 @@ def validate(card: dict) -> list[ValidationIssue]:
 
 
 def validate_and_throw(card: dict) -> None:
+    """Validates an Adaptive Card and raises AdaptiveCardValidationError if errors are found.
+
+    Args:
+        card: The Adaptive Card dictionary to validate.
+
+    Raises:
+        AdaptiveCardValidationError: If any validation issues with severity Error are found.
+    """
     errors = [i for i in validate(card) if i.severity == ValidationSeverity.Error]
     if errors:
         raise AdaptiveCardValidationError(errors)

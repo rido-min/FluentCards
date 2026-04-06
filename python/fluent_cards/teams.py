@@ -298,6 +298,22 @@ class TeamsAdaptiveCards:
         description: str,
         requester_image_url: Optional[str] = None,
     ) -> dict:
+        """Creates an approval request card with Approve and Decline actions.
+
+        Args:
+            requester_name: The display name of the person making the request.
+            submitted_date: The date the request was submitted.
+            title: The title of the approval request.
+            category: The category of the request.
+            amount: The amount being requested.
+            business_unit: The business unit associated with the request.
+            due_date: The due date for the approval decision.
+            description: A description of the approval request.
+            requester_image_url: Optional URL of the requester's avatar image.
+
+        Returns:
+            The configured Adaptive Card dictionary.
+        """
         return create_approval_card(
             requester_name=requester_name,
             submitted_date=submitted_date,
@@ -323,6 +339,23 @@ class TeamsAdaptiveCards:
         notes: str,
         project_url: str,
     ) -> dict:
+        """Creates a status update notification card showing the current state of a project or task.
+
+        Args:
+            card_title: The title displayed on the card.
+            team_name: The name of the team posting the update.
+            update_date: The date of the status update.
+            project: The project name.
+            status: The current project status.
+            sprint: The current sprint identifier.
+            completion: The completion percentage or label.
+            updated_by: The name of the person posting the update.
+            notes: Additional notes or comments about the status.
+            project_url: URL linking to the project.
+
+        Returns:
+            The configured Adaptive Card dictionary.
+        """
         return create_status_update_card(
             card_title=card_title,
             team_name=team_name,
@@ -347,6 +380,21 @@ class TeamsAdaptiveCards:
         description: str,
         task_url: str,
     ) -> dict:
+        """Creates a task assignment notification card informing the recipient of a newly assigned task.
+
+        Args:
+            task_name: The name of the assigned task.
+            project: The project the task belongs to.
+            assigned_by: The name of the person who assigned the task.
+            due_date: The due date for the task.
+            estimate: The time estimate for the task.
+            priority: The priority label for the task.
+            description: A description of the task.
+            task_url: URL linking to the task details.
+
+        Returns:
+            The configured Adaptive Card dictionary.
+        """
         return create_task_update_card(
             task_name=task_name,
             project=project,
@@ -370,6 +418,22 @@ class TeamsAdaptiveCards:
         join_url: str,
         details_url: str,
     ) -> dict:
+        """Creates a meeting reminder card with meeting details and a join link.
+
+        Args:
+            meeting_title: The title of the meeting.
+            organizer: The name of the meeting organizer.
+            date: The date of the meeting.
+            time: The time of the meeting.
+            location: The location or meeting room.
+            attendees: A description of the attendees.
+            agenda: The meeting agenda or summary.
+            join_url: URL to join the meeting.
+            details_url: URL to view full meeting details.
+
+        Returns:
+            The configured Adaptive Card dictionary.
+        """
         return create_meeting_reminder_card(
             meeting_title=meeting_title,
             organizer=organizer,
@@ -395,6 +459,23 @@ class TeamsAdaptiveCards:
         report_url: str,
         employee_image_url: Optional[str] = None,
     ) -> dict:
+        """Creates an expense report card for finance team review with Approve and Reject actions.
+
+        Args:
+            employee_name: The name of the employee submitting the expense report.
+            employee_job_title: The job title of the employee.
+            report_id: The unique identifier for the expense report.
+            submitted_date: The date the report was submitted.
+            category: The expense category.
+            total_amount: The total amount of the expense.
+            currency: The currency of the expense.
+            description: A description of the expenses.
+            report_url: URL linking to the full expense report.
+            employee_image_url: Optional URL of the employee's avatar image.
+
+        Returns:
+            The configured Adaptive Card dictionary.
+        """
         return create_expense_report_card(
             employee_name=employee_name,
             employee_job_title=employee_job_title,
