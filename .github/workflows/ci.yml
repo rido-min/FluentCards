@@ -19,8 +19,12 @@ permissions:
 
 jobs:
   dotnet:
-    name: .NET
-    runs-on: ubuntu-latest
+    name: .NET (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
     defaults:
       run:
         working-directory: dotnet
@@ -58,9 +62,11 @@ jobs:
           fail_ci_if_error: false
 
       - name: Pack
+        if: matrix.os == 'ubuntu-latest'
         run: dotnet pack src/FluentCards/FluentCards.csproj --configuration ${{ env.CONFIGURATION }} --no-build --output ./nupkg
 
       - name: Upload NuGet artifacts
+        if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v5
         with:
           name: nuget-package
@@ -69,8 +75,12 @@ jobs:
             dotnet/nupkg/*.snupkg
 
   node:
-    name: Node.js
-    runs-on: ubuntu-latest
+    name: Node.js (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
     defaults:
       run:
         working-directory: node
@@ -104,30 +114,34 @@ jobs:
         run: npm run typecheck
 
       - name: Stamp version
+        if: matrix.os == 'ubuntu-latest'
         working-directory: node/packages/fluent-cards
         run: ../../node_modules/.bin/nbgv-setversion
 
       - name: Pack
+        if: matrix.os == 'ubuntu-latest'
         working-directory: node/packages/fluent-cards
         run: npm pack
 
       - name: Reset version
-        if: always()
+        if: always() && matrix.os == 'ubuntu-latest'
         working-directory: node/packages/fluent-cards
         run: ../../node_modules/.bin/nbgv-setversion --reset
 
       - name: Upload npm artifact
+        if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v5
         with:
           name: npm-package
           path: node/packages/fluent-cards/*.tgz
 
   python:
-    name: Python ${{ matrix.python-version }}
-    runs-on: ubuntu-latest
+    name: Python ${{ matrix.python-version }} (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
+        os: [ubuntu-latest, windows-latest]
         python-version: ['3.10', '3.12']
     defaults:
       run:
@@ -156,11 +170,11 @@ jobs:
           fail_ci_if_error: false
 
       - name: Install nbgv
-        if: matrix.python-version == '3.12'
+        if: matrix.python-version == '3.12' && matrix.os == 'ubuntu-latest'
         run: pip install nbgv-python
 
       - name: Stamp version
-        if: matrix.python-version == '3.12'
+        if: matrix.python-version == '3.12' && matrix.os == 'ubuntu-latest'
         run: |
           VERSION=$(python -c "
           from nbgv_python.runner import NbgvRunner
@@ -172,25 +186,29 @@ jobs:
           sed -i "s/^version = .*/version = \"$VERSION\"/" pyproject.toml
 
       - name: Build distribution
-        if: matrix.python-version == '3.12'
+        if: matrix.python-version == '3.12' && matrix.os == 'ubuntu-latest'
         run: |
           pip install build
           python -m build
 
       - name: Reset version
-        if: always() && matrix.python-version == '3.12'
+        if: always() && matrix.python-version == '3.12' && matrix.os == 'ubuntu-latest'
         run: git checkout -- pyproject.toml
 
       - name: Upload Python artifacts
-        if: matrix.python-version == '3.12'
+        if: matrix.python-version == '3.12' && matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v5
         with:
           name: python-dist
           path: python/dist/*
 
   go:
-    name: Go
-    runs-on: ubuntu-latest
+    name: Go (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
     defaults:
       run:
         working-directory: go

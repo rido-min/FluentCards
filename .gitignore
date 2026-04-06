@@ -10,6 +10,11 @@
 node/**/dist/
 node/**/coverage/
 
+.vs/
+launchSettings.json
+appsettings*.json
+
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
