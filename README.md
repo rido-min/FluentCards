@@ -13,6 +13,7 @@ A multi-language library for building [Adaptive Cards](https://adaptivecards.io/
 | C# / .NET 8 | [`dotnet/`](dotnet/) | [![NuGet](https://img.shields.io/nuget/v/FluentCards.svg)](https://www.nuget.org/packages/FluentCards) |
 | TypeScript / Node.js | [`node/`](node/) | npm (coming soon) |
 | Python | [`python/`](python/) | PyPI (coming soon) |
+| Go | [`go/`](go/) | [![Go Reference](https://pkg.go.dev/badge/github.com/rido-min/FluentCards/go/fluentcards.svg)](https://pkg.go.dev/github.com/rido-min/FluentCards/go/fluentcards) |
 
 ## Quick Start
 
@@ -77,6 +78,29 @@ card = (AdaptiveCardBuilder.create()
     .build())
 
 print(card.to_json())
+```
+
+### Go
+
+```bash
+go get github.com/rido-min/FluentCards/go
+```
+
+```go
+import "github.com/rido-min/FluentCards/go/fluentcards"
+
+card := fluentcards.NewAdaptiveCardBuilder().
+    WithVersion("1.5").
+    AddTextBlock(func(tb *fluentcards.TextBlockBuilder) {
+        tb.WithText("Hello, FluentCards!").
+            WithSize(fluentcards.TextSizeLarge).
+            WithWeight(fluentcards.TextWeightBolder).
+            WithWrap(true)
+    }).
+    Build()
+
+json, _ := fluentcards.ToJSON(card)
+fmt.Println(json)
 ```
 
 ## Documentation
