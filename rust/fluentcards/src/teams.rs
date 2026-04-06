@@ -135,11 +135,11 @@ impl TeamsCards {
                     .with_is_subtle(true);
             })
             .add_action(|a| {
-                a.submit(Some("Approve"))
+                a.submit("Approve")
                     .with_style(ActionStyle::Positive);
             })
             .add_action(|a| {
-                a.submit(Some("Decline"))
+                a.submit("Decline")
                     .with_style(ActionStyle::Destructive);
             })
             .build()
@@ -249,7 +249,7 @@ impl TeamsCards {
                 a.open_url(&task_url).with_title("View Task");
             })
             .add_action(|a| {
-                a.submit(Some("Acknowledge"))
+                a.submit("Acknowledge")
                     .with_style(ActionStyle::Positive);
             })
             .build()
@@ -376,11 +376,11 @@ impl TeamsCards {
                     .with_is_subtle(true);
             })
             .add_action(|a| {
-                a.submit(Some("Approve"))
+                a.submit("Approve")
                     .with_style(ActionStyle::Positive);
             })
             .add_action(|a| {
-                a.submit(Some("Reject"))
+                a.submit("Reject")
                     .with_style(ActionStyle::Destructive);
             })
             .add_action(move |a| {

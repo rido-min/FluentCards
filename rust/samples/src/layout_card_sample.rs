@@ -33,7 +33,7 @@ pub fn create_two_column_card() -> Card {
             });
         })
         .add_action(|a| {
-            a.submit(Some("Add to Cart"))
+            a.submit("Add to Cart")
                 .with_style(ActionStyle::Positive);
         })
         .build()

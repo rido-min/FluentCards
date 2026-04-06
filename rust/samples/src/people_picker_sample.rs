@@ -11,7 +11,7 @@ pub fn create_people_picker_card() -> Card {
                 .with_choices_data("graph.microsoft.com/users");
         })
         .add_action(|a| {
-            a.submit(Some("Submit"));
+            a.submit("Submit");
         })
         .build()
 }

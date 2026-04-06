@@ -24,56 +24,48 @@ impl ActionBuilder {
         self
     }
 
-    /// Creates an Action.Submit action.
-    pub fn submit(&mut self, title: Option<&str>) -> &mut Self {
+    /// Creates an Action.Submit action with an optional title.
+    pub fn submit(&mut self, title: &str) -> &mut Self {
         let mut data = Card::new();
         data.insert("type".into(), Value::String("Action.Submit".into()));
-        if let Some(t) = title {
-            if !t.is_empty() {
-                data.insert("title".into(), Value::String(t.into()));
-            }
+        if !title.is_empty() {
+            data.insert("title".into(), Value::String(title.into()));
         }
         self.data = Some(data);
         self
     }
 
-    /// Creates an Action.ShowCard action.
-    pub fn show_card(&mut self, title: Option<&str>) -> &mut Self {
+    /// Creates an Action.ShowCard action with an optional title.
+    pub fn show_card(&mut self, title: &str) -> &mut Self {
         let mut data = Card::new();
         data.insert("type".into(), Value::String("Action.ShowCard".into()));
-        if let Some(t) = title {
-            if !t.is_empty() {
-                data.insert("title".into(), Value::String(t.into()));
-            }
+        if !title.is_empty() {
+            data.insert("title".into(), Value::String(title.into()));
         }
         self.data = Some(data);
         self
     }
 
-    /// Creates an Action.ToggleVisibility action.
-    pub fn toggle_visibility(&mut self, title: Option<&str>) -> &mut Self {
+    /// Creates an Action.ToggleVisibility action with an optional title.
+    pub fn toggle_visibility(&mut self, title: &str) -> &mut Self {
         let mut data = Card::new();
         data.insert(
             "type".into(),
             Value::String("Action.ToggleVisibility".into()),
         );
-        if let Some(t) = title {
-            if !t.is_empty() {
-                data.insert("title".into(), Value::String(t.into()));
-            }
+        if !title.is_empty() {
+            data.insert("title".into(), Value::String(title.into()));
         }
         self.data = Some(data);
         self
     }
 
-    /// Creates an Action.Execute action.
-    pub fn execute(&mut self, title: Option<&str>) -> &mut Self {
+    /// Creates an Action.Execute action with an optional title.
+    pub fn execute(&mut self, title: &str) -> &mut Self {
         let mut data = Card::new();
         data.insert("type".into(), Value::String("Action.Execute".into()));
-        if let Some(t) = title {
-            if !t.is_empty() {
-                data.insert("title".into(), Value::String(t.into()));
-            }
+        if !title.is_empty() {
+            data.insert("title".into(), Value::String(title.into()));
         }
         self.data = Some(data);
         self

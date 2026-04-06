@@ -107,18 +107,24 @@ Pre-built card layouts for Microsoft Teams:
 ```rust
 use fluent_cards::*;
 
-let card = teams_approval_card(ApprovalCardParams {
+let card = TeamsCards::approval_card(&ApprovalCardParams {
     requester_name: "Alice".into(),
     title: "Budget Request".into(),
-    // ...
-    ..Default::default()
+    // populate the remaining required fields here
+    submitted_date: "2025-01-15".into(),
+    category: "Travel".into(),
+    amount: "$1,200.00".into(),
+    business_unit: "Engineering".into(),
+    due_date: "2025-01-30".into(),
+    description: "Conference travel expenses".into(),
+    requester_image_url: None,
 });
 
 // Also available:
-// teams_status_update_card(StatusUpdateCardParams { ... })
-// teams_task_update_card(TaskUpdateCardParams { ... })
-// teams_meeting_reminder_card(MeetingReminderCardParams { ... })
-// teams_expense_report_card(ExpenseReportCardParams { ... })
+// TeamsCards::status_update_card(&StatusUpdateCardParams { ... })
+// TeamsCards::task_update_card(&TaskUpdateCardParams { ... })
+// TeamsCards::meeting_reminder_card(&MeetingReminderCardParams { ... })
+// TeamsCards::expense_report_card(&ExpenseReportCardParams { ... })
 ```
 
 ## Project layout

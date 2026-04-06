@@ -9,5 +9,5 @@ keywords = ["adaptive-cards", "fluent", "builder", "cards"]
 categories = ["web-programming"]
 
 [dependencies]
-serde = "1"
-serde_json = "1"
+serde = "1.0.228"
+serde_json = "1.0.149"

@@ -252,7 +252,7 @@ mod tests {
                 tb.with_text("Round trip").with_size(crate::TextSize::Large);
             })
             .add_action(|a| {
-                a.submit(Some("OK")).with_style(crate::ActionStyle::Positive);
+                a.submit("OK").with_style(crate::ActionStyle::Positive);
             })
             .build();
         let json = to_json(&original).unwrap();

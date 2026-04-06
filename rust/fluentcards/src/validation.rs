@@ -15,7 +15,7 @@ pub struct ValidationIssue {
     pub message: String,
 }
 
-/// Error returned by `validate_and_panic` when error-severity issues are found.
+/// Panic payload used by `validate_and_panic` when error-severity issues are found.
 #[derive(Debug, Clone)]
 pub struct AdaptiveCardValidationError {
     pub issues: Vec<ValidationIssue>,

@@ -185,7 +185,7 @@ pub fn create_comprehensive_card() -> Card {
                 .with_title("View on GitHub");
         })
         .add_action(|a| {
-            a.submit(Some("Get Notified"))
+            a.submit("Get Notified")
                 .with_style(ActionStyle::Positive);
         })
         .build()

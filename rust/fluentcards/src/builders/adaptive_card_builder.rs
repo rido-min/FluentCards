@@ -407,7 +407,7 @@ mod tests {
         let card = AdaptiveCardBuilder::new()
             .add_text_block(|tb| { tb.with_text("x"); })
             .add_action(|a| {
-                a.submit(Some("Click me"));
+                a.submit("Click me");
             })
             .build();
         let actions = card["actions"].as_array().unwrap();

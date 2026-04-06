@@ -30,7 +30,7 @@ pub fn create_contact_form() -> Card {
                 .with_max_length(500);
         })
         .add_action(|a| {
-            a.submit(Some("Send Message"))
+            a.submit("Send Message")
                 .with_style(ActionStyle::Positive);
         })
         .build()
@@ -61,7 +61,7 @@ pub fn create_survey_form() -> Card {
                 .with_is_multiline(true);
         })
         .add_action(|a| {
-            a.submit(Some("Submit Survey"))
+            a.submit("Submit Survey")
                 .with_style(ActionStyle::Positive);
         })
         .build()
@@ -95,7 +95,7 @@ pub fn create_registration_form() -> Card {
                 .with_value("true");
         })
         .add_action(|a| {
-            a.submit(Some("Register"))
+            a.submit("Register")
                 .with_style(ActionStyle::Positive);
         })
         .build()
