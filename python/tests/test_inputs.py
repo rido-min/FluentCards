@@ -129,6 +129,17 @@ class TestInputChoiceSetBuilder:
         assert input_['choices'][0]['title'] == 'Reading'
         assert input_['choices'][0]['value'] == 'reading'
 
+    def test_with_choices_data_sets_data_query_payload(self):
+        input_ = (InputChoiceSetBuilder()
+                  .with_id('people-picker')
+                  .with_choices_data('graph.microsoft.com/users')
+                  .build())
+
+        choices_data = input_['choices.data']
+        assert choices_data is not None
+        assert choices_data['type'] == 'Data.Query'
+        assert choices_data['dataset'] == 'graph.microsoft.com/users'
+
 
 class TestAdaptiveCardBuilderInputMethods:
     def test_adds_all_input_types_to_body_in_order(self):

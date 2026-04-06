@@ -123,3 +123,17 @@ func TestInputChoiceSetBuilder(t *testing.T) {
 	assert.Equal(t, "Red", choices[0].(map[string]any)["title"])
 	assert.Equal(t, "red", choices[0].(map[string]any)["value"])
 }
+
+func TestInputChoiceSetBuilder_WithChoicesData(t *testing.T) {
+	t.Parallel()
+	card := fluentcards.NewAdaptiveCardBuilder().
+		AddInputChoiceSet(func(ics *fluentcards.InputChoiceSetBuilder) {
+			ics.WithID("people-picker").
+				WithChoicesData("graph.microsoft.com/users")
+		}).Build()
+	el := card["body"].([]any)[0].(map[string]any)
+	choicesData, ok := el["choices.data"].(map[string]any)
+	require.True(t, ok, "choices.data should be present")
+	assert.Equal(t, "Data.Query", choicesData["type"])
+	assert.Equal(t, "graph.microsoft.com/users", choicesData["dataset"])
+}

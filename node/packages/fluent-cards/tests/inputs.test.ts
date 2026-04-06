@@ -136,6 +136,18 @@ describe('InputChoiceSetBuilder', () => {
     assert.equal(input.choices![0].title, 'Reading');
     assert.equal(input.choices![0].value, 'reading');
   });
+
+  it('sets choices.data with a Data.Query payload', () => {
+    const input = new InputChoiceSetBuilder()
+      .withId('people-picker')
+      .withChoicesData('graph.microsoft.com/users')
+      .build();
+
+    const choicesData = input['choices.data'];
+    assert.ok(choicesData, 'choices.data should be present');
+    assert.equal(choicesData!.type, 'Data.Query');
+    assert.equal(choicesData!.dataset, 'graph.microsoft.com/users');
+  });
 });
 
 describe('AdaptiveCardBuilder input methods', () => {
