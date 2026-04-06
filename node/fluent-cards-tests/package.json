@@ -3,13 +3,18 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "test": "node --test --require tsx/cjs test/actions.test.ts test/builder.test.ts test/elements.test.ts test/inputs.test.ts test/serialization.test.ts test/teams.test.ts test/validation.test.ts",
+    "test": "c8 --reporter=lcov --reporter=text node --test --require tsx/cjs test/actions.test.ts test/builder.test.ts test/elements.test.ts test/inputs.test.ts test/serialization.test.ts test/teams.test.ts test/validation.test.ts",
     "typecheck": "tsc --noEmit"
+  },
+  "c8": {
+    "include": ["../fluent-cards/src/**/*.ts"],
+    "report-dir": "coverage"
   },
   "dependencies": {
     "fluent-cards": "*"
   },
   "devDependencies": {
+    "c8": "^10.1.3",
     "tsx": "^4.19.3",
     "@types/node": "^22.0.0",
     "typescript": "^5.7.3"

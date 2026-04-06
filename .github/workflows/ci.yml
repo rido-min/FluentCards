@@ -2,10 +2,14 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
-    tags: [ 'v*' ]
+    branches: [main]
+    tags: ['v*']
   pull_request:
-    branches: [ main ]
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
   DOTNET_VERSION: '8.0.x'
@@ -15,230 +19,171 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  dotnet:
+    name: .NET
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
     defaults:
       run:
         working-directory: dotnet
     steps:
-    - uses: actions/checkout@v5
-      with:
-        fetch-depth: 0
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
-    - name: Restore dependencies
-      run: dotnet restore
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('dotnet/**/*.csproj', 'dotnet/**/Directory.Build.props') }}
+          restore-keys: nuget-${{ runner.os }}-
 
-    - name: Build
-      run: dotnet build --configuration ${{ env.CONFIGURATION }} --no-restore
+      - name: Restore
+        run: dotnet restore
 
-    - name: Test
-      run: dotnet test --configuration ${{ env.CONFIGURATION }} --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage
+      - name: Build
+        run: dotnet build --configuration ${{ env.CONFIGURATION }} --no-restore
 
-    - name: Upload coverage reports
-      uses: codecov/codecov-action@v5
-      with:
-        directory: dotnet/coverage
-        fail_ci_if_error: false
+      - name: Test
+        run: dotnet test --configuration ${{ env.CONFIGURATION }} --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage
 
-  aot-test:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    defaults:
-      run:
-        working-directory: dotnet
-    steps:
-    - uses: actions/checkout@v5
-      with:
-        fetch-depth: 0
+      - name: Upload coverage
+        uses: codecov/codecov-action@v5
+        with:
+          directory: dotnet/coverage
+          flags: dotnet
+          fail_ci_if_error: false
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Pack
+        run: dotnet pack src/FluentCards/FluentCards.csproj --configuration ${{ env.CONFIGURATION }} --no-build --output ./nupkg
 
-    - name: Build with trimming analysis
-      run: dotnet build src/FluentCards/FluentCards.csproj --configuration Release /p:EnableTrimAnalyzer=true
-
-    - name: Verify AOT compatibility
-      run: dotnet publish samples/FluentCards.Samples/FluentCards.Samples.csproj -c Release -r linux-x64 --self-contained -p:PublishAot=true -p:StripSymbols=true || echo "AOT warnings logged"
-
-  benchmark:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    permissions:
-      contents: read
-    defaults:
-      run:
-        working-directory: dotnet
-    steps:
-    - uses: actions/checkout@v5
-      with:
-        fetch-depth: 0
-
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
-
-    - name: Run benchmarks
-      run: dotnet run --project benchmarks/FluentCards.Benchmarks/FluentCards.Benchmarks.csproj -c Release -- --filter "*" --exporters json
-
-    - name: Upload benchmark results
-      uses: actions/upload-artifact@v5
-      with:
-        name: benchmark-results
-        path: dotnet/BenchmarkDotNet.Artifacts/
+      - name: Upload NuGet artifacts
+        uses: actions/upload-artifact@v5
+        with:
+          name: nuget-package
+          path: |
+            dotnet/nupkg/*.nupkg
+            dotnet/nupkg/*.snupkg
 
   node:
+    name: Node.js
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
     defaults:
       run:
         working-directory: node
     steps:
-    - uses: actions/checkout@v5
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v5
-      with:
-        node-version: '22'
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
 
-    - name: Install dependencies
-      run: npm install
+      - name: Install dependencies
+        run: npm install
 
-    - name: Test
-      run: npm test
+      - name: Build
+        run: npm run build
 
-    - name: Typecheck
-      run: npm run typecheck
+      - name: Test
+        run: npm test
 
-  pack:
+      - name: Upload coverage
+        uses: codecov/codecov-action@v5
+        with:
+          files: node/fluent-cards-tests/coverage/lcov.info
+          flags: node
+          fail_ci_if_error: false
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Stamp version
+        run: npm run setversion
+
+      - name: Pack
+        working-directory: node/fluent-cards
+        run: npm pack
+
+      - name: Reset version
+        if: always()
+        run: npm run resetversion
+
+      - name: Upload npm artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: npm-package
+          path: node/fluent-cards/*.tgz
+
+  python:
+    name: Python ${{ matrix.python-version }}
     runs-on: ubuntu-latest
-    needs: [build, aot-test]
-    permissions:
-      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.10', '3.12']
     defaults:
       run:
-        working-directory: dotnet
+        working-directory: python
     steps:
-    - uses: actions/checkout@v5
-      with:
-        fetch-depth: 0
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
 
-    - name: Pack
-      run: dotnet pack src/FluentCards/FluentCards.csproj --configuration Release --output ./nupkg
+      - name: Install dependencies
+        run: pip install -e ".[dev]"
 
-    - name: Upload NuGet package
-      uses: actions/upload-artifact@v5
-      with:
-        name: nuget-package
-        path: dotnet/nupkg/*.nupkg
+      - name: Test
+        run: pytest --cov --cov-report=xml
 
-    - name: Upload Symbol package
-      uses: actions/upload-artifact@v5
-      with:
-        name: symbol-package
-        path: dotnet/nupkg/*.snupkg
+      - name: Upload coverage
+        uses: codecov/codecov-action@v5
+        with:
+          files: python/coverage.xml
+          flags: python-${{ matrix.python-version }}
+          fail_ci_if_error: false
 
-  publish:
-    runs-on: ubuntu-latest
-    needs: pack
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
-    environment: nuget
-    permissions:
-      contents: read
-    steps:
-    - name: Download NuGet package
-      uses: actions/download-artifact@v5
-      with:
-        name: nuget-package
-        path: ./nupkg
+      - name: Setup Node.js (for nbgv)
+        if: matrix.python-version == '3.12'
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
 
-    - name: Download Symbol package
-      uses: actions/download-artifact@v5
-      with:
-        name: symbol-package
-        path: ./nupkg
+      - name: Install nbgv
+        if: matrix.python-version == '3.12'
+        run: npm install -g nerdbank-gitversioning
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Stamp version
+        if: matrix.python-version == '3.12'
+        run: |
+          VERSION=$(nbgv get-version -v SemVer2)
+          echo "Stamping version: $VERSION"
+          sed -i "s/^version = .*/version = \"$VERSION\"/" pyproject.toml
 
-    - name: Publish to NuGet
-      run: dotnet nuget push ./nupkg/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+      - name: Build distribution
+        if: matrix.python-version == '3.12'
+        run: |
+          pip install build
+          python -m build
 
-  npm-pack:
-    runs-on: ubuntu-latest
-    needs: node
-    steps:
-    - uses: actions/checkout@v5
-      with:
-        fetch-depth: 0
+      - name: Reset version
+        if: always() && matrix.python-version == '3.12'
+        run: git checkout -- pyproject.toml
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v5
-      with:
-        node-version: '22'
-
-    - name: Install dependencies
-      run: npm install
-      working-directory: node
-
-    - name: Stamp version
-      run: npm run setversion
-      working-directory: node
-
-    - name: Pack
-      run: npm pack
-      working-directory: node/fluent-cards
-
-    - name: Reset version
-      run: npm run resetversion
-      working-directory: node
-
-    - name: Upload npm package
-      uses: actions/upload-artifact@v5
-      with:
-        name: npm-package
-        path: node/fluent-cards/*.tgz
-
-  npm-publish:
-    runs-on: ubuntu-latest
-    needs: npm-pack
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
-    environment: npm
-    permissions:
-      contents: read
-      id-token: write
-    steps:
-    - name: Download npm package
-      uses: actions/download-artifact@v5
-      with:
-        name: npm-package
-        path: ./npm-dist
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v5
-      with:
-        node-version: '22'
-        registry-url: 'https://registry.npmjs.org'
-
-    - name: Publish to npm
-      run: npm publish ./npm-dist/*.tgz --provenance --access public
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Upload Python artifacts
+        if: matrix.python-version == '3.12'
+        uses: actions/upload-artifact@v5
+        with:
+          name: python-dist
+          path: python/dist/*
