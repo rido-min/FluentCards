@@ -106,6 +106,8 @@ func demonstrateValidateAndPanic() {
 							fmt.Printf("  [%s] %s\n", e.Code, e.Message)
 						}
 					}
+				} else {
+					panic(r)
 				}
 			}
 		}()
