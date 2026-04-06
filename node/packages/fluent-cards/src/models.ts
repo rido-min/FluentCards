@@ -269,6 +269,14 @@ export interface InputToggle extends InputElementBase {
   wrap?: boolean;
 }
 
+/** A dynamic data query for fetching choices from a data source (Adaptive Cards 1.6+). */
+export interface DataQuery {
+  type: 'Data.Query';
+  dataset: string;
+  count?: number;
+  skip?: number;
+}
+
 /** A dropdown or multi-select input with predefined choices. */
 export interface InputChoiceSet extends InputElementBase {
   type: 'Input.ChoiceSet';
@@ -278,6 +286,7 @@ export interface InputChoiceSet extends InputElementBase {
   value?: string;
   placeholder?: string;
   wrap?: boolean;
+  'choices.data'?: DataQuery;
 }
 
 /** A single choice option within an {@link InputChoiceSet}. */

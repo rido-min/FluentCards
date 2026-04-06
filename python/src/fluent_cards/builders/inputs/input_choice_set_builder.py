@@ -145,6 +145,18 @@ class InputChoiceSetBuilder:
             self._input['choices'].append(title_or_choice)
         return self
 
+    def with_choices_data(self, dataset: str) -> InputChoiceSetBuilder:
+        """Sets a dynamic data query for fetching choices from a data source (Adaptive Cards 1.6+).
+
+        Args:
+            dataset: The dataset identifier, e.g. 'graph.microsoft.com/users'.
+
+        Returns:
+            The builder instance for method chaining.
+        """
+        self._input['choices.data'] = {'type': 'Data.Query', 'dataset': dataset}
+        return self
+
     def build(self) -> dict:
         """Builds and returns the configured Input.ChoiceSet dictionary.
 

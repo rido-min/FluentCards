@@ -1,4 +1,4 @@
-import type { InputChoiceSet, Choice } from '../../models.js';
+import type { InputChoiceSet, Choice, DataQuery } from '../../models.js';
 import { ChoiceInputStyle, Spacing } from '../../enums.js';
 
 /** Fluent builder for {@link InputChoiceSet} elements. */
@@ -38,6 +38,9 @@ export class InputChoiceSetBuilder {
     }
     return this;
   }
+
+  /** Sets a dynamic data query for fetching choices from a data source (Adaptive Cards 1.6+). @param dataset The dataset identifier, e.g. `"graph.microsoft.com/users"`. @returns The builder instance for method chaining. */
+  withChoicesData(dataset: string): this { this.input['choices.data'] = { type: 'Data.Query', dataset } as DataQuery; return this; }
 
   /** Builds and returns the configured InputChoiceSet element. @returns The configured InputChoiceSet instance. */
   build(): InputChoiceSet { return this.input; }

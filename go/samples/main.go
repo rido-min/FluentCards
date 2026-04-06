@@ -71,4 +71,32 @@ func main() {
 	for _, issue := range invalidIssues {
 		fmt.Printf("  [%s] %s at '%s': %s\n", issue.Severity, issue.Code, issue.Path, issue.Message)
 	}
+
+	// Run all samples and print their JSON
+	printSample("Welcome Card", createWelcomeCard())
+	printSample("Notification Card", createNotificationCard())
+	printSample("Image Card", createImageCard())
+	printSample("Contact Form", createContactForm())
+	printSample("Survey Form", createSurveyForm())
+	printSample("Registration Form", createRegistrationForm())
+	printSample("Two Column Card", createTwoColumnCard())
+	printSample("Styled Container Card", createStyledContainerCard())
+	printSample("Fact Set Card", createFactSetCard())
+	printSample("Nested Container Card", createNestedContainerCard())
+	printSample("Rich Text Card", createRichTextCard())
+	printSample("Image Set Card", createImageSetCard())
+	printSample("Table Card", createTableCard())
+	printSample("Media Card", createMediaCard())
+	printSample("Comprehensive Card", createComprehensiveCard())
+	printSample("People Picker Card", createPeoplePickerCard())
+}
+
+func printSample(name string, card fluentcards.Card) {
+	fmt.Printf("\n=== %s ===\n", name)
+	json, err := fluentcards.ToJSON(card)
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+	fmt.Println(json)
 }

@@ -30,6 +30,7 @@ export type {
   InputToggle,
   InputChoiceSet,
   Choice,
+  DataQuery,
   OpenUrlAction,
   SubmitAction,
   ShowCardAction,

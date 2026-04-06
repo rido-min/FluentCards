@@ -73,6 +73,13 @@ func (b *InputChoiceSetBuilder) AddChoiceMap(choice map[string]any) *InputChoice
 	return b
 }
 
+// WithChoicesData sets a dynamic data query for fetching choices from a data source (Adaptive Cards 1.6+).
+// dataset is the dataset identifier, e.g. "graph.microsoft.com/users".
+func (b *InputChoiceSetBuilder) WithChoicesData(dataset string) *InputChoiceSetBuilder {
+	b.data["choices.data"] = map[string]any{"type": "Data.Query", "dataset": dataset}
+	return b
+}
+
 func (b *InputChoiceSetBuilder) Build() Card {
 	return b.data
 }
