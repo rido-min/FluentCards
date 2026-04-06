@@ -3,37 +3,27 @@
     {
       "src": [
         {
-          "files": ["src/FluentCards/**/*.cs"],
-          "src": "dotnet"
+          "files": ["src/FluentCards/FluentCards.csproj"],
+          "src": "."
         }
       ],
-      "dest": "api/dotnet",
+      "dest": "api",
       "disableGitFeatures": false
     }
   ],
   "build": {
     "content": [
       {
-        "files": ["api/dotnet/**.yml", "api/dotnet/index.md"]
+        "files": ["api/**.yml", "api/index.md"]
       },
       {
-        "files": ["docs/**.md"],
-        "exclude": ["_site/**", "obj/**"]
-      },
-      {
-        "files": ["toc.yml", "*.md"],
-        "exclude": ["_site/**"]
+        "files": ["toc.yml"]
       }
     ],
-    "resource": [
-      {
-        "files": ["docs/screenshots/**"]
-      }
-    ],
-    "dest": "_site",
+    "dest": "../_site/api/dotnet",
     "globalMetadata": {
       "_appName": "FluentCards",
-      "_appTitle": "FluentCards",
+      "_appTitle": "FluentCards (.NET)",
       "_enableSearch": true
     }
   }

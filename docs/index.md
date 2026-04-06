@@ -6,7 +6,7 @@ FluentCards is a multi-language library for building [Adaptive Cards](https://ad
 
 | Language | Package | API Reference |
 |---|---|---|
-| C# / .NET 8 | [![NuGet](https://img.shields.io/nuget/v/FluentCards.svg)](https://www.nuget.org/packages/FluentCards) | [.NET API Reference](../api/dotnet/) |
+| C# / .NET 8 | [![NuGet](https://img.shields.io/nuget/v/FluentCards.svg)](https://www.nuget.org/packages/FluentCards) | .NET API Reference |
 | TypeScript / Node.js | npm (coming soon) | [TypeScript API Reference](./api-node.md) |
 | Python | PyPI (coming soon) | [Python API Reference](./api-python.md) |
 
