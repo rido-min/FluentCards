@@ -66,18 +66,18 @@ pip install fluent-cards
 ```
 
 ```python
-from fluent_cards import AdaptiveCardBuilder, TextSize, TextWeight
+from fluent_cards import AdaptiveCardBuilder, TextSize, TextWeight, to_json
 
 card = (AdaptiveCardBuilder.create()
     .with_version('1.5')
     .add_text_block(lambda tb: tb
         .with_text('Hello, FluentCards!')
-        .with_size(TextSize.LARGE)
-        .with_weight(TextWeight.BOLDER)
+        .with_size(TextSize.Large)
+        .with_weight(TextWeight.Bolder)
         .with_wrap(True))
     .build())
 
-print(card.to_json())
+print(to_json(card))
 ```
 
 ### Go
