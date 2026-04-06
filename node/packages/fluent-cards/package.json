@@ -16,8 +16,18 @@
   ],
   "scripts": {
     "build": "tsc",
-    "typecheck": "tsc --noEmit",
+    "test": "c8 --reporter=lcov --reporter=text node --test --require tsx/cjs tests/actions.test.ts tests/builder.test.ts tests/elements.test.ts tests/inputs.test.ts tests/serialization.test.ts tests/teams.test.ts tests/validation.test.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tests/tsconfig.json",
     "prepublishOnly": "npm run build"
+  },
+  "c8": {
+    "include": ["src/**/*.ts"],
+    "report-dir": "tests/coverage"
+  },
+  "devDependencies": {
+    "c8": "^10.1.3",
+    "tsx": "^4.19.3",
+    "@types/node": "^22.0.0"
   },
   "keywords": [
     "adaptive-cards",
@@ -29,7 +39,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/rido-min/FluentCards.git",
-    "directory": "node/src"
+    "directory": "node/packages/fluent-cards"
   },
   "engines": {
     "node": ">=16"

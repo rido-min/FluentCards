@@ -2,9 +2,8 @@
   "name": "fluent-cards-workspace",
   "private": true,
   "workspaces": [
-    "src/fluent-cards",
-    "tests/fluent-cards-tests",
-    "samples/fluent-cards-samples"
+    "packages/fluent-cards",
+    "samples"
   ],
   "scripts": {
     "build": "npm run build --workspaces --if-present",

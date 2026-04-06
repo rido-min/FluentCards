@@ -9,8 +9,8 @@
     "skipLibCheck": true,
     "noEmit": true,
     "paths": {
-      "fluent-cards": ["../../src/fluent-cards/src/index.ts"]
+      "fluent-cards": ["../src/index.ts"]
     }
   },
-  "include": ["test/**/*"]
+  "include": ["./**/*"]
 }

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "tsx src/program.ts"
+    "start": "tsx program.ts"
   },
   "dependencies": {
     "fluent-cards": "*"

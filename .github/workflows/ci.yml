@@ -96,7 +96,7 @@ jobs:
       - name: Upload coverage
         uses: codecov/codecov-action@v5
         with:
-          files: node/tests/fluent-cards-tests/coverage/lcov.info
+          files: node/packages/fluent-cards/tests/coverage/lcov.info
           flags: node
           fail_ci_if_error: false
 
@@ -104,23 +104,23 @@ jobs:
         run: npm run typecheck
 
       - name: Stamp version
-        working-directory: node/src/fluent-cards
+        working-directory: node/packages/fluent-cards
         run: ../../node_modules/.bin/nbgv-setversion
 
       - name: Pack
-        working-directory: node/src/fluent-cards
+        working-directory: node/packages/fluent-cards
         run: npm pack
 
       - name: Reset version
         if: always()
-        working-directory: node/src/fluent-cards
+        working-directory: node/packages/fluent-cards
         run: ../../node_modules/.bin/nbgv-setversion --reset
 
       - name: Upload npm artifact
         uses: actions/upload-artifact@v5
         with:
           name: npm-package
-          path: node/src/fluent-cards/*.tgz
+          path: node/packages/fluent-cards/*.tgz
 
   python:
     name: Python ${{ matrix.python-version }}
