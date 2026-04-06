@@ -1,5 +1,5 @@
 import type { InputChoiceSet, Choice } from '../../models.js';
-import { ChoiceInputStyle } from '../../enums.js';
+import { ChoiceInputStyle, Spacing } from '../../enums.js';
 
 /** Fluent builder for {@link InputChoiceSet} elements. */
 export class InputChoiceSetBuilder {
@@ -14,7 +14,7 @@ export class InputChoiceSetBuilder {
   withWrap(wrap = true): this { this.input.wrap = wrap; return this; }
   withIsRequired(isRequired = true): this { this.input.isRequired = isRequired; return this; }
   withErrorMessage(errorMessage: string): this { this.input.errorMessage = errorMessage; return this; }
-  withSpacing(spacing: string): this { this.input.spacing = spacing; return this; }
+  withSpacing(spacing: Spacing): this { this.input.spacing = spacing; return this; }
 
   addChoice(title: string, value: string): this;
   addChoice(choice: Choice): this;

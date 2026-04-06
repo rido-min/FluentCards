@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "test": "node --test --require tsx/cjs test/actions.test.ts test/builder.test.ts test/elements.test.ts test/inputs.test.ts test/serialization.test.ts test/validation.test.ts",
+    "test": "node --test --require tsx/cjs test/actions.test.ts test/builder.test.ts test/elements.test.ts test/inputs.test.ts test/serialization.test.ts test/teams.test.ts test/validation.test.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

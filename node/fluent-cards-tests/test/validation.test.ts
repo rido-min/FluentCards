@@ -3,6 +3,9 @@ import assert from 'node:assert/strict';
 import {
   AdaptiveCardBuilder,
   InputTextBuilder,
+  InputToggleBuilder,
+  InputNumberBuilder,
+  InputDateBuilder,
   validate,
   validateAndThrow,
   AdaptiveCardValidationError,
@@ -50,17 +53,17 @@ describe('validate', () => {
     assert.ok(issues.some((i) => i.code === 'EMPTY_CARD' && i.severity === ValidationSeverity.Warning));
   });
 
-  it('reports EMPTY_TEXT warning for blank TextBlock', () => {
+  it('reports MISSING_TEXT error for blank TextBlock', () => {
     const card = AdaptiveCardBuilder.create()
       .withVersion('1.5')
       .addTextBlock((b) => b.withText(''))
       .build();
 
     const issues = validate(card);
-    const warn = issues.find((i) => i.code === 'EMPTY_TEXT');
-    assert.ok(warn);
-    assert.equal(warn!.severity, ValidationSeverity.Warning);
-    assert.equal(warn!.path, 'body[0].text');
+    const err = issues.find((i) => i.code === 'MISSING_TEXT');
+    assert.ok(err);
+    assert.equal(err!.severity, ValidationSeverity.Error);
+    assert.equal(err!.path, 'body[0].text');
   });
 
   it('reports MISSING_IMAGE_URL error for Image without url', () => {
@@ -166,7 +169,7 @@ describe('validate', () => {
       .build();
 
     const issues = validate(card);
-    assert.ok(issues.some((i) => i.code === 'EMPTY_TEXT' && i.path === 'body[0].items[0].text'));
+    assert.ok(issues.some((i) => i.code === 'MISSING_TEXT' && i.path === 'body[0].items[0].text'));
     assert.ok(issues.some((i) => i.code === 'MISSING_INPUT_ID' && i.path === 'body[0].items[1].id'));
   });
 
@@ -234,5 +237,87 @@ describe('AdaptiveCardValidationError', () => {
     ];
     const ex = new AdaptiveCardValidationError(errors);
     assert.deepEqual(ex.errors, errors);
+  });
+});
+
+describe('validation — new rules', () => {
+  it('reports MISSING_TOGGLE_TITLE error for Input.Toggle without title', () => {
+    const card = AdaptiveCardBuilder.create()
+      .withVersion('1.5')
+      .addInputToggle(b => b.withId('t1'))
+      .build();
+    const issues = validate(card);
+    assert.ok(issues.some((i) => i.code === 'MISSING_TOGGLE_TITLE' && i.severity === ValidationSeverity.Error));
+  });
+
+  it('reports MIN_GREATER_THAN_MAX for Input.Number with invalid range', () => {
+    const input = new InputNumberBuilder().withId('n1').withMin(10).withMax(5).build();
+    const card = AdaptiveCardBuilder.create().withVersion('1.5').addElement(input).build();
+    const issues = validate(card);
+    assert.ok(issues.some((i) => i.code === 'MIN_GREATER_THAN_MAX' && i.severity === ValidationSeverity.Error));
+  });
+
+  it('reports MIN_GREATER_THAN_MAX for Input.Date with invalid range', () => {
+    const input = new InputDateBuilder().withId('d1').withMin('2024-12-31').withMax('2024-01-01').build();
+    const card = AdaptiveCardBuilder.create().withVersion('1.5').addElement(input).build();
+    const issues = validate(card);
+    assert.ok(issues.some((i) => i.code === 'MIN_GREATER_THAN_MAX'));
+  });
+
+  it('reports MISSING_FACTS error for empty FactSet', () => {
+    const card = AdaptiveCardBuilder.create()
+      .withVersion('1.5')
+      .addFactSet(() => {})
+      .build();
+    const issues = validate(card);
+    assert.ok(issues.some((i) => i.code === 'MISSING_FACTS' && i.severity === ValidationSeverity.Error));
+  });
+
+  it('reports MISSING_INLINES error for empty RichTextBlock', () => {
+    const card = AdaptiveCardBuilder.create()
+      .withVersion('1.5')
+      .addRichTextBlock(() => {})
+      .build();
+    const issues = validate(card);
+    assert.ok(issues.some((i) => i.code === 'MISSING_INLINES' && i.severity === ValidationSeverity.Error));
+  });
+
+  it('reports INVALID_SELECT_ACTION for ShowCard used as selectAction', () => {
+    const card = AdaptiveCardBuilder.create()
+      .withVersion('1.5')
+      .addTextBlock((b) => b.withText('Hello'))
+      .withSelectAction({ type: 'Action.ShowCard', title: 'Show' })
+      .build();
+    const issues = validate(card);
+    assert.ok(issues.some((i) => i.code === 'INVALID_SELECT_ACTION' && i.severity === ValidationSeverity.Error));
+  });
+
+  it('reports DUPLICATE_ID warning when two elements share an id', () => {
+    const card = AdaptiveCardBuilder.create()
+      .withVersion('1.5')
+      .addTextBlock((b) => b.withId('same').withText('First'))
+      .addTextBlock((b) => b.withId('same').withText('Second'))
+      .build();
+    const issues = validate(card);
+    assert.ok(issues.some((i) => i.code === 'DUPLICATE_ID' && i.severity === ValidationSeverity.Warning));
+  });
+
+  it('reports VERSION_MISMATCH warning for Table in a v1.0 card', () => {
+    const card = AdaptiveCardBuilder.create()
+      .withVersion('1.0')
+      .addTable(() => {})
+      .build();
+    const issues = validate(card);
+    assert.ok(issues.some((i) => i.code === 'VERSION_MISMATCH' && i.path.startsWith('body[0]')));
+  });
+
+  it('reports VERSION_MISMATCH for refresh used with v1.0', () => {
+    const card = AdaptiveCardBuilder.create()
+      .withVersion('1.0')
+      .addTextBlock((b) => b.withText('Hello'))
+      .withRefresh((r) => r.withAction((a) => a.execute('Refresh')))
+      .build();
+    const issues = validate(card);
+    assert.ok(issues.some((i) => i.code === 'VERSION_MISMATCH' && i.path === 'refresh'));
   });
 });

@@ -1,5 +1,5 @@
 import type { Image, AdaptiveAction } from '../models.js';
-import { HorizontalAlignment, ImageSize, ImageStyle } from '../enums.js';
+import { HorizontalAlignment, ImageSize, ImageStyle, Spacing } from '../enums.js';
 import { ActionBuilder } from './ActionBuilder.js';
 
 /** Fluent builder for {@link Image} elements. */
@@ -15,7 +15,7 @@ export class ImageBuilder {
   withHeight(height: string): this { this.image.height = height; return this; }
   withHorizontalAlignment(alignment: HorizontalAlignment): this { this.image.horizontalAlignment = alignment; return this; }
   withBackgroundColor(color: string): this { this.image.backgroundColor = color; return this; }
-  withSpacing(spacing: string): this { this.image.spacing = spacing; return this; }
+  withSpacing(spacing: Spacing): this { this.image.spacing = spacing; return this; }
   withSeparator(separator: boolean): this { this.image.separator = separator; return this; }
 
   withSelectAction(configure: (b: ActionBuilder) => void): this {

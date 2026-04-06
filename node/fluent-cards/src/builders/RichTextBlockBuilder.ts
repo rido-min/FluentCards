@@ -1,5 +1,5 @@
 import type { RichTextBlock, TextRun } from '../models.js';
-import { HorizontalAlignment } from '../enums.js';
+import { HorizontalAlignment, Spacing } from '../enums.js';
 import { TextRunBuilder } from './TextRunBuilder.js';
 
 /** Fluent builder for {@link RichTextBlock} elements. */
@@ -8,7 +8,7 @@ export class RichTextBlockBuilder {
 
   withId(id: string): this { this.richText.id = id; return this; }
   withHorizontalAlignment(alignment: HorizontalAlignment): this { this.richText.horizontalAlignment = alignment; return this; }
-  withSpacing(spacing: string): this { this.richText.spacing = spacing; return this; }
+  withSpacing(spacing: Spacing): this { this.richText.spacing = spacing; return this; }
 
   addText(text: string): this {
     this.richText.inlines!.push(text);

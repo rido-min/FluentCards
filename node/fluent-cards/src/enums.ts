@@ -101,6 +101,47 @@ export enum BackgroundImageFillMode {
   Repeat = 'repeat',
 }
 
+/** Specifies the font type for text rendering. */
+export enum FontType {
+  Default = 'default',
+  Monospace = 'monospace',
+}
+
+/** Controls the amount of space between elements. */
+export enum Spacing {
+  Default = 'default',
+  None = 'none',
+  Small = 'small',
+  Medium = 'medium',
+  Large = 'large',
+  ExtraLarge = 'extraLarge',
+  Padding = 'padding',
+}
+
+/** Controls whether an action appears as primary or secondary. */
+export enum ActionMode {
+  Primary = 'primary',
+  Secondary = 'secondary',
+}
+
+/** Controls where an input label is placed relative to the input (v1.6+). */
+export enum InputLabelPosition {
+  Inline = 'inline',
+  Above = 'above',
+}
+
+/** Controls the visual style of an input (v1.6+). */
+export enum InputStyle {
+  Default = 'default',
+  RevealOnHover = 'revealOnHover',
+}
+
+/** Controls the semantic style of a TextBlock (v1.5+). */
+export enum TextBlockStyle {
+  Default = 'default',
+  Heading = 'heading',
+}
+
 /** Specifies the severity of a validation issue. */
 export enum ValidationSeverity {
   Info = 'info',

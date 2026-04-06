@@ -1,5 +1,5 @@
 import type { Table, TableColumnDefinition, TableRow } from '../models.js';
-import { ContainerStyle, HorizontalAlignment, VerticalAlignment } from '../enums.js';
+import { ContainerStyle, HorizontalAlignment, VerticalAlignment, Spacing } from '../enums.js';
 
 /** Fluent builder for {@link Table} elements. */
 export class TableBuilder {
@@ -11,7 +11,7 @@ export class TableBuilder {
   withGridStyle(gridStyle: ContainerStyle): this { this.table.gridStyle = gridStyle; return this; }
   withHorizontalCellContentAlignment(alignment: HorizontalAlignment): this { this.table.horizontalCellContentAlignment = alignment; return this; }
   withVerticalCellContentAlignment(alignment: VerticalAlignment): this { this.table.verticalCellContentAlignment = alignment; return this; }
-  withSpacing(spacing: string): this { this.table.spacing = spacing; return this; }
+  withSpacing(spacing: Spacing): this { this.table.spacing = spacing; return this; }
 
   addColumn(column: TableColumnDefinition): this {
     this.table.columns!.push(column);

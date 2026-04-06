@@ -1,5 +1,5 @@
 import type { InputText, AdaptiveAction } from '../../models.js';
-import { TextInputStyle } from '../../enums.js';
+import { TextInputStyle, Spacing } from '../../enums.js';
 import { ActionBuilder } from '../ActionBuilder.js';
 
 /** Fluent builder for {@link InputText} elements. */
@@ -16,7 +16,7 @@ export class InputTextBuilder {
   withRegex(regex: string): this { this.input.regex = regex; return this; }
   withIsRequired(isRequired = true): this { this.input.isRequired = isRequired; return this; }
   withErrorMessage(errorMessage: string): this { this.input.errorMessage = errorMessage; return this; }
-  withSpacing(spacing: string): this { this.input.spacing = spacing; return this; }
+  withSpacing(spacing: Spacing): this { this.input.spacing = spacing; return this; }
 
   withInlineAction(configure: (b: ActionBuilder) => void): this {
     const b = new ActionBuilder();

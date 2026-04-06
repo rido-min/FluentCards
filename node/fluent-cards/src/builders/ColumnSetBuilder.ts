@@ -1,5 +1,5 @@
 import type { ColumnSet } from '../models.js';
-import { ContainerStyle, HorizontalAlignment } from '../enums.js';
+import { ContainerStyle, HorizontalAlignment, Spacing } from '../enums.js';
 import { ColumnBuilder } from './ColumnBuilder.js';
 import { ActionBuilder } from './ActionBuilder.js';
 
@@ -12,7 +12,7 @@ export class ColumnSetBuilder {
   withBleed(bleed = true): this { this.columnSet.bleed = bleed; return this; }
   withMinHeight(minHeight: string): this { this.columnSet.minHeight = minHeight; return this; }
   withHorizontalAlignment(alignment: HorizontalAlignment): this { this.columnSet.horizontalAlignment = alignment; return this; }
-  withSpacing(spacing: string): this { this.columnSet.spacing = spacing; return this; }
+  withSpacing(spacing: Spacing): this { this.columnSet.spacing = spacing; return this; }
   withSeparator(separator: boolean): this { this.columnSet.separator = separator; return this; }
 
   withSelectAction(configure: (b: ActionBuilder) => void): this {

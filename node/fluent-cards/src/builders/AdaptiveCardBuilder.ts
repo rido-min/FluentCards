@@ -2,12 +2,12 @@ import type {
   AdaptiveCard,
   AdaptiveAction,
   AdaptiveElement,
-  AuthenticationConfiguration,
   BackgroundImage,
   CardMetadata,
   Column,
   RefreshConfiguration,
 } from '../models.js';
+import { VerticalAlignment } from '../enums.js';
 import { TextBlockBuilder } from './TextBlockBuilder.js';
 import { ImageBuilder } from './ImageBuilder.js';
 import { ContainerBuilder } from './ContainerBuilder.js';
@@ -30,10 +30,20 @@ import { InputChoiceSetBuilder } from './inputs/InputChoiceSetBuilder.js';
 
 /** Fluent builder for creating {@link AdaptiveCard} instances. */
 export class AdaptiveCardBuilder {
+  private static readonly SCHEMA_URLS: Record<string, string> = {
+    '1.0': 'https://adaptivecards.io/schemas/1.0.0/adaptive-card.json',
+    '1.1': 'https://adaptivecards.io/schemas/1.1.0/adaptive-card.json',
+    '1.2': 'https://adaptivecards.io/schemas/1.2.0/adaptive-card.json',
+    '1.3': 'https://adaptivecards.io/schemas/1.3.0/adaptive-card.json',
+    '1.4': 'https://adaptivecards.io/schemas/1.4.0/adaptive-card.json',
+    '1.5': 'https://adaptivecards.io/schemas/1.5.0/adaptive-card.json',
+    '1.6': 'https://adaptivecards.io/schemas/1.6.0/adaptive-card.json',
+  };
+
   private readonly card: AdaptiveCard = {
     type: 'AdaptiveCard',
     version: '1.5',
-    '$schema': 'http://adaptivecards.io/schemas/adaptive-card.json',
+    '$schema': AdaptiveCardBuilder.SCHEMA_URLS['1.5'],
   };
 
   static create(): AdaptiveCardBuilder {
@@ -42,11 +52,53 @@ export class AdaptiveCardBuilder {
 
   withVersion(version: string): this {
     this.card.version = version;
+    this.card['$schema'] = AdaptiveCardBuilder.SCHEMA_URLS[version]
+      ?? 'http://adaptivecards.io/schemas/adaptive-card.json';
     return this;
   }
 
   withSchema(schema: string | undefined): this {
     this.card['$schema'] = schema;
+    return this;
+  }
+
+  withFallbackText(fallbackText: string): this {
+    this.card.fallbackText = fallbackText;
+    return this;
+  }
+
+  withSpeak(speak: string): this {
+    this.card.speak = speak;
+    return this;
+  }
+
+  withLang(lang: string): this {
+    this.card.lang = lang;
+    return this;
+  }
+
+  withRtl(rtl = true): this {
+    this.card.rtl = rtl;
+    return this;
+  }
+
+  withMinHeight(minHeight: string): this {
+    this.card.minHeight = minHeight;
+    return this;
+  }
+
+  withVerticalContentAlignment(alignment: VerticalAlignment): this {
+    this.card.verticalContentAlignment = alignment;
+    return this;
+  }
+
+  withBackgroundImage(backgroundImage: BackgroundImage): this {
+    this.card.backgroundImage = backgroundImage;
+    return this;
+  }
+
+  withSelectAction(action: AdaptiveAction): this {
+    this.card.selectAction = action;
     return this;
   }
 
@@ -168,6 +220,12 @@ export class AdaptiveCardBuilder {
     const b = new InputChoiceSetBuilder();
     configure(b);
     this.pushBody(b.build());
+    return this;
+  }
+
+  /** Add a pre-built element directly to the card body. */
+  addElement(element: AdaptiveElement): this {
+    this.pushBody(element);
     return this;
   }
 

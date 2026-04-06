@@ -1,3 +1,4 @@
+import { Spacing } from '../../enums.js';
 import type { InputNumber } from '../../models.js';
 
 /** Fluent builder for {@link InputNumber} elements. */
@@ -12,7 +13,7 @@ export class InputNumberBuilder {
   withMax(max: number): this { this.input.max = max; return this; }
   withIsRequired(isRequired = true): this { this.input.isRequired = isRequired; return this; }
   withErrorMessage(errorMessage: string): this { this.input.errorMessage = errorMessage; return this; }
-  withSpacing(spacing: string): this { this.input.spacing = spacing; return this; }
+  withSpacing(spacing: Spacing): this { this.input.spacing = spacing; return this; }
 
   build(): InputNumber { return this.input; }
 }

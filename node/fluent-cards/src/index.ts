@@ -54,11 +54,17 @@ export {
   ImageSize,
   ImageStyle,
   ActionStyle,
+  ActionMode,
   ContainerStyle,
+  FontType,
+  TextBlockStyle,
   TextInputStyle,
   ChoiceInputStyle,
   AssociatedInputs,
   BackgroundImageFillMode,
+  Spacing,
+  InputLabelPosition,
+  InputStyle,
   ValidationSeverity,
 } from './enums.js';
 
@@ -97,3 +103,13 @@ export {
   AdaptiveCardValidationError,
 } from './validation.js';
 export type { ValidationIssue } from './validation.js';
+
+// ─── Teams helpers ────────────────────────────────────────────────────────────
+export { TeamsAdaptiveCards } from './TeamsAdaptiveCards.js';
+export type {
+  ApprovalCardInput,
+  StatusUpdateCardInput,
+  TaskUpdateCardInput,
+  MeetingReminderCardInput,
+  ExpenseReportCardInput,
+} from './TeamsAdaptiveCards.js';

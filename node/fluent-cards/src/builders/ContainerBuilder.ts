@@ -1,5 +1,5 @@
 import type { Container, AdaptiveElement } from '../models.js';
-import { ContainerStyle, VerticalAlignment } from '../enums.js';
+import { ContainerStyle, VerticalAlignment, Spacing } from '../enums.js';
 import { TextBlockBuilder } from './TextBlockBuilder.js';
 import { ImageBuilder } from './ImageBuilder.js';
 import { ActionBuilder } from './ActionBuilder.js';
@@ -18,7 +18,7 @@ export class ContainerBuilder {
   withVerticalContentAlignment(alignment: VerticalAlignment): this { this.container.verticalContentAlignment = alignment; return this; }
   withBleed(bleed = true): this { this.container.bleed = bleed; return this; }
   withMinHeight(minHeight: string): this { this.container.minHeight = minHeight; return this; }
-  withSpacing(spacing: string): this { this.container.spacing = spacing; return this; }
+  withSpacing(spacing: Spacing): this { this.container.spacing = spacing; return this; }
   withSeparator(separator: boolean): this { this.container.separator = separator; return this; }
   withIsVisible(isVisible: boolean): this { this.container.isVisible = isVisible; return this; }
 

@@ -1,12 +1,18 @@
 import {
+  ActionMode,
   ActionStyle,
   AssociatedInputs,
   BackgroundImageFillMode,
   ChoiceInputStyle,
   ContainerStyle,
+  FontType,
   HorizontalAlignment,
   ImageSize,
   ImageStyle,
+  InputLabelPosition,
+  InputStyle,
+  Spacing,
+  TextBlockStyle,
   TextColor,
   TextInputStyle,
   TextSize,
@@ -19,7 +25,7 @@ import {
 export interface AdaptiveElementBase {
   id?: string;
   isVisible?: boolean;
-  spacing?: string;
+  spacing?: Spacing;
   separator?: boolean;
   /** "auto" | "stretch" */
   height?: string;
@@ -37,9 +43,13 @@ export interface TextBlock extends AdaptiveElementBase {
   size?: TextSize;
   weight?: TextWeight;
   color?: TextColor;
+  isSubtle?: boolean;
   wrap?: boolean;
   maxLines?: number;
   horizontalAlignment?: HorizontalAlignment;
+  fontType?: FontType;
+  style?: TextBlockStyle;
+  selectAction?: AdaptiveAction;
 }
 
 export interface Image extends AdaptiveElementBase {
@@ -187,6 +197,8 @@ export interface InputElementBase extends AdaptiveElementBase {
   label?: string;
   isRequired?: boolean;
   errorMessage?: string;
+  labelPosition?: InputLabelPosition;
+  inputStyle?: InputStyle;
 }
 
 export interface InputText extends InputElementBase {
@@ -274,6 +286,7 @@ export interface AdaptiveActionBase {
   title?: string;
   iconUrl?: string;
   style?: ActionStyle;
+  mode?: ActionMode;
   isEnabled?: boolean;
   tooltip?: string;
 }
@@ -366,6 +379,14 @@ export interface AdaptiveCard {
   '$schema'?: string;
   body?: AdaptiveElement[];
   actions?: AdaptiveAction[];
+  selectAction?: AdaptiveAction;
+  fallbackText?: string;
+  speak?: string;
+  lang?: string;
+  minHeight?: string;
+  verticalContentAlignment?: VerticalAlignment;
+  backgroundImage?: BackgroundImage;
+  rtl?: boolean;
   refresh?: RefreshConfiguration;
   authentication?: AuthenticationConfiguration;
   metadata?: CardMetadata;
