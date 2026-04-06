@@ -13,6 +13,8 @@
     "resetversion": "nbgv-setversion --reset"
   },
   "devDependencies": {
-    "nerdbank-gitversioning": "3.9.50"
+    "nerdbank-gitversioning": "^3.9.50",
+    "typescript": "^6.0.0"
+    
   }
 }
