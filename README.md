@@ -4,7 +4,14 @@
 [![NuGet](https://img.shields.io/nuget/v/FluentCards.svg)](https://www.nuget.org/packages/FluentCards)
 [![NuGet Downloads](https://img.shields.io/nuget/dt/FluentCards.svg)](https://www.nuget.org/packages/FluentCards)
 
-A .NET library for building [Adaptive Cards](https://adaptivecards.io/) using a fluent builder pattern with strong typing and JSON serialization powered by Source Generators.
+A multi-language library for building [Adaptive Cards](https://adaptivecards.io/) using a fluent builder pattern with strong typing and full schema validation.
+
+## Language Ports
+
+| Language | Folder | Package |
+|----------|--------|---------|
+| C# / .NET 8 | [`dotnet/`](dotnet/) | [![NuGet](https://img.shields.io/nuget/v/FluentCards.svg)](https://www.nuget.org/packages/FluentCards) |
+| TypeScript / Node.js | [`node/`](node/) | npm (coming soon) |
 
 ## Features
 
