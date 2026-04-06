@@ -10,6 +10,7 @@ FluentCards is a multi-language library. Each language port lives in its own top
 | `node/` | TypeScript / Node.js | Stable |
 | `python/` | Python 3.10+ | Stable |
 | `go/` | Go 1.22+ | Stable |
+| `rust/` | Rust 1.70+ | Stable |
 
 Shared assets (docs, screenshots, root README) live at the repository root.
 
@@ -42,7 +43,7 @@ When implementing a port for a new language, follow these steps:
 
 ## Sample Parity
 
-All four language ports share an identical set of sample programs. **When adding, removing, or changing a sample in one language, apply the equivalent change to all others.** The canonical sample list is:
+All five language ports share an identical set of sample programs. **When adding, removing, or changing a sample in one language, apply the equivalent change to all others.** The canonical sample list is:
 
 | Sample file (stem) | What it demonstrates |
 |--------------------|----------------------|
@@ -62,6 +63,7 @@ Naming conventions by language:
 | TypeScript | camelCase `.ts` | `basicCardSample.ts` |
 | Python | snake_case `.py` | `basic_card_sample.py` |
 | Go | snake_case `.go` | `basic_card_sample.go` |
+| Rust | snake_case `.rs` | `basic_card_sample.rs` |
 
 ---
 
@@ -182,6 +184,45 @@ go run .
 - Do not use `interface{}` — prefer `any` (Go 1.18+ alias).
 
 ### Constraints (go)
+- Keep diffs minimal and scoped to the request.
+- Update or add tests for any behavior change.
+- Do not modify CI, dependency versions, or security settings unless asked.
+- Never print, log, or commit secrets.
+
+---
+
+## rust/
+
+### Verification
+```
+cd rust
+cargo build && cargo test
+```
+To run samples:
+```
+cd rust/samples
+cargo run
+```
+
+### Environment
+- Rust 1.70+ (edition 2021). Runtime dependencies: `serde`, `serde_json`.
+- Library lives in `rust/fluentcards/` (crate `fluent-cards`). Tests are inline `#[cfg(test)]` modules. Samples live in `rust/samples/` as a separate binary crate.
+- Workspace root is `rust/Cargo.toml` with members `fluentcards` and `samples`.
+
+### Guardrails
+- This library implements the **Adaptive Cards 1.6.0 specification**. All elements, properties, actions, and enums must conform to the schema.
+- Enums use a `string_enum!` macro generating PascalCase variants (e.g., `TextSize::Large`, `TextWeight::Bolder`) that serialize to camelCase strings.
+- `build()` returns a `Card` which is `serde_json::Map<String, Value>`. Serialization is done via module-level `to_json(&card)` and `from_json(&str)`.
+- Validation is exposed via `validate(&card) -> Vec<ValidationIssue>` and `validate_and_panic(&card)`.
+- Builder pattern: `AdaptiveCardBuilder::new() → .with_x() / .add_x(|b| { b.with_y(...); }) → .build()`.
+- Closures passed to builder methods receive `&mut ChildBuilder` (e.g., `add_text_block(|tb| { tb.with_text("..."); })`).
+
+### Versioning
+- `Cargo.toml` contains a placeholder version (`0.0.0-placeholder`).
+- During CI, the version is computed from `version.json` via `nbgv-python` and stamped into `Cargo.toml` with `sed`, matching the Python port strategy.
+- After packaging, `Cargo.toml` is reset via `git checkout`.
+
+### Constraints (rust)
 - Keep diffs minimal and scoped to the request.
 - Update or add tests for any behavior change.
 - Do not modify CI, dependency versions, or security settings unless asked.

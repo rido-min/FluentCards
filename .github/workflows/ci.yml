@@ -215,3 +215,65 @@ jobs:
           files: go/coverage.out
           flags: go
           fail_ci_if_error: false
+
+  rust:
+    name: Rust
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: rust
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            rust/target/
+          key: cargo-${{ runner.os }}-${{ hashFiles('rust/**/Cargo.lock') }}
+          restore-keys: cargo-${{ runner.os }}-
+
+      - name: Build
+        run: cargo build --release
+
+      - name: Test
+        run: cargo test --release
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Stamp version
+        run: |
+          pip install nbgv-python
+          VERSION=$(python -c "
+          from nbgv_python.runner import NbgvRunner
+          from nbgv_python.versioning import normalize_version_field
+          ver = NbgvRunner().get_version()
+          print(normalize_version_field(ver['semver2'], field='SemVer2'))
+          ")
+          echo "Stamping version: $VERSION"
+          sed -i "s/^version = .*/version = \"$VERSION\"/" fluentcards/Cargo.toml
+
+      - name: Package
+        run: cargo package --manifest-path fluentcards/Cargo.toml --allow-dirty
+
+      - name: Reset version
+        if: always()
+        run: git checkout -- fluentcards/Cargo.toml
+
+      - name: Upload crate artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: rust-crate
+          path: rust/target/package/*.crate
