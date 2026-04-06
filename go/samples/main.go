@@ -7,7 +7,8 @@ import (
 )
 
 func main() {
-	fmt.Println("=== FluentCards Demo ===\n")
+	fmt.Println("=== FluentCards Demo ===")
+	fmt.Println()
 
 	// Create a card using the fluent builder pattern
 	card := fluentcards.NewAdaptiveCardBuilder().
