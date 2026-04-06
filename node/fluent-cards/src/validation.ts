@@ -16,6 +16,7 @@ export interface ValidationIssue {
 
 /** Thrown by {@link validateAndThrow} when errors are found. */
 export class AdaptiveCardValidationError extends Error {
+  /** @param errors The list of validation errors. */
   constructor(public readonly errors: ValidationIssue[]) {
     super(formatMessage(errors));
     this.name = 'AdaptiveCardValidationError';

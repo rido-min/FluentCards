@@ -22,6 +22,7 @@ import {
 
 // ─── Shared base ─────────────────────────────────────────────────────────────
 
+/** Base properties shared by all Adaptive Card body elements. */
 export interface AdaptiveElementBase {
   id?: string;
   isVisible?: boolean;
@@ -37,6 +38,7 @@ export interface AdaptiveElementBase {
 
 // ─── Concrete element models ─────────────────────────────────────────────────
 
+/** A text element that displays formatted text. */
 export interface TextBlock extends AdaptiveElementBase {
   type: 'TextBlock';
   text: string;
@@ -52,6 +54,7 @@ export interface TextBlock extends AdaptiveElementBase {
   selectAction?: AdaptiveAction;
 }
 
+/** An image element. */
 export interface Image extends AdaptiveElementBase {
   type: 'Image';
   url?: string;
@@ -66,6 +69,7 @@ export interface Image extends AdaptiveElementBase {
   selectAction?: AdaptiveAction;
 }
 
+/** A container that groups body elements together. */
 export interface Container extends AdaptiveElementBase {
   type: 'Container';
   items?: AdaptiveElement[];
@@ -77,6 +81,7 @@ export interface Container extends AdaptiveElementBase {
   selectAction?: AdaptiveAction;
 }
 
+/** A set of columns that divide horizontal space. */
 export interface ColumnSet extends AdaptiveElementBase {
   type: 'ColumnSet';
   columns?: Column[];
@@ -87,6 +92,7 @@ export interface ColumnSet extends AdaptiveElementBase {
   selectAction?: AdaptiveAction;
 }
 
+/** A single column within a {@link ColumnSet}. */
 export interface Column {
   type: 'Column';
   items?: AdaptiveElement[];
@@ -100,22 +106,26 @@ export interface Column {
   selectAction?: AdaptiveAction;
 }
 
+/** A set of name/value pairs displayed in a table layout. */
 export interface FactSet extends AdaptiveElementBase {
   type: 'FactSet';
   facts?: Fact[];
 }
 
+/** A single name/value pair within a {@link FactSet}. */
 export interface Fact {
   title?: string;
   value?: string;
 }
 
+/** A block of richly formatted text composed of inline {@link TextRun} elements. */
 export interface RichTextBlock extends AdaptiveElementBase {
   type: 'RichTextBlock';
   inlines?: (string | TextRun)[];
   horizontalAlignment?: HorizontalAlignment;
 }
 
+/** An inline text run with optional formatting, used inside {@link RichTextBlock}. */
 export interface TextRun {
   type: 'TextRun';
   text?: string;
@@ -130,11 +140,13 @@ export interface TextRun {
   selectAction?: AdaptiveAction;
 }
 
+/** A set of actions displayed as a row of buttons within the card body. */
 export interface ActionSet extends AdaptiveElementBase {
   type: 'ActionSet';
   actions?: AdaptiveAction[];
 }
 
+/** A media element that displays video or audio. */
 export interface Media extends AdaptiveElementBase {
   type: 'Media';
   sources?: MediaSource[];
@@ -142,17 +154,20 @@ export interface Media extends AdaptiveElementBase {
   altText?: string;
 }
 
+/** A single media source (URL + MIME type) within a {@link Media} element. */
 export interface MediaSource {
   mimeType?: string;
   url?: string;
 }
 
+/** A collection of images displayed as a gallery. */
 export interface ImageSet extends AdaptiveElementBase {
   type: 'ImageSet';
   images?: Image[];
   imageSize?: ImageSize;
 }
 
+/** A table element with rows and columns. */
 export interface Table extends AdaptiveElementBase {
   type: 'Table';
   columns?: TableColumnDefinition[];
@@ -164,6 +179,7 @@ export interface Table extends AdaptiveElementBase {
   verticalCellContentAlignment?: VerticalAlignment;
 }
 
+/** A single row within a {@link Table}. */
 export interface TableRow {
   type: 'TableRow';
   cells?: TableCell[];
@@ -172,6 +188,7 @@ export interface TableRow {
   verticalCellContentAlignment?: VerticalAlignment;
 }
 
+/** A single cell within a {@link TableRow}. */
 export interface TableCell {
   type: 'TableCell';
   items?: AdaptiveElement[];
@@ -184,6 +201,7 @@ export interface TableCell {
   rtl?: boolean;
 }
 
+/** Defines the width and alignment for a single column in a {@link Table}. */
 export interface TableColumnDefinition {
   width?: string;
   horizontalCellContentAlignment?: HorizontalAlignment;
@@ -192,6 +210,7 @@ export interface TableColumnDefinition {
 
 // ─── Input elements ──────────────────────────────────────────────────────────
 
+/** Base properties shared by all Adaptive Card input elements. */
 export interface InputElementBase extends AdaptiveElementBase {
   id: string;
   label?: string;
@@ -201,6 +220,7 @@ export interface InputElementBase extends AdaptiveElementBase {
   inputStyle?: InputStyle;
 }
 
+/** A single-line or multi-line text input. */
 export interface InputText extends InputElementBase {
   type: 'Input.Text';
   isMultiline?: boolean;
@@ -212,6 +232,7 @@ export interface InputText extends InputElementBase {
   inlineAction?: AdaptiveAction;
 }
 
+/** A numeric input field. */
 export interface InputNumber extends InputElementBase {
   type: 'Input.Number';
   min?: number;
@@ -220,6 +241,7 @@ export interface InputNumber extends InputElementBase {
   value?: number;
 }
 
+/** A date picker input. */
 export interface InputDate extends InputElementBase {
   type: 'Input.Date';
   min?: string;
@@ -228,6 +250,7 @@ export interface InputDate extends InputElementBase {
   value?: string;
 }
 
+/** A time picker input. */
 export interface InputTime extends InputElementBase {
   type: 'Input.Time';
   min?: string;
@@ -236,6 +259,7 @@ export interface InputTime extends InputElementBase {
   value?: string;
 }
 
+/** A toggle (checkbox) input. */
 export interface InputToggle extends InputElementBase {
   type: 'Input.Toggle';
   title: string;
@@ -245,6 +269,7 @@ export interface InputToggle extends InputElementBase {
   wrap?: boolean;
 }
 
+/** A dropdown or multi-select input with predefined choices. */
 export interface InputChoiceSet extends InputElementBase {
   type: 'Input.ChoiceSet';
   choices?: Choice[];
@@ -255,6 +280,7 @@ export interface InputChoiceSet extends InputElementBase {
   wrap?: boolean;
 }
 
+/** A single choice option within an {@link InputChoiceSet}. */
 export interface Choice {
   title: string;
   value: string;
@@ -281,6 +307,7 @@ export type AdaptiveElement =
 
 // ─── Action models ────────────────────────────────────────────────────────────
 
+/** Base properties shared by all Adaptive Card action types. */
 export interface AdaptiveActionBase {
   id?: string;
   title?: string;
@@ -291,27 +318,32 @@ export interface AdaptiveActionBase {
   tooltip?: string;
 }
 
+/** An action that opens a URL in a browser. */
 export interface OpenUrlAction extends AdaptiveActionBase {
   type: 'Action.OpenUrl';
   url: string;
 }
 
+/** An action that submits input data to the host. */
 export interface SubmitAction extends AdaptiveActionBase {
   type: 'Action.Submit';
   data?: unknown;
   associatedInputs?: AssociatedInputs;
 }
 
+/** An action that reveals an embedded card when clicked. */
 export interface ShowCardAction extends AdaptiveActionBase {
   type: 'Action.ShowCard';
   card?: AdaptiveCard;
 }
 
+/** An action that toggles the visibility of one or more elements. */
 export interface ToggleVisibilityAction extends AdaptiveActionBase {
   type: 'Action.ToggleVisibility';
   targetElements?: (string | TargetElement)[];
 }
 
+/** An action that executes a command with a verb on the host (Adaptive Cards Universal Action Model). */
 export interface ExecuteAction extends AdaptiveActionBase {
   type: 'Action.Execute';
   verb?: string;
@@ -327,6 +359,7 @@ export type AdaptiveAction =
   | ToggleVisibilityAction
   | ExecuteAction;
 
+/** Identifies an element whose visibility is toggled by {@link ToggleVisibilityAction}. */
 export interface TargetElement {
   elementId: string;
   isVisible?: boolean;
@@ -334,6 +367,7 @@ export interface TargetElement {
 
 // ─── Advanced configuration models ───────────────────────────────────────────
 
+/** Defines a background image with fill mode and alignment options. */
 export interface BackgroundImage {
   url?: string;
   fillMode?: BackgroundImageFillMode;
@@ -341,12 +375,14 @@ export interface BackgroundImage {
   verticalAlignment?: VerticalAlignment;
 }
 
+/** Configuration for automatic card refresh. */
 export interface RefreshConfiguration {
   action?: AdaptiveAction;
   userIds?: string[];
   expires?: string;
 }
 
+/** Configuration for OAuth/SSO authentication on the card. */
 export interface AuthenticationConfiguration {
   text?: string;
   connectionName?: string;
@@ -354,12 +390,14 @@ export interface AuthenticationConfiguration {
   buttons?: AuthCardButton[];
 }
 
+/** Describes the token exchange resource for SSO authentication. */
 export interface TokenExchangeResource {
   id?: string;
   uri?: string;
   providerId?: string;
 }
 
+/** A button shown in the authentication prompt. */
 export interface AuthCardButton {
   type: string;
   title?: string;
@@ -367,12 +405,14 @@ export interface AuthCardButton {
   value?: string;
 }
 
+/** Metadata associated with the card, such as the web URL for deep linking. */
 export interface CardMetadata {
   webUrl?: string;
 }
 
 // ─── Root card ───────────────────────────────────────────────────────────────
 
+/** The root Adaptive Card object. */
 export interface AdaptiveCard {
   type: 'AdaptiveCard';
   version: string;
