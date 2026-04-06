@@ -153,20 +153,19 @@ jobs:
           flags: python-${{ matrix.python-version }}
           fail_ci_if_error: false
 
-      - name: Setup Node.js (for nbgv)
-        if: matrix.python-version == '3.12'
-        uses: actions/setup-node@v5
-        with:
-          node-version: '22'
-
       - name: Install nbgv
         if: matrix.python-version == '3.12'
-        run: npm install -g nerdbank-gitversioning
+        run: pip install nbgv-python
 
       - name: Stamp version
         if: matrix.python-version == '3.12'
         run: |
-          VERSION=$(nbgv get-version -v SemVer2)
+          VERSION=$(python -c "
+          from nbgv_python.runner import NbgvRunner
+          from nbgv_python.versioning import normalize_version_field
+          ver = NbgvRunner().get_version()
+          print(normalize_version_field(ver['semver2'], field='SemVer2'))
+          ")
           echo "Stamping version: $VERSION"
           sed -i "s/^version = .*/version = \"$VERSION\"/" pyproject.toml
 
