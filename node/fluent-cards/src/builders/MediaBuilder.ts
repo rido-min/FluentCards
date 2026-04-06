@@ -14,8 +14,9 @@ export class MediaBuilder {
   /** Sets the spacing above the element. @param spacing The spacing value. @returns The builder instance for method chaining. */
   withSpacing(spacing: Spacing): this { this.media.spacing = spacing; return this; }
 
-  /** Adds a media source by URL and MIME type, or a pre-built MediaSource object. @param urlOrSource The URL string or a pre-built MediaSource. @param mimeType The MIME type (required when URL is provided). @returns The builder instance for method chaining. */
+  /** Adds a media source with a URL and MIME type. @param url The media URL. @param mimeType The MIME type of the source. @returns The builder instance for method chaining. */
   addSource(url: string, mimeType: string): this;
+  /** Adds a pre-built MediaSource object. @param source A pre-built MediaSource. @returns The builder instance for method chaining. */
   addSource(source: MediaSource): this;
   addSource(urlOrSource: string | MediaSource, mimeType?: string): this {
     if (typeof urlOrSource === 'string') {

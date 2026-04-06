@@ -1,0 +1,13 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["src/index.ts"],
+  "out": "../../_site/api/node",
+  "name": "FluentCards (TypeScript)",
+  "readme": "README.md",
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "includeVersion": true,
+  "navigationLinks": {
+    "GitHub": "https://github.com/rido-min/FluentCards"
+  }
+}

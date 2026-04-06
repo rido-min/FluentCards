@@ -1,0 +1,5 @@
+- name: Docs
+  href: docs/
+  homepage: docs/index.md
+- name: .NET API Reference
+  href: api/dotnet/

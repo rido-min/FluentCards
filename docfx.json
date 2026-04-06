@@ -1,0 +1,40 @@
+{
+  "metadata": [
+    {
+      "src": [
+        {
+          "files": ["src/FluentCards/**/*.cs"],
+          "src": "dotnet"
+        }
+      ],
+      "dest": "api/dotnet",
+      "disableGitFeatures": false
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "files": ["api/dotnet/**.yml", "api/dotnet/index.md"]
+      },
+      {
+        "files": ["docs/**.md"],
+        "exclude": ["_site/**", "obj/**"]
+      },
+      {
+        "files": ["toc.yml", "*.md"],
+        "exclude": ["_site/**"]
+      }
+    ],
+    "resource": [
+      {
+        "files": ["docs/screenshots/**"]
+      }
+    ],
+    "dest": "_site",
+    "globalMetadata": {
+      "_appName": "FluentCards",
+      "_appTitle": "FluentCards",
+      "_enableSearch": true
+    }
+  }
+}

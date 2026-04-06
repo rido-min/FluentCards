@@ -30,8 +30,9 @@ export class ColumnSetBuilder {
     return this;
   }
 
-  /** Adds a column. @param configureOrWidth Width string or configure callback. @param configure Optional configure callback when width is specified. @returns The builder instance for method chaining. */
+  /** Adds a column using a configure callback. @param configure A callback to configure the Column builder. @returns The builder instance for method chaining. */
   addColumn(configure: (b: ColumnBuilder) => void): this;
+  /** Adds a column with an explicit width. @param width The column width (e.g. `"auto"`, `"stretch"`, or a pixel value). @param configure A callback to configure the Column builder. @returns The builder instance for method chaining. */
   addColumn(width: string, configure: (b: ColumnBuilder) => void): this;
   addColumn(
     configureOrWidth: string | ((b: ColumnBuilder) => void),

@@ -26,8 +26,9 @@ export class InputChoiceSetBuilder {
   /** Sets the spacing above the element. @param spacing The spacing value. @returns The builder instance for method chaining. */
   withSpacing(spacing: Spacing): this { this.input.spacing = spacing; return this; }
 
-  /** Adds a choice by title and value, or a pre-built Choice object. @param titleOrChoice The title string or a pre-built Choice. @param value The value string (required when title is a string). @returns The builder instance for method chaining. */
+  /** Adds a choice with the given title and value. @param title The choice label displayed to the user. @param value The choice value submitted on selection. @returns The builder instance for method chaining. */
   addChoice(title: string, value: string): this;
+  /** Adds a pre-built Choice object. @param choice A pre-built Choice. @returns The builder instance for method chaining. */
   addChoice(choice: Choice): this;
   addChoice(titleOrChoice: string | Choice, value?: string): this {
     if (typeof titleOrChoice === 'string') {

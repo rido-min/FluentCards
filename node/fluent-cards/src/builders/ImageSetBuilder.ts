@@ -13,8 +13,9 @@ export class ImageSetBuilder {
   /** Sets the spacing above the element. @param spacing The spacing value. @returns The builder instance for method chaining. */
   withSpacing(spacing: Spacing): this { this.imageSet.spacing = spacing; return this; }
 
-  /** Adds an image using a builder callback or a pre-built Image. @param configureOrImage A callback or a pre-built Image. @returns The builder instance for method chaining. */
+  /** Adds an image using a builder callback. @param configure A callback to configure the Image builder. @returns The builder instance for method chaining. */
   addImage(configure: (b: ImageBuilder) => void): this;
+  /** Adds a pre-built Image object. @param image A pre-built Image. @returns The builder instance for method chaining. */
   addImage(image: Image): this;
   addImage(configureOrImage: ((b: ImageBuilder) => void) | Image): this {
     if (typeof configureOrImage === 'function') {
