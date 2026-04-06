@@ -1,6 +1,6 @@
 {
   "name": "fluent-cards",
-  "version": "1.0.0",
+  "version": "0.0.0-placeholder",
   "description": "Fluent builder API for Adaptive Cards",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -19,7 +19,11 @@
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run build"
   },
-  "keywords": ["adaptive-cards", "fluent", "builder"],
+  "keywords": [
+    "adaptive-cards",
+    "fluent",
+    "builder"
+  ],
   "license": "MIT",
   "author": "rido-min",
   "repository": {

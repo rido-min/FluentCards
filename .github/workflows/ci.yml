@@ -104,7 +104,8 @@ jobs:
         run: npm run typecheck
 
       - name: Stamp version
-        run: npm run setversion
+        working-directory: node/fluent-cards
+        run: ../node_modules/.bin/nbgv-setversion
 
       - name: Pack
         working-directory: node/fluent-cards
@@ -112,7 +113,8 @@ jobs:
 
       - name: Reset version
         if: always()
-        run: npm run resetversion
+        working-directory: node/fluent-cards
+        run: ../node_modules/.bin/nbgv-setversion --reset
 
       - name: Upload npm artifact
         uses: actions/upload-artifact@v5
