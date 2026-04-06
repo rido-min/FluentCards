@@ -105,9 +105,10 @@ func demonstrateValidateAndPanic() {
 						if e.Severity == fluentcards.ValidationSeverityError {
 							fmt.Printf("  [%s] %s\n", e.Code, e.Message)
 						}
-					} else {
-						panic(r)
 					}
+				} else {
+					panic(r)
+				}
 			}
 		}()
 		fluentcards.ValidateAndPanic(card)
