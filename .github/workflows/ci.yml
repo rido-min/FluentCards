@@ -215,3 +215,67 @@ jobs:
           files: go/coverage.out
           flags: go
           fail_ci_if_error: false
+
+  java:
+    name: Java
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: java
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+
+      - name: Build
+        run: mvn compile -q
+
+      - name: Test
+        run: mvn test -q
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v5
+        with:
+          files: java/target/site/jacoco/jacoco.xml
+          flags: java
+          fail_ci_if_error: false
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install nbgv
+        run: pip install nbgv-python
+
+      - name: Stamp version
+        run: |
+          VERSION=$(python -c "
+          from nbgv_python.runner import NbgvRunner
+          from nbgv_python.versioning import normalize_version_field
+          ver = NbgvRunner().get_version()
+          print(normalize_version_field(ver['semver2'], field='SemVer2'))
+          ")
+          echo "Stamping version: $VERSION"
+          mvn versions:set -DnewVersion="$VERSION" -q
+          mvn versions:commit -q
+
+      - name: Package
+        run: mvn package -DskipTests -q
+
+      - name: Reset version
+        if: always()
+        run: git checkout -- pom.xml
+
+      - name: Upload Maven artifacts
+        uses: actions/upload-artifact@v5
+        with:
+          name: maven-package
+          path: java/target/*.jar

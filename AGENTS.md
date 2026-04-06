@@ -10,6 +10,7 @@ FluentCards is a multi-language library. Each language port lives in its own top
 | `node/` | TypeScript / Node.js | Stable |
 | `python/` | Python 3.10+ | Stable |
 | `go/` | Go 1.22+ | Stable |
+| `java/` | Java 17+ | Stable |
 
 Shared assets (docs, screenshots, root README) live at the repository root.
 
@@ -62,6 +63,7 @@ Naming conventions by language:
 | TypeScript | camelCase `.ts` | `basicCardSample.ts` |
 | Python | snake_case `.py` | `basic_card_sample.py` |
 | Go | snake_case `.go` | `basic_card_sample.go` |
+| Java | PascalCase `.java` | `BasicCardSample.java` |
 
 ---
 
@@ -182,6 +184,37 @@ go run .
 - Do not use `interface{}` — prefer `any` (Go 1.18+ alias).
 
 ### Constraints (go)
+- Keep diffs minimal and scoped to the request.
+- Update or add tests for any behavior change.
+- Do not modify CI, dependency versions, or security settings unless asked.
+- Never print, log, or commit secrets.
+
+---
+
+## java/
+
+### Verification
+```
+cd java
+mvn compile -q && mvn test -q
+```
+If it fails, fix the root cause and re-run before committing.
+
+### Environment
+- Java 17+. Runtime dependency: `com.google.code.gson:gson`. Test dependency: `org.junit.jupiter:junit-jupiter`.
+- Library lives in `java/src/main/java/io/fluentcards/` (package `io.fluentcards`). Tests are in `java/src/test/java/io/fluentcards/`. Samples live in `java/samples/` as standalone reference files.
+- Build with Maven (`mvn compile`, `mvn test`).
+
+### Guardrails
+- This library implements the **Adaptive Cards 1.6.0 specification**. All elements, properties, actions, and enums must conform to the schema.
+- Enums use Java convention `UPPER_CASE` constants with a `getValue()` method returning the camelCase string (e.g., `TextSize.EXTRA_LARGE.getValue()` returns `"extraLarge"`).
+- `build()` returns a plain `Map<String, Object>`. Serialization is done via `CardSerializer.toJson(card)` which returns `String`.
+- Validation is exposed via `CardValidator.validate(card)` and `CardValidator.validateAndThrow(card)`.
+- Builder pattern: `AdaptiveCardBuilder.create() → .withX() / .addX(tb -> tb...) → .build()`.
+- Builder methods accepting sub-builders use `Consumer<TBuilder>` (e.g., `addTextBlock(Consumer<TextBlockBuilder>)`).
+- Versioning uses `nbgv-python` in CI to read `version.json` and `mvn versions:set` to stamp the version into `pom.xml`.
+
+### Constraints (java)
 - Keep diffs minimal and scoped to the request.
 - Update or add tests for any behavior change.
 - Do not modify CI, dependency versions, or security settings unless asked.

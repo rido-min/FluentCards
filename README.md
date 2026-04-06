@@ -16,6 +16,7 @@ A multi-language library for building [Adaptive Cards](https://adaptivecards.io/
 | TypeScript / Node.js | [`node/`](node/) | [![npm](https://img.shields.io/badge/npm-fluent--cards-blue)](https://www.npmjs.com/package/fluent-cards) |
 | Python | [`python/`](python/) | [![PyPI](https://img.shields.io/pypi/v/fluent-cards.svg)](https://pypi.org/project/fluent-cards/) |
 | Go | [`go/`](go/) | [![Go Reference](https://pkg.go.dev/badge/github.com/rido-min/FluentCards/go/fluentcards.svg)](https://pkg.go.dev/github.com/rido-min/FluentCards/go/fluentcards) |
+| Java | [`java/`](java/) | Maven Central (coming soon) |
 
 ## Quick Start
 
@@ -103,6 +104,31 @@ card := fluentcards.NewAdaptiveCardBuilder().
 
 json, _ := fluentcards.ToJSON(card)
 fmt.Println(json)
+```
+
+### Java
+
+```xml
+<dependency>
+    <groupId>io.fluentcards</groupId>
+    <artifactId>fluent-cards</artifactId>
+    <version>0.1.0</version>
+</dependency>
+```
+
+```java
+import io.fluentcards.*;
+
+Map<String, Object> card = AdaptiveCardBuilder.create()
+    .withVersion("1.5")
+    .addTextBlock(tb -> tb
+        .withText("Hello, FluentCards!")
+        .withSize(TextSize.LARGE)
+        .withWeight(TextWeight.BOLDER)
+        .withWrap(true))
+    .build();
+
+System.out.println(CardSerializer.toJson(card));
 ```
 
 ## Documentation
