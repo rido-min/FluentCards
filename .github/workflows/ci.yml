@@ -258,9 +258,8 @@ jobs:
           pip install nbgv-python
           VERSION=$(python -c "
           from nbgv_python.runner import NbgvRunner
-          from nbgv_python.versioning import normalize_version_field
           ver = NbgvRunner().get_version()
-          print(normalize_version_field(ver['semver2'], field='SemVer2'))
+          print(ver['semver2'])
           ")
           echo "Stamping version: $VERSION"
           sed -i "s/^version = .*/version = \"$VERSION\"/" fluentcards/Cargo.toml
