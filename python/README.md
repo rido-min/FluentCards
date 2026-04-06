@@ -1,6 +1,13 @@
 # FluentCards — Python
 
-A Python library for building [Adaptive Cards](https://adaptivecards.io/) using a fluent builder pattern with strong typing and built-in validation.
+[![CI](https://github.com/rido-min/FluentCards/actions/workflows/ci.yml/badge.svg)](https://github.com/rido-min/FluentCards/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/fluent-cards.svg)](https://pypi.org/project/fluent-cards/)
+[![Python](https://img.shields.io/pypi/pyversions/fluent-cards.svg)](https://pypi.org/project/fluent-cards/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+A Python library for building [Adaptive Cards](https://adaptivecards.io/) using a fluent builder pattern with strong typing and built-in schema validation.
+
+> Also available for [.NET (NuGet)](https://www.nuget.org/packages/FluentCards), [Node.js (npm)](https://www.npmjs.com/package/fluent-cards), and [Go](https://github.com/rido-min/FluentCards/tree/main/go).
 
 ## Installation
 
@@ -25,26 +32,112 @@ card = (AdaptiveCardBuilder.create()
 print(card.to_json())
 ```
 
-## Project Layout
+Output:
 
-```
-python/
-├── fluent_cards/          # Library package
-│   ├── builders/          # Fluent builder classes
-│   ├── enums.py           # String enums
-│   ├── models.py          # Dataclasses and types
-│   ├── serialization.py
-│   ├── validation.py
-│   └── __init__.py        # Public API
-└── tests/                 # pytest test suite
+```json
+{
+  "type": "AdaptiveCard",
+  "version": "1.5",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "Hello, FluentCards!",
+      "size": "Large",
+      "weight": "Bolder",
+      "wrap": true
+    }
+  ]
+}
 ```
 
-## Build & Test
+## Features
+
+- **Fluent builder API** — chainable, readable card construction
+- **Strong typing** — enums for all Adaptive Cards schema values (`TextSize`, `TextWeight`, `Colors`, `ContainerStyle`, etc.)
+- **Built-in validation** — catches schema errors before the card is sent
+- **Zero dependencies** — pure Python, no third-party packages required
+- **Full schema support** — TextBlock, Image, ColumnSet, Container, FactSet, ActionSet, and more
+
+## More Examples
+
+### Card with image and actions
+
+```python
+from fluent_cards import AdaptiveCardBuilder, TextSize, TextWeight, ActionStyle
+
+card = (AdaptiveCardBuilder.create()
+    .with_version('1.5')
+    .add_text_block(lambda tb: tb
+        .with_text('Order Confirmed')
+        .with_size(TextSize.LARGE)
+        .with_weight(TextWeight.BOLDER))
+    .add_text_block(lambda tb: tb
+        .with_text('Your order #12345 has been placed.')
+        .with_wrap(True))
+    .add_action_open_url(lambda a: a
+        .with_title('Track Order')
+        .with_url('https://example.com/track/12345'))
+    .build())
+```
+
+### Card with columns
+
+```python
+from fluent_cards import AdaptiveCardBuilder
+
+card = (AdaptiveCardBuilder.create()
+    .with_version('1.5')
+    .add_column_set(lambda cs: cs
+        .add_column(lambda col: col
+            .with_width('auto')
+            .add_text_block(lambda tb: tb.with_text('Name:')))
+        .add_column(lambda col: col
+            .with_width('stretch')
+            .add_text_block(lambda tb: tb.with_text('Jane Doe'))))
+    .build())
+```
+
+### Using choices (Input.ChoiceSet)
+
+```python
+from fluent_cards import AdaptiveCardBuilder
+
+card = (AdaptiveCardBuilder.create()
+    .with_version('1.5')
+    .add_input_choice_set(lambda cs: cs
+        .with_id('priority')
+        .with_label('Priority')
+        .with_choices_data([
+            ('High', 'high'),
+            ('Medium', 'medium'),
+            ('Low', 'low'),
+        ]))
+    .build())
+```
+
+### Validation
+
+```python
+from fluent_cards import AdaptiveCardBuilder
+
+card = AdaptiveCardBuilder.create().build()  # no version set
+errors = card.validate()
+# errors -> ["version is required"]
+```
+
+## API Reference
+
+See the [full API docs](https://rido-min.github.io/FluentCards/python/) for all builder methods and enums.
+
+## Development
 
 ```bash
-cd python
+git clone https://github.com/rido-min/FluentCards.git
+cd FluentCards/python
 pip install -e ".[dev]"
 pytest
 ```
 
-See the [root README](../README.md) for more details.
+## License
+
+MIT — see [LICENSE](https://github.com/rido-min/FluentCards/blob/main/LICENSE) for details.
