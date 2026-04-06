@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Go SDK port with full feature parity: all builders, validation, serialization, and Teams helpers
+- Sample parity across all four languages (.NET, Node.js, Python, Go): basic cards, form cards, layout cards, rich content, people picker
+- Validation sample in all four languages demonstrating valid cards, structural errors, invalid input ranges, version mismatch detection, and `ValidateAndThrow`/`ValidateAndPanic`
+- `WithChoicesData` / `withChoicesData` / `with_choices_data` on `InputChoiceSetBuilder` in Go, Node.js, and Python — emits `choices.data` with a `Data.Query` payload for dynamic people pickers (Adaptive Cards 1.6+)
+- `DataQuery` model and export in Node.js package
 - `AdaptiveCardVersion` enum (`V1_0`–`V1_6`) with `ToVersionString()`, `ToSchemaUrl()`, and `TryParse()` for type-safe schema version selection
 - `WithVersion(AdaptiveCardVersion)` builder overload with automatic `$schema` URL synchronization
 - `VersionInfo` static class mapping all element types, action types, and card properties to their introduction version
