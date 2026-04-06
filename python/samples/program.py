@@ -24,6 +24,7 @@ from rich_content_sample import (
     create_comprehensive_card,
 )
 from people_picker_sample import create_people_picker_card
+from validation_sample import run_validation_samples
 
 print('=== FluentCards Demo ===\n')
 
@@ -102,3 +103,6 @@ print_sample('Table Card', create_table_card())
 print_sample('Media Card', create_media_card())
 print_sample('Comprehensive Card', create_comprehensive_card())
 print_sample('People Picker Card', create_people_picker_card())
+
+# Validation samples
+run_validation_samples()

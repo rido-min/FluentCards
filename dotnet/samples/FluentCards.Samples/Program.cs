@@ -1,4 +1,5 @@
 using FluentCards;
+using FluentCards.Samples;
 
 Console.WriteLine("=== FluentCards Demo ===\n");
 
@@ -59,3 +60,5 @@ foreach (var issue in invalidIssues)
     Console.WriteLine($"  [{issue.Severity}] {issue.Code} at '{issue.Path}': {issue.Message}");
 }
 
+// Validation samples
+ValidationSample.Run();

@@ -89,6 +89,9 @@ func main() {
 	printSample("Media Card", createMediaCard())
 	printSample("Comprehensive Card", createComprehensiveCard())
 	printSample("People Picker Card", createPeoplePickerCard())
+
+	// Validation samples
+	runValidationSamples()
 }
 
 func printSample(name string, card fluentcards.Card) {
