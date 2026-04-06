@@ -1,0 +1,87 @@
+name: .NET Advanced
+
+on:
+  workflow_dispatch:
+    inputs:
+      run-aot:
+        description: Run AOT compatibility test
+        type: boolean
+        default: true
+      run-benchmarks:
+        description: Run benchmarks
+        type: boolean
+        default: true
+
+env:
+  DOTNET_VERSION: '8.0.x'
+
+permissions:
+  contents: read
+
+jobs:
+  aot-test:
+    name: AOT Compatibility
+    if: ${{ inputs.run-aot }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dotnet
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Build with trim analysis
+        run: dotnet build src/FluentCards/FluentCards.csproj --configuration Release /p:EnableTrimAnalyzer=true
+
+      - name: Verify AOT publish
+        run: dotnet publish samples/FluentCards.Samples/FluentCards.Samples.csproj -c Release -r linux-x64 --self-contained -p:PublishAot=true -p:StripSymbols=true
+
+  benchmark:
+    name: Benchmarks
+    if: ${{ inputs.run-benchmarks }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    defaults:
+      run:
+        working-directory: dotnet
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Run benchmarks
+        run: dotnet run --project benchmarks/FluentCards.Benchmarks/FluentCards.Benchmarks.csproj -c Release -- --filter "*" --exporters json
+
+      - name: Find benchmark result file
+        id: bench-result
+        run: echo "path=$(find BenchmarkDotNet.Artifacts/results -name '*-report-full-compressed.json' | head -1)" >> $GITHUB_OUTPUT
+
+      - name: Store benchmark results
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          tool: benchmarkdotnet
+          output-file-path: dotnet/${{ steps.bench-result.outputs.path }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          auto-push: true
+          alert-threshold: '150%'
+          comment-on-alert: true
+          fail-on-alert: false
+          benchmark-data-dir-path: dev/bench
+
+      - name: Upload benchmark artifacts
+        uses: actions/upload-artifact@v5
+        with:
+          name: benchmark-results
+          path: dotnet/BenchmarkDotNet.Artifacts/

@@ -79,7 +79,7 @@ npm install && npm test && npm run typecheck
 ### Environment
 - TypeScript with strict mode enabled.
 - Node.js built-in test runner (`node:test`) with `tsx` for TypeScript support.
-- Library lives in `node/fluent-cards/src/`. Tests live in `node/fluent-cards-tests/test/`.
+- Library lives in `node/packages/fluent-cards/src/`. Tests live in `node/packages/fluent-cards/tests/`.
 
 ### Guardrails
 - This library implements the **Adaptive Cards 1.6.0 specification**. All elements, properties, actions, and enums must conform to the schema.

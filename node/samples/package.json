@@ -1,0 +1,14 @@
+{
+  "name": "fluent-cards-samples",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "tsx program.ts"
+  },
+  "dependencies": {
+    "fluent-cards": "*"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.3"
+  }
+}

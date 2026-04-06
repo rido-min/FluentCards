@@ -2,14 +2,15 @@
   "compilerOptions": {
     "target": "ES2022",
     "module": "CommonJS",
-    "lib": ["ES2022"],
+    "lib": ["ES2022", "DOM"],
+    "types": ["node"],
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "noEmit": true,
     "paths": {
-      "fluent-cards": ["../fluent-cards/src/index.ts"]
+      "fluent-cards": ["../src/index.ts"]
     }
   },
-  "include": ["test/**/*"]
+  "include": ["./**/*"]
 }

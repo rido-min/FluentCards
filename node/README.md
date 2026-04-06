@@ -29,7 +29,7 @@ console.log(toJson(card));
 
 ```
 node/
-├── fluent-cards/          # Library package
+├── packages/fluent-cards/   # Library package
 │   ├── src/
 │   │   ├── builders/      # Fluent builder classes
 │   │   ├── enums.ts       # String enums
@@ -37,12 +37,10 @@ node/
 │   │   ├── serialization.ts
 │   │   ├── validation.ts
 │   │   └── index.ts       # Barrel export
+│   ├── tests/             # Test suite (node:test + tsx)
 │   ├── tsconfig.json
 │   └── package.json
-├── fluent-cards-tests/    # Test suite (node:test + tsx)
-│   ├── test/
-│   ├── tsconfig.json
-│   └── package.json
+├── samples/               # Sample code
 └── package.json           # npm workspace root
 ```
 

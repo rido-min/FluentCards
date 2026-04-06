@@ -2,8 +2,8 @@
   "name": "fluent-cards-workspace",
   "private": true,
   "workspaces": [
-    "fluent-cards",
-    "fluent-cards-tests"
+    "packages/fluent-cards",
+    "samples"
   ],
   "scripts": {
     "build": "npm run build --workspaces --if-present",
@@ -13,6 +13,8 @@
     "resetversion": "nbgv-setversion --reset"
   },
   "devDependencies": {
-    "nerdbank-gitversioning": "3.9.50"
-  }
+    "nerdbank-gitversioning": "^3.9.50",
+    "typescript": "^6.0.0"
+  },
+  "version": "0.0.0-placeholder"
 }
