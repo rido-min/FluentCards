@@ -29,7 +29,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/rido-min/FluentCards.git",
-    "directory": "node/src/fluent-cards"
+    "directory": "node/src"
   },
   "engines": {
     "node": ">=16"

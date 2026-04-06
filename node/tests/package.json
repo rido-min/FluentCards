@@ -7,7 +7,7 @@
     "typecheck": "tsc --noEmit"
   },
   "c8": {
-    "include": ["../../src/fluent-cards/src/**/*.ts"],
+    "include": ["../src/src/**/*.ts"],
     "report-dir": "coverage"
   },
   "dependencies": {
