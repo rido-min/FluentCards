@@ -55,4 +55,4 @@ npm test
 npm run typecheck
 ```
 
-See the [root README](../README.md) for more details.
+See the [root README](https://github.com/rido-min/FluentCards#readme) for more details.

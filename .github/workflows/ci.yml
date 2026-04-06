@@ -181,3 +181,54 @@ jobs:
 
     - name: Publish to NuGet
       run: dotnet nuget push ./nupkg/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+
+  npm-pack:
+    runs-on: ubuntu-latest
+    needs: node
+    steps:
+    - uses: actions/checkout@v5
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v5
+      with:
+        node-version: '22'
+
+    - name: Install dependencies
+      run: npm install
+      working-directory: node
+
+    - name: Pack
+      run: npm pack
+      working-directory: node/fluent-cards
+
+    - name: Upload npm package
+      uses: actions/upload-artifact@v5
+      with:
+        name: npm-package
+        path: node/fluent-cards/*.tgz
+
+  npm-publish:
+    runs-on: ubuntu-latest
+    needs: npm-pack
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    environment: npm
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+    - name: Download npm package
+      uses: actions/download-artifact@v5
+      with:
+        name: npm-package
+        path: ./npm-dist
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v5
+      with:
+        node-version: '22'
+        registry-url: 'https://registry.npmjs.org'
+
+    - name: Publish to npm
+      run: npm publish ./npm-dist/*.tgz --provenance --access public
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
