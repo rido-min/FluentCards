@@ -44,4 +44,4 @@ dotnet build --configuration Release
 dotnet test --configuration Release --no-build
 ```
 
-See the [root README](../README.md) for more details and the full feature list.
+See [Schema Validation](../docs/schema-validation.md) and [Teams Cards](../docs/teams-cards.md) for more details.
