@@ -18,18 +18,18 @@ pip install fluent-cards
 ## Quick Start
 
 ```python
-from fluent_cards import AdaptiveCardBuilder, TextSize, TextWeight
+from fluent_cards import AdaptiveCardBuilder, TextSize, TextWeight, to_json
 
 card = (AdaptiveCardBuilder.create()
     .with_version('1.5')
     .add_text_block(lambda tb: tb
         .with_text('Hello, FluentCards!')
-        .with_size(TextSize.LARGE)
-        .with_weight(TextWeight.BOLDER)
+        .with_size(TextSize.Large)
+        .with_weight(TextWeight.Bolder)
         .with_wrap(True))
     .build())
 
-print(card.to_json())
+print(to_json(card))
 ```
 
 Output:
@@ -69,14 +69,14 @@ card = (AdaptiveCardBuilder.create()
     .with_version('1.5')
     .add_text_block(lambda tb: tb
         .with_text('Order Confirmed')
-        .with_size(TextSize.LARGE)
-        .with_weight(TextWeight.BOLDER))
+        .with_size(TextSize.Large)
+        .with_weight(TextWeight.Bolder))
     .add_text_block(lambda tb: tb
         .with_text('Your order #12345 has been placed.')
         .with_wrap(True))
-    .add_action_open_url(lambda a: a
-        .with_title('Track Order')
-        .with_url('https://example.com/track/12345'))
+    .add_action(lambda a: a
+        .open_url('https://example.com/track/12345')
+        .with_title('Track Order'))
     .build())
 ```
 
@@ -107,22 +107,22 @@ card = (AdaptiveCardBuilder.create()
     .add_input_choice_set(lambda cs: cs
         .with_id('priority')
         .with_label('Priority')
-        .with_choices_data([
-            ('High', 'high'),
-            ('Medium', 'medium'),
-            ('Low', 'low'),
-        ]))
+        .add_choice('High', 'high')
+        .add_choice('Medium', 'medium')
+        .add_choice('Low', 'low'))
     .build())
 ```
 
 ### Validation
 
 ```python
-from fluent_cards import AdaptiveCardBuilder
+from fluent_cards import AdaptiveCardBuilder, validate
 
 card = AdaptiveCardBuilder.create().build()  # no version set
-errors = card.validate()
-# errors -> ["version is required"]
+errors = validate(card)
+
+for error in errors:
+    print(error)
 ```
 
 ## API Reference
