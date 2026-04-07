@@ -86,8 +86,10 @@ public class TextBlockBuilder {
         return this;
     }
 
-    public TextBlockBuilder withSelectAction(Map<String, Object> action) {
-        data.put("selectAction", action);
+    public TextBlockBuilder withSelectAction(java.util.function.Consumer<ActionBuilder> configure) {
+        ActionBuilder ab = new ActionBuilder();
+        configure.accept(ab);
+        data.put("selectAction", ab.build());
         return this;
     }
 

@@ -250,8 +250,6 @@ public final class CardValidator {
                 if (id.isEmpty()) {
                     addIssue(issues, ValidationSeverity.ERROR, path + ".id", "MISSING_INPUT_ID",
                             "Input element is missing the required 'id' property. Inputs cannot be submitted without an id.");
-                } else {
-                    trackId(id, path, issues, ids);
                 }
                 validateInputElement(element, issues, path);
             }

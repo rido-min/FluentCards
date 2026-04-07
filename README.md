@@ -112,12 +112,13 @@ fmt.Println(json)
 <dependency>
     <groupId>io.fluentcards</groupId>
     <artifactId>fluent-cards</artifactId>
-    <version>0.1.0</version>
+    <version>0.0.0-SNAPSHOT</version>
 </dependency>
 ```
 
 ```java
 import io.fluentcards.*;
+import java.util.Map;
 
 Map<String, Object> card = AdaptiveCardBuilder.create()
     .withVersion("1.5")

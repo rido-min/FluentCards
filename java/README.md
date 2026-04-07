@@ -15,7 +15,7 @@ Add the following dependency to your `pom.xml`:
 <dependency>
     <groupId>io.fluentcards</groupId>
     <artifactId>fluent-cards</artifactId>
-    <version>0.1.0</version>
+    <version>0.0.0-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -80,7 +80,7 @@ ContainerStyle.EMPHASIS  // "emphasis"
 // Serialize to JSON with 2-space indentation
 String json = CardSerializer.toJson(card);
 
-// Serialize with custom indentation
+// Serialize with 4-space indentation
 String json = CardSerializer.toJson(card, 4);
 
 // Parse JSON back to a Card
@@ -105,15 +105,25 @@ CardValidator.validateAndThrow(card);
 Pre-built card layouts for Microsoft Teams:
 
 ```java
-Map<String, Object> card = TeamsCards.approvalCard(ApprovalCardParams.builder()
-    .requesterName("Alice")
-    .title("Budget Request")
-    .build());
+Map<String, Object> card = TeamsCards.approvalCard(
+    new TeamsCards.ApprovalCardParams("Alice", "2024-01-15", "Budget Request",
+        "Finance", "$5,000", "Engineering", "2024-02-01", "Annual budget", null));
 
-Map<String, Object> card = TeamsCards.statusUpdateCard(StatusUpdateCardParams.builder().build());
-Map<String, Object> card = TeamsCards.taskUpdateCard(TaskUpdateCardParams.builder().build());
-Map<String, Object> card = TeamsCards.meetingReminderCard(MeetingReminderCardParams.builder().build());
-Map<String, Object> card = TeamsCards.expenseReportCard(ExpenseReportCardParams.builder().build());
+Map<String, Object> status = TeamsCards.statusUpdateCard(
+    new TeamsCards.StatusUpdateCardParams("Update", "Team A", "2024-01-15",
+        "Project X", "On Track", "Sprint 5", "75%", "John", "Going well", "https://example.com"));
+
+Map<String, Object> task = TeamsCards.taskUpdateCard(
+    new TeamsCards.TaskUpdateCardParams("Fix Bug", "Project X", "Alice",
+        "2024-02-01", "4h", "High", "Fix the login bug", "https://example.com"));
+
+Map<String, Object> meeting = TeamsCards.meetingReminderCard(
+    new TeamsCards.MeetingReminderCardParams("Standup", "Alice", "2024-01-15",
+        "10:00 AM", "Room 1", "Team", "Daily sync", "https://example.com", "https://example.com"));
+
+Map<String, Object> expense = TeamsCards.expenseReportCard(
+    new TeamsCards.ExpenseReportCardParams("Alice", "Engineer", "EXP-001",
+        "2024-01-15", "Travel", "$500", "USD", "Business trip", "https://example.com", null));
 ```
 
 ## Project Layout

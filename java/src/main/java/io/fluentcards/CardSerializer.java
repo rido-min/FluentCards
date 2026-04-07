@@ -2,7 +2,10 @@ package io.fluentcards;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -30,17 +33,16 @@ public final class CardSerializer {
      */
     public static String toJson(Map<String, Object> card, int indent) {
         Map<String, Object> clean = stripNulls(card);
-        if (indent > 0) {
-            Gson gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .disableHtmlEscaping()
-                .create();
+        Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+        if (indent <= 0) {
             return gson.toJson(clean, MAP_TYPE);
         }
-        Gson gson = new GsonBuilder()
-            .disableHtmlEscaping()
-            .create();
-        return gson.toJson(clean, MAP_TYPE);
+        JsonElement tree = gson.toJsonTree(clean, MAP_TYPE);
+        StringWriter sw = new StringWriter();
+        JsonWriter writer = new JsonWriter(sw);
+        writer.setIndent(" ".repeat(indent));
+        gson.toJson(tree, writer);
+        return sw.toString();
     }
 
     /**
@@ -81,6 +83,7 @@ public final class CardSerializer {
     private static List<Object> stripNullsList(List<Object> list) {
         var result = new ArrayList<Object>(list.size());
         for (Object item : list) {
+            if (item == null) continue;
             if (item instanceof Map) {
                 result.add(stripNulls((Map<String, Object>) item));
             } else if (item instanceof List) {

@@ -258,13 +258,6 @@ jobs:
       - name: Test
         run: mvn test -q
 
-      - name: Upload coverage
-        uses: codecov/codecov-action@v5
-        with:
-          files: java/target/site/jacoco/jacoco.xml
-          flags: java
-          fail_ci_if_error: false
-
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
