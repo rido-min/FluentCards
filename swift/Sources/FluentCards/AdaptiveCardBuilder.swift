@@ -19,7 +19,7 @@ public final class AdaptiveCardBuilder {
         if let url = schemaURLs[version] {
             data["$schema"] = url
         } else {
-            data["$schema"] = "http://adaptivecards.io/schemas/adaptive-card.json"
+            data["$schema"] = "https://adaptivecards.io/schemas/adaptive-card.json"
         }
         return self
     }
