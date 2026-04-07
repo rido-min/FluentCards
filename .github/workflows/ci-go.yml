@@ -1,0 +1,53 @@
+name: CI (Go)
+
+on:
+  push:
+    branches: [main, 'release/v*']
+    paths:
+      - 'go/**'
+      - 'version.json'
+  pull_request:
+    branches: [main, 'release/v*']
+    paths:
+      - 'go/**'
+      - 'version.json'
+
+concurrency:
+  group: ci-go-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  go:
+    name: Go (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    defaults:
+      run:
+        working-directory: go
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+          cache-dependency-path: go/go.sum
+
+      - name: Build
+        run: go build ./...
+
+      - name: Test
+        run: go test ./... -coverprofile=coverage.out -covermode=atomic
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v5
+        with:
+          files: go/coverage.out
+          flags: go
+          fail_ci_if_error: false

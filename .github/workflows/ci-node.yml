@@ -1,0 +1,82 @@
+name: CI (Node.js)
+
+on:
+  push:
+    branches: [main, 'release/v*']
+    paths:
+      - 'node/**'
+      - 'version.json'
+  pull_request:
+    branches: [main, 'release/v*']
+    paths:
+      - 'node/**'
+      - 'version.json'
+
+concurrency:
+  group: ci-node-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  node:
+    name: Node.js (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    defaults:
+      run:
+        working-directory: node
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm test
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v5
+        with:
+          files: node/packages/fluent-cards/tests/coverage/lcov.info
+          flags: node
+          fail_ci_if_error: false
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Stamp version
+        if: matrix.os == 'ubuntu-latest'
+        working-directory: node/packages/fluent-cards
+        run: ../../node_modules/.bin/nbgv-setversion
+
+      - name: Pack
+        if: matrix.os == 'ubuntu-latest'
+        working-directory: node/packages/fluent-cards
+        run: npm pack
+
+      - name: Reset version
+        if: always() && matrix.os == 'ubuntu-latest'
+        working-directory: node/packages/fluent-cards
+        run: ../../node_modules/.bin/nbgv-setversion --reset
+
+      - name: Upload npm artifact
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@v5
+        with:
+          name: npm-package
+          path: node/packages/fluent-cards/*.tgz

@@ -1,0 +1,81 @@
+name: CI (.NET)
+
+on:
+  push:
+    branches: [main, 'release/v*']
+    paths:
+      - 'dotnet/**'
+      - 'version.json'
+  pull_request:
+    branches: [main, 'release/v*']
+    paths:
+      - 'dotnet/**'
+      - 'version.json'
+
+concurrency:
+  group: ci-dotnet-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  DOTNET_VERSION: '8.0.x'
+  CONFIGURATION: Release
+
+permissions:
+  contents: read
+
+jobs:
+  dotnet:
+    name: .NET (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    defaults:
+      run:
+        working-directory: dotnet
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('dotnet/**/*.csproj', 'dotnet/**/Directory.Build.props') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration ${{ env.CONFIGURATION }} --no-restore
+
+      - name: Test
+        run: dotnet test --configuration ${{ env.CONFIGURATION }} --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v5
+        with:
+          directory: dotnet/coverage
+          flags: dotnet
+          fail_ci_if_error: false
+
+      - name: Pack
+        if: matrix.os == 'ubuntu-latest'
+        run: dotnet pack src/FluentCards/FluentCards.csproj --configuration ${{ env.CONFIGURATION }} --no-build --output ./nupkg
+
+      - name: Upload NuGet artifacts
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@v5
+        with:
+          name: nuget-package
+          path: |
+            dotnet/nupkg/*.nupkg
+            dotnet/nupkg/*.snupkg
