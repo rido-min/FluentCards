@@ -10,6 +10,7 @@ FluentCards is a multi-language library. Each language port lives in its own top
 | `node/` | TypeScript / Node.js | Stable |
 | `python/` | Python 3.10+ | Stable |
 | `go/` | Go 1.22+ | Stable |
+| `swift/` | Swift 5.9+ | Stable |
 
 Shared assets (docs, screenshots, root README) live at the repository root.
 
@@ -42,7 +43,7 @@ When implementing a port for a new language, follow these steps:
 
 ## Sample Parity
 
-All four language ports share an identical set of sample programs. **When adding, removing, or changing a sample in one language, apply the equivalent change to all others.** The canonical sample list is:
+All five language ports share an identical set of sample programs. **When adding, removing, or changing a sample in one language, apply the equivalent change to all others.** The canonical sample list is:
 
 | Sample file (stem) | What it demonstrates |
 |--------------------|----------------------|
@@ -62,6 +63,7 @@ Naming conventions by language:
 | TypeScript | camelCase `.ts` | `basicCardSample.ts` |
 | Python | snake_case `.py` | `basic_card_sample.py` |
 | Go | snake_case `.go` | `basic_card_sample.go` |
+| Swift | snake_case `.swift` | `basic_card_sample.swift` |
 
 ---
 

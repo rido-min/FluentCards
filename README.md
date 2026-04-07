@@ -106,6 +106,29 @@ json, _ := fluentcards.ToJSON(card)
 fmt.Println(json)
 ```
 
+### Swift
+
+Add to your `Package.swift`:
+```swift
+.package(url: "https://github.com/rido-min/FluentCards", from: "1.0.0")
+```
+
+```swift
+import FluentCards
+
+let card = AdaptiveCardBuilder()
+    .withVersion("1.5")
+    .addTextBlock { tb in
+        tb.withText("Hello, FluentCards!")
+        tb.withSize(.large)
+        tb.withWeight(.bolder)
+        tb.withWrap(true)
+    }
+    .build()
+
+if let json = try? toJSON(card) { print(json) }
+```
+
 ## Documentation
 
 - [Schema Validation](docs/schema-validation.md) — built-in validation, version-aware checks, and schema conformance testing
