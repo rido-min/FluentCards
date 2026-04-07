@@ -16,6 +16,7 @@ A multi-language library for building [Adaptive Cards](https://adaptivecards.io/
 | TypeScript / Node.js | [`node/`](node/) | [![npm](https://img.shields.io/badge/npm-fluent--cards-blue)](https://www.npmjs.com/package/fluent-cards) |
 | Python | [`python/`](python/) | [![PyPI](https://img.shields.io/pypi/v/fluent-cards.svg)](https://pypi.org/project/fluent-cards/) |
 | Go | [`go/`](go/) | [![Go Reference](https://pkg.go.dev/badge/github.com/rido-min/FluentCards/go/fluentcards.svg)](https://pkg.go.dev/github.com/rido-min/FluentCards/go/fluentcards) |
+| Swift | [`swift/`](swift/) | Swift Package Manager |
 
 ## Quick Start
 
