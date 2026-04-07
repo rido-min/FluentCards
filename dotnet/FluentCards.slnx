@@ -1,0 +1,21 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/benchmarks/">
+    <Project Path="benchmarks/FluentCards.Benchmarks.Tests/FluentCards.Benchmarks.Tests.csproj" />
+    <Project Path="benchmarks/FluentCards.Benchmarks/FluentCards.Benchmarks.csproj" />
+  </Folder>
+  <Folder Name="/samples/">
+    <Project Path="samples/FluentCards.Samples/FluentCards.Samples.csproj" />
+    <Project Path="samples/TeamsCardRenderer/TeamsCardRenderer.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/FluentCards/FluentCards.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/FluentCards.Tests/FluentCards.Tests.csproj" />
+  </Folder>
+</Solution>
