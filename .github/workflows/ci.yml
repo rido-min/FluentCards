@@ -38,20 +38,24 @@ jobs:
             dotnet:
               - 'dotnet/**'
               - 'version.json'
+              - '.github/workflows/**'
             node:
               - 'node/**'
               - 'version.json'
+              - '.github/workflows/**'
             python:
               - 'python/**'
               - 'version.json'
+              - '.github/workflows/**'
             go:
               - 'go/**'
               - 'version.json'
+              - '.github/workflows/**'
 
   dotnet:
     name: .NET (${{ matrix.os }})
     needs: changes
-    if: needs.changes.outputs.dotnet == 'true'
+    if: needs.changes.outputs.dotnet == 'true' || (github.event_name == 'push' && startsWith(github.ref, 'refs/heads/release/v'))
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -109,7 +113,7 @@ jobs:
   node:
     name: Node.js (${{ matrix.os }})
     needs: changes
-    if: needs.changes.outputs.node == 'true'
+    if: needs.changes.outputs.node == 'true' || (github.event_name == 'push' && startsWith(github.ref, 'refs/heads/release/v'))
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -172,7 +176,7 @@ jobs:
   python:
     name: Python ${{ matrix.python-version }} (${{ matrix.os }})
     needs: changes
-    if: needs.changes.outputs.python == 'true'
+    if: needs.changes.outputs.python == 'true' || (github.event_name == 'push' && startsWith(github.ref, 'refs/heads/release/v'))
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -241,7 +245,7 @@ jobs:
   go:
     name: Go (${{ matrix.os }})
     needs: changes
-    if: needs.changes.outputs.go == 'true'
+    if: needs.changes.outputs.go == 'true' || (github.event_name == 'push' && startsWith(github.ref, 'refs/heads/release/v'))
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
