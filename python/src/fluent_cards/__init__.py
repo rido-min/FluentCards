@@ -28,7 +28,7 @@ from .enums import (
 
 from .models import CaptionSource
 
-from .serialization import to_json, from_json
+from .serialization import to_dict, to_json, from_json
 
 from .validation import (
     ValidationIssue,
@@ -94,6 +94,7 @@ __all__ = [
     # Models
     'CaptionSource',
     # Serialization
+    'to_dict',
     'to_json',
     'from_json',
     # Validation

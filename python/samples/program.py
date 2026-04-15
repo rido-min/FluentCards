@@ -1,5 +1,6 @@
 from fluent_cards import (
     AdaptiveCardBuilder,
+    to_dict,
     to_json,
     from_json,
     validate,
@@ -53,6 +54,14 @@ card = (
 # Serialize to JSON
 json_str = to_json(card)
 print(json_str)
+
+# Demonstrate to_dict — returns a clean dict ready for API embedding
+print('\n=== to_dict Demo ===')
+card_dict = to_dict(card)
+print(f'Type: {type(card_dict).__name__}')
+print(f'Body elements: {len(card_dict.get("body", []))}')
+print(f'First text: {card_dict["body"][0]["text"]}')
+print('✓ Ready for embedding in API responses (no double-serialization)')
 
 # Demonstrate roundtrip serialization
 print('\n=== Roundtrip Test ===')

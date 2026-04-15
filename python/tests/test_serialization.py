@@ -1,6 +1,7 @@
 import pytest
 from fluent_cards import (
     AdaptiveCardBuilder,
+    to_dict,
     to_json,
     from_json,
     TextSize,
@@ -179,3 +180,63 @@ class TestFromJson:
         action = parsed['actions'][0]
         assert action['url'] == 'https://example.com'
         assert action['title'] == 'Visit'
+
+
+class TestToDict:
+    def test_returns_dict_not_string(self):
+        card = AdaptiveCardBuilder.create().build()
+        result = to_dict(card)
+        assert isinstance(result, dict)
+
+    def test_includes_type_and_version(self):
+        result = to_dict(AdaptiveCardBuilder.create().build())
+        assert result['type'] == 'AdaptiveCard'
+        assert result['version'] == '1.5'
+
+    def test_omits_none_values(self):
+        card = (AdaptiveCardBuilder.create()
+                .add_text_block(lambda b: b.with_text('Hello'))
+                .build())
+        result = to_dict(card)
+        tb = result['body'][0]
+        assert 'size' not in tb
+        assert 'weight' not in tb
+        assert 'color' not in tb
+
+    def test_converts_enums_to_plain_strings(self):
+        card = (AdaptiveCardBuilder.create()
+                .add_text_block(lambda b: b.with_text('x')
+                                .with_size(TextSize.ExtraLarge)
+                                .with_color(TextColor.Attention))
+                .build())
+        result = to_dict(card)
+        tb = result['body'][0]
+        assert tb['size'] == 'extraLarge'
+        assert type(tb['size']) is str
+        assert tb['color'] == 'attention'
+        assert type(tb['color']) is str
+
+    def test_equivalent_to_json_loads_of_to_json(self):
+        import json
+        card = (AdaptiveCardBuilder.create()
+                .add_text_block(lambda b: b.with_text('Test')
+                                .with_size(TextSize.Large)
+                                .with_weight(TextWeight.Bolder))
+                .add_action(lambda b: b.submit('OK').with_style(ActionStyle.Positive))
+                .build())
+        assert to_dict(card) == json.loads(to_json(card))
+
+    def test_handles_nested_structures(self):
+        card = (AdaptiveCardBuilder.create()
+                .add_container(lambda c: c
+                               .add_text_block(lambda tb: tb.with_text('Nested')))
+                .build())
+        result = to_dict(card)
+        container = result['body'][0]
+        assert container['type'] == 'Container'
+        assert container['items'][0]['text'] == 'Nested'
+
+    def test_handles_empty_card(self):
+        result = to_dict(AdaptiveCardBuilder.create().build())
+        assert result['type'] == 'AdaptiveCard'
+        assert 'body' not in result or result['body'] == []
