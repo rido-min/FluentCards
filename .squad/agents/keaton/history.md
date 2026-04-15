@@ -33,3 +33,19 @@ Conducted comprehensive multi-port codebase review with all five squad agents. K
 ### 2026-04-15: Comprehensive Schema Conformance Audit (Post-PR 57)
 
 Performed exhaustive conformance audit of .NET port against Adaptive Cards 1.6.0 specification (all 100,000+ chars of schema JSON). **Result: EXCELLENT CONFORMANCE — Zero critical gaps found.** The earlier findings (TextBlock.selectAction, Column properties, Action.Submit/Execute) have all been addressed by recent PRs. Current state: All 16 element types ✅, all 5 action types ✅, all 17 enums ✅, all advanced features (Refresh, Authentication, Metadata, captionSources, choices.data) ✅, complete builder coverage ✅. False alarms: Container.rtl and TableCell.rtl flagged initially but verified as implemented (base class inheritance + schema typo "rtl?"). One low-priority enhancement opportunity: BackgroundImage string shorthand (schema allows string OR object; .NET only supports object form, which is more type-safe). Conclusion: PR 57 closed the last conformance gaps. Library is production-ready and fully spec-compliant across all versions 1.0–1.6. Full audit report: .squad/decisions/inbox/keaton-schema-conformance-audit.md. Methodology: fetched official schema, systematic definitions/* comparison, line-by-line property verification, builder coverage review. Confidence: Very High.
+
+### 2025-07-22: TypeScript Port — Full Schema Conformance Audit
+
+Performed full schema conformance audit of the TypeScript port (`node/packages/fluent-cards/src/`) against the Adaptive Cards 1.6.0 specification. **Result: FAIL — 8 actionable gaps found, no critical blockers.**
+
+Key findings:
+- **TextRun missing `fontType`** — property absent from model and builder (Medium)
+- **Media missing `captionSources`** — v1.6 feature not implemented; `CaptionSource` interface entirely absent (Medium)
+- **Column.width and TableColumnDefinition.width typed as `string` only** — schema allows `string | number` for relative weights (Medium)
+- **TextBlockBuilder missing 4 base element methods** — `withHeight()`, `withFallback()`, `withRequires()`, `withRtl()` present in all other element builders (Low)
+- **AssociatedInputs enum uses camelCase** (`'auto'`/`'none'`) but schema canonical values are PascalCase (`'Auto'`/`'None'`); schema regex allows both (Low)
+- **TextBlock.selectAction** is an intentional team extension not in the 1.6.0 schema — documented as design note
+- All 5 action types, all 6 input types, all advanced features (Auth, Refresh, Metadata) are fully conformant
+- 17 of 18 enums match schema exactly
+- Existing test file has 21 tests; ~60 more needed for .NET parity (~84 tests)
+- Full audit report: `.squad/decisions/inbox/keaton-ts-schema-audit.md`

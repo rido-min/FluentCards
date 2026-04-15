@@ -992,7 +992,7 @@ describe('Schema conformance – Action.ToggleVisibility details', () => {
 
 describe('Schema conformance – Enums', () => {
   it('TextSize has all spec values', () => {
-    const values = Object.values(TextSize);
+    const values: string[] = Object.values(TextSize);
     assert.ok(values.includes('small'));
     assert.ok(values.includes('default'));
     assert.ok(values.includes('medium'));
@@ -1002,7 +1002,7 @@ describe('Schema conformance – Enums', () => {
   });
 
   it('TextWeight has all spec values', () => {
-    const values = Object.values(TextWeight);
+    const values: string[] = Object.values(TextWeight);
     assert.ok(values.includes('lighter'));
     assert.ok(values.includes('default'));
     assert.ok(values.includes('bolder'));
@@ -1010,7 +1010,7 @@ describe('Schema conformance – Enums', () => {
   });
 
   it('TextColor has all spec values', () => {
-    const values = Object.values(TextColor);
+    const values: string[] = Object.values(TextColor);
     assert.ok(values.includes('default'));
     assert.ok(values.includes('dark'));
     assert.ok(values.includes('light'));
@@ -1022,21 +1022,21 @@ describe('Schema conformance – Enums', () => {
   });
 
   it('FontType has all spec values', () => {
-    const values = Object.values(FontType);
+    const values: string[] = Object.values(FontType);
     assert.ok(values.includes('default'));
     assert.ok(values.includes('monospace'));
     assert.equal(values.length, 2);
   });
 
   it('TextBlockStyle has all spec values', () => {
-    const values = Object.values(TextBlockStyle);
+    const values: string[] = Object.values(TextBlockStyle);
     assert.ok(values.includes('default'));
     assert.ok(values.includes('heading'));
     assert.equal(values.length, 2);
   });
 
   it('HorizontalAlignment has all spec values', () => {
-    const values = Object.values(HorizontalAlignment);
+    const values: string[] = Object.values(HorizontalAlignment);
     assert.ok(values.includes('left'));
     assert.ok(values.includes('center'));
     assert.ok(values.includes('right'));
@@ -1044,7 +1044,7 @@ describe('Schema conformance – Enums', () => {
   });
 
   it('VerticalAlignment has all spec values', () => {
-    const values = Object.values(VerticalAlignment);
+    const values: string[] = Object.values(VerticalAlignment);
     assert.ok(values.includes('top'));
     assert.ok(values.includes('center'));
     assert.ok(values.includes('bottom'));
@@ -1052,7 +1052,7 @@ describe('Schema conformance – Enums', () => {
   });
 
   it('ImageSize has all spec values', () => {
-    const values = Object.values(ImageSize);
+    const values: string[] = Object.values(ImageSize);
     assert.ok(values.includes('auto'));
     assert.ok(values.includes('stretch'));
     assert.ok(values.includes('small'));
@@ -1062,14 +1062,14 @@ describe('Schema conformance – Enums', () => {
   });
 
   it('ImageStyle has all spec values', () => {
-    const values = Object.values(ImageStyle);
+    const values: string[] = Object.values(ImageStyle);
     assert.ok(values.includes('default'));
     assert.ok(values.includes('person'));
     assert.equal(values.length, 2);
   });
 
   it('ContainerStyle has all spec values', () => {
-    const values = Object.values(ContainerStyle);
+    const values: string[] = Object.values(ContainerStyle);
     assert.ok(values.includes('default'));
     assert.ok(values.includes('emphasis'));
     assert.ok(values.includes('good'));
@@ -1080,7 +1080,7 @@ describe('Schema conformance – Enums', () => {
   });
 
   it('ActionStyle has all spec values', () => {
-    const values = Object.values(ActionStyle);
+    const values: string[] = Object.values(ActionStyle);
     assert.ok(values.includes('default'));
     assert.ok(values.includes('positive'));
     assert.ok(values.includes('destructive'));
@@ -1088,7 +1088,7 @@ describe('Schema conformance – Enums', () => {
   });
 
   it('ChoiceInputStyle has all spec values', () => {
-    const values = Object.values(ChoiceInputStyle);
+    const values: string[] = Object.values(ChoiceInputStyle);
     assert.ok(values.includes('compact'));
     assert.ok(values.includes('expanded'));
     assert.ok(values.includes('filtered'));
@@ -1096,14 +1096,14 @@ describe('Schema conformance – Enums', () => {
   });
 
   it('AssociatedInputs has all spec values', () => {
-    const values = Object.values(AssociatedInputs);
+    const values: string[] = Object.values(AssociatedInputs);
     assert.ok(values.includes('Auto'));
     assert.ok(values.includes('None'));
     assert.equal(values.length, 2);
   });
 
   it('Spacing has all spec values', () => {
-    const values = Object.values(Spacing);
+    const values: string[] = Object.values(Spacing);
     assert.ok(values.includes('default'));
     assert.ok(values.includes('none'));
     assert.ok(values.includes('small'));
@@ -1115,7 +1115,7 @@ describe('Schema conformance – Enums', () => {
   });
 
   it('BackgroundImageFillMode has all spec values', () => {
-    const values = Object.values(BackgroundImageFillMode);
+    const values: string[] = Object.values(BackgroundImageFillMode);
     assert.ok(values.includes('cover'));
     assert.ok(values.includes('repeatHorizontally'));
     assert.ok(values.includes('repeatVertically'));
@@ -1124,14 +1124,14 @@ describe('Schema conformance – Enums', () => {
   });
 
   it('ActionMode has all spec values', () => {
-    const values = Object.values(ActionMode);
+    const values: string[] = Object.values(ActionMode);
     assert.ok(values.includes('primary'));
     assert.ok(values.includes('secondary'));
     assert.equal(values.length, 2);
   });
 
   it('TextInputStyle has all spec values', () => {
-    const values = Object.values(TextInputStyle);
+    const values: string[] = Object.values(TextInputStyle);
     assert.ok(values.includes('text'));
     assert.ok(values.includes('tel'));
     assert.ok(values.includes('url'));
@@ -1141,14 +1141,14 @@ describe('Schema conformance – Enums', () => {
   });
 
   it('InputLabelPosition has all spec values', () => {
-    const values = Object.values(InputLabelPosition);
+    const values: string[] = Object.values(InputLabelPosition);
     assert.ok(values.includes('inline'));
     assert.ok(values.includes('above'));
     assert.equal(values.length, 2);
   });
 
   it('InputStyle has all spec values', () => {
-    const values = Object.values(InputStyle);
+    const values: string[] = Object.values(InputStyle);
     assert.ok(values.includes('default'));
     assert.ok(values.includes('revealOnHover'));
     assert.equal(values.length, 2);
