@@ -1,6 +1,16 @@
 from __future__ import annotations
-from typing import Callable
+from typing import Callable, TYPE_CHECKING
 from ..enums import ContainerStyle, VerticalAlignment, Spacing
+
+if TYPE_CHECKING:
+    from .action_builder import ActionBuilder
+    from .action_set_builder import ActionSetBuilder
+    from .background_image_builder import BackgroundImageBuilder
+    from .column_set_builder import ColumnSetBuilder
+    from .fact_set_builder import FactSetBuilder
+    from .image_builder import ImageBuilder
+    from .rich_text_block_builder import RichTextBlockBuilder
+    from .text_block_builder import TextBlockBuilder
 
 
 class ContainerBuilder:
@@ -105,7 +115,7 @@ class ContainerBuilder:
         self._container['isVisible'] = is_visible
         return self
 
-    def with_background_image(self, configure: Callable) -> ContainerBuilder:
+    def with_background_image(self, configure: Callable[[BackgroundImageBuilder], None]) -> ContainerBuilder:
         """Sets the background image for the container.
 
         Args:
@@ -120,7 +130,7 @@ class ContainerBuilder:
         self._container['backgroundImage'] = b.build()
         return self
 
-    def with_select_action(self, configure: Callable) -> ContainerBuilder:
+    def with_select_action(self, configure: Callable[[ActionBuilder], None]) -> ContainerBuilder:
         """Sets the action invoked when the container is selected.
 
         Args:
@@ -135,7 +145,7 @@ class ContainerBuilder:
         self._container['selectAction'] = b.build()
         return self
 
-    def add_text_block(self, configure: Callable) -> ContainerBuilder:
+    def add_text_block(self, configure: Callable[[TextBlockBuilder], None]) -> ContainerBuilder:
         """Adds a TextBlock element to the container.
 
         Args:
@@ -150,7 +160,7 @@ class ContainerBuilder:
         self._container['items'].append(b.build())
         return self
 
-    def add_image(self, configure: Callable) -> ContainerBuilder:
+    def add_image(self, configure: Callable[[ImageBuilder], None]) -> ContainerBuilder:
         """Adds an Image element to the container.
 
         Args:
@@ -165,7 +175,7 @@ class ContainerBuilder:
         self._container['items'].append(b.build())
         return self
 
-    def add_container(self, configure: Callable) -> ContainerBuilder:
+    def add_container(self, configure: Callable[[ContainerBuilder], None]) -> ContainerBuilder:
         """Adds a nested Container element.
 
         Args:
@@ -179,7 +189,7 @@ class ContainerBuilder:
         self._container['items'].append(b.build())
         return self
 
-    def add_column_set(self, configure: Callable) -> ContainerBuilder:
+    def add_column_set(self, configure: Callable[[ColumnSetBuilder], None]) -> ContainerBuilder:
         """Adds a ColumnSet element to the container.
 
         Args:
@@ -194,7 +204,7 @@ class ContainerBuilder:
         self._container['items'].append(b.build())
         return self
 
-    def add_fact_set(self, configure: Callable) -> ContainerBuilder:
+    def add_fact_set(self, configure: Callable[[FactSetBuilder], None]) -> ContainerBuilder:
         """Adds a FactSet element to the container.
 
         Args:
@@ -209,7 +219,7 @@ class ContainerBuilder:
         self._container['items'].append(b.build())
         return self
 
-    def add_rich_text_block(self, configure: Callable) -> ContainerBuilder:
+    def add_rich_text_block(self, configure: Callable[[RichTextBlockBuilder], None]) -> ContainerBuilder:
         """Adds a RichTextBlock element to the container.
 
         Args:
@@ -224,7 +234,7 @@ class ContainerBuilder:
         self._container['items'].append(b.build())
         return self
 
-    def add_action_set(self, configure: Callable) -> ContainerBuilder:
+    def add_action_set(self, configure: Callable[[ActionSetBuilder], None]) -> ContainerBuilder:
         """Adds an ActionSet element to the container.
 
         Args:

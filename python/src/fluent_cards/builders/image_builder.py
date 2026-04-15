@@ -1,6 +1,9 @@
 from __future__ import annotations
-from typing import Callable
+from typing import Callable, TYPE_CHECKING
 from ..enums import HorizontalAlignment, ImageSize, ImageStyle, Spacing
+
+if TYPE_CHECKING:
+    from .action_builder import ActionBuilder
 
 
 class ImageBuilder:
@@ -141,7 +144,7 @@ class ImageBuilder:
         self._image['separator'] = separator
         return self
 
-    def with_select_action(self, configure: Callable) -> ImageBuilder:
+    def with_select_action(self, configure: Callable[[ActionBuilder], None]) -> ImageBuilder:
         """Sets the action invoked when the image is selected.
 
         Args:

@@ -1,6 +1,9 @@
 from __future__ import annotations
-from typing import Callable
+from typing import Callable, TYPE_CHECKING
 from ..enums import TextColor, TextSize, TextWeight
+
+if TYPE_CHECKING:
+    from .action_builder import ActionBuilder
 
 
 class TextRunBuilder:
@@ -117,7 +120,7 @@ class TextRunBuilder:
         self._run['highlight'] = highlight
         return self
 
-    def with_select_action(self, configure: Callable) -> TextRunBuilder:
+    def with_select_action(self, configure: Callable[[ActionBuilder], None]) -> TextRunBuilder:
         """Sets the action invoked when the text run is selected.
 
         Args:

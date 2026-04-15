@@ -1,6 +1,9 @@
 from __future__ import annotations
-from typing import Callable, Union
+from typing import Callable, Union, TYPE_CHECKING
 from ..enums import ImageSize, Spacing
+
+if TYPE_CHECKING:
+    from .image_builder import ImageBuilder
 
 
 class ImageSetBuilder:
@@ -45,7 +48,7 @@ class ImageSetBuilder:
         self._image_set['spacing'] = spacing.value
         return self
 
-    def add_image(self, configure_or_image: Union[Callable, dict]) -> ImageSetBuilder:
+    def add_image(self, configure_or_image: Union[Callable[[ImageBuilder], None], dict]) -> ImageSetBuilder:
         """Adds an image to the image set.
 
         Args:

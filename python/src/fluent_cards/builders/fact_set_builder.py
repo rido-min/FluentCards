@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Union
+from typing import Optional, Union
 from ..enums import Spacing
 
 
@@ -33,7 +33,7 @@ class FactSetBuilder:
         self._fact_set['spacing'] = spacing.value
         return self
 
-    def add_fact(self, title_or_fact: Union[str, dict], value: str = None) -> FactSetBuilder:
+    def add_fact(self, title_or_fact: Union[str, dict], value: Optional[str] = None) -> FactSetBuilder:
         """Adds a fact to the fact set.
 
         Args:

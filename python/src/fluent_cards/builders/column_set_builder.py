@@ -1,6 +1,10 @@
 from __future__ import annotations
-from typing import Callable, Optional, Union
+from typing import Callable, Optional, Union, TYPE_CHECKING
 from ..enums import ContainerStyle, HorizontalAlignment, Spacing
+
+if TYPE_CHECKING:
+    from .action_builder import ActionBuilder
+    from .column_builder import ColumnBuilder
 
 
 class ColumnSetBuilder:
@@ -93,7 +97,7 @@ class ColumnSetBuilder:
         self._column_set['separator'] = separator
         return self
 
-    def with_select_action(self, configure: Callable) -> ColumnSetBuilder:
+    def with_select_action(self, configure: Callable[[ActionBuilder], None]) -> ColumnSetBuilder:
         """Sets the action invoked when the column set is selected.
 
         Args:
@@ -108,8 +112,8 @@ class ColumnSetBuilder:
         self._column_set['selectAction'] = b.build()
         return self
 
-    def add_column(self, configure_or_width: Union[str, Callable],
-                   configure: Optional[Callable] = None) -> ColumnSetBuilder:
+    def add_column(self, configure_or_width: Union[str, Callable[[ColumnBuilder], None]],
+                   configure: Optional[Callable[[ColumnBuilder], None]] = None) -> ColumnSetBuilder:
         """Adds a Column to the column set.
 
         Args:

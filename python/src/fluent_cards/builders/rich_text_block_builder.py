@@ -1,6 +1,9 @@
 from __future__ import annotations
-from typing import Callable
+from typing import Callable, TYPE_CHECKING
 from ..enums import HorizontalAlignment, Spacing
+
+if TYPE_CHECKING:
+    from .text_run_builder import TextRunBuilder
 
 
 class RichTextBlockBuilder:
@@ -57,7 +60,7 @@ class RichTextBlockBuilder:
         self._rich_text['inlines'].append(text)
         return self
 
-    def add_text_run(self, configure: Callable) -> RichTextBlockBuilder:
+    def add_text_run(self, configure: Callable[[TextRunBuilder], None]) -> RichTextBlockBuilder:
         """Adds a formatted TextRun inline to the rich text block.
 
         Args:

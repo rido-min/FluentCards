@@ -1,5 +1,8 @@
 from __future__ import annotations
-from typing import Callable
+from typing import Callable, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .action_builder import ActionBuilder
 
 
 class RefreshBuilder:
@@ -8,7 +11,7 @@ class RefreshBuilder:
     def __init__(self):
         self._refresh: dict = {}
 
-    def with_action(self, configure: Callable) -> RefreshBuilder:
+    def with_action(self, configure: Callable[[ActionBuilder], None]) -> RefreshBuilder:
         """Sets the action invoked to refresh the card.
 
         Args:

@@ -1,6 +1,13 @@
 from __future__ import annotations
-from typing import Callable
+from typing import Callable, TYPE_CHECKING
 from ..enums import ContainerStyle, Spacing, VerticalAlignment
+
+if TYPE_CHECKING:
+    from .action_builder import ActionBuilder
+    from .background_image_builder import BackgroundImageBuilder
+    from .container_builder import ContainerBuilder
+    from .image_builder import ImageBuilder
+    from .text_block_builder import TextBlockBuilder
 
 
 class ColumnBuilder:
@@ -81,7 +88,7 @@ class ColumnBuilder:
         self._column['minHeight'] = min_height
         return self
 
-    def with_background_image(self, configure: Callable) -> ColumnBuilder:
+    def with_background_image(self, configure: Callable[[BackgroundImageBuilder], None]) -> ColumnBuilder:
         """Sets the background image for the column.
 
         Args:
@@ -96,7 +103,7 @@ class ColumnBuilder:
         self._column['backgroundImage'] = b.build()
         return self
 
-    def with_select_action(self, configure: Callable) -> ColumnBuilder:
+    def with_select_action(self, configure: Callable[[ActionBuilder], None]) -> ColumnBuilder:
         """Sets the action invoked when the column is selected.
 
         Args:
@@ -198,7 +205,7 @@ class ColumnBuilder:
         self._column['rtl'] = rtl
         return self
 
-    def add_text_block(self, configure: Callable) -> ColumnBuilder:
+    def add_text_block(self, configure: Callable[[TextBlockBuilder], None]) -> ColumnBuilder:
         """Adds a TextBlock element to the column.
 
         Args:
@@ -213,7 +220,7 @@ class ColumnBuilder:
         self._column['items'].append(b.build())
         return self
 
-    def add_image(self, configure: Callable) -> ColumnBuilder:
+    def add_image(self, configure: Callable[[ImageBuilder], None]) -> ColumnBuilder:
         """Adds an Image element to the column.
 
         Args:
@@ -228,7 +235,7 @@ class ColumnBuilder:
         self._column['items'].append(b.build())
         return self
 
-    def add_container(self, configure: Callable) -> ColumnBuilder:
+    def add_container(self, configure: Callable[[ContainerBuilder], None]) -> ColumnBuilder:
         """Adds a Container element to the column.
 
         Args:

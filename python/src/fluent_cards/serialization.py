@@ -41,5 +41,5 @@ def from_json(json_str: str) -> Optional[dict]:
         if isinstance(parsed, dict) and parsed.get("type") == "AdaptiveCard":
             return parsed
         return None
-    except Exception:
+    except (json.JSONDecodeError, ValueError):
         return None

@@ -1,6 +1,9 @@
 from __future__ import annotations
-from typing import Callable
+from typing import Callable, TYPE_CHECKING
 from ...enums import TextInputStyle, Spacing
+
+if TYPE_CHECKING:
+    from ..action_builder import ActionBuilder
 
 
 class InputTextBuilder:
@@ -141,7 +144,7 @@ class InputTextBuilder:
         self._input['spacing'] = spacing.value
         return self
 
-    def with_inline_action(self, configure: Callable) -> InputTextBuilder:
+    def with_inline_action(self, configure: Callable[[ActionBuilder], None]) -> InputTextBuilder:
         """Sets an inline action button displayed inside the text input.
 
         Args:
