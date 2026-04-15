@@ -91,8 +91,8 @@ class TestToJson:
                 .add_action(lambda b: b.submit('None').with_associated_inputs(AssociatedInputs.None_))
                 .build())
         json_str = to_json(card)
-        assert '"associatedInputs": "Auto"' in json_str
-        assert '"associatedInputs": "None"' in json_str
+        assert '"associatedInputs": "auto"' in json_str
+        assert '"associatedInputs": "none"' in json_str
 
     def test_omits_action_style_when_not_set(self):
         card = AdaptiveCardBuilder.create().add_action(lambda b: b.submit('Submit')).build()
