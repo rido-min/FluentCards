@@ -667,6 +667,7 @@ func TestSchemaConformance_TextRun_AllDecorations(t *testing.T) {
 				WithStrikethrough(true).
 				WithUnderline(true).
 				WithHighlight(true).
+				WithFontType(FontTypeMonospace).
 				WithSelectAction(func(a *ActionBuilder) {
 					a.OpenURL("https://example.com")
 				})
@@ -686,6 +687,7 @@ func TestSchemaConformance_TextRun_AllDecorations(t *testing.T) {
 	assert.Equal(t, true, run["strikethrough"])
 	assert.Equal(t, true, run["underline"])
 	assert.Equal(t, true, run["highlight"])
+	assert.Equal(t, string(FontTypeMonospace), run["fontType"])
 	sa := run["selectAction"].(Card)
 	assert.Equal(t, "Action.OpenUrl", sa["type"])
 }
@@ -925,21 +927,14 @@ func TestSchemaConformance_CaptionSources(t *testing.T) {
 	t.Parallel()
 	m := newMediaBuilder().
 		AddSource("https://example.com/video.mp4", "video/mp4").
+		AddCaptionSource("text/vtt", "https://example.com/captions.vtt", "English").
 		Build()
-
-	// CaptionSources are added as raw source maps since no dedicated builder exists
-	m["captionSources"] = []any{
-		map[string]any{
-			"mimeType": "text/vtt",
-			"url":      "https://example.com/captions.vtt",
-			"label":    "English",
-		},
-	}
 
 	assert.Equal(t, "Media", m["type"])
 	captions := m["captionSources"].([]any)
 	require.Len(t, captions, 1)
 	cap := captions[0].(map[string]any)
+	assert.Equal(t, "CaptionSource", cap["type"])
 	assert.Equal(t, "text/vtt", cap["mimeType"])
 	assert.Equal(t, "https://example.com/captions.vtt", cap["url"])
 	assert.Equal(t, "English", cap["label"])
@@ -961,6 +956,21 @@ func TestSchemaConformance_CommonProperties_Fallback(t *testing.T) {
 	assert.Equal(t, "1.5", reqs["adaptiveCards"])
 	assert.Equal(t, "stretch", c["height"])
 	assert.Equal(t, true, c["rtl"])
+}
+
+func TestSchemaConformance_CommonProperties_TextBlock(t *testing.T) {
+	t.Parallel()
+	tb := newTextBlockBuilder().
+		WithText("test").
+		WithFallback("drop").
+		WithRequires("adaptiveCards", "1.2").
+		WithHeight("stretch").
+		Build()
+
+	assert.Equal(t, "drop", tb["fallback"])
+	reqs := tb["requires"].(map[string]any)
+	assert.Equal(t, "1.2", reqs["adaptiveCards"])
+	assert.Equal(t, "stretch", tb["height"])
 }
 
 func TestSchemaConformance_CommonProperties_MediaRequires(t *testing.T) {

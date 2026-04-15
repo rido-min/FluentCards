@@ -80,9 +80,9 @@ func (b *MediaBuilder) AddSourceMap(source map[string]any) *MediaBuilder {
 
 // AddCaptionSource adds a caption source with the given MIME type, URL, and label.
 func (b *MediaBuilder) AddCaptionSource(mimeType, url, label string) *MediaBuilder {
-	captions, ok := b.data["captionSources"].([]map[string]any)
+	captions, ok := b.data["captionSources"].([]any)
 	if !ok {
-		captions = []map[string]any{}
+		captions = []any{}
 	}
 	b.data["captionSources"] = append(captions, map[string]any{
 		"type":     "CaptionSource",
