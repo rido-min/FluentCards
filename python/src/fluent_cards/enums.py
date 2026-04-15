@@ -104,8 +104,8 @@ class ChoiceInputStyle(str, Enum):
 class AssociatedInputs(str, Enum):
     """Controls which inputs are submitted when an action is invoked."""
 
-    Auto = "auto"
-    None_ = "none"
+    Auto = "Auto"
+    None_ = "None"
 
 
 class BackgroundImageFillMode(str, Enum):
@@ -162,6 +162,13 @@ class TextBlockStyle(str, Enum):
 
     Default = "default"
     Heading = "heading"
+
+
+class BlockElementHeight(str, Enum):
+    """Controls the height behavior of a block element."""
+
+    Auto = "auto"
+    Stretch = "stretch"
 
 
 class ValidationSeverity(str, Enum):

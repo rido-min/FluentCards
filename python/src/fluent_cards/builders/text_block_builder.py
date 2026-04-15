@@ -177,6 +177,45 @@ class TextBlockBuilder:
         self._block['isVisible'] = is_visible
         return self
 
+    def with_height(self, height: str) -> TextBlockBuilder:
+        """Sets the height of the text block.
+
+        Args:
+            height: The height value ('auto' or 'stretch').
+
+        Returns:
+            The builder instance for method chaining.
+        """
+        self._block['height'] = height
+        return self
+
+    def with_fallback(self, fallback) -> TextBlockBuilder:
+        """Sets the fallback behavior when the text block is unsupported.
+
+        Args:
+            fallback: The fallback value ('drop' or another element dict).
+
+        Returns:
+            The builder instance for method chaining.
+        """
+        self._block['fallback'] = fallback
+        return self
+
+    def with_requires(self, key: str, version: str) -> TextBlockBuilder:
+        """Sets a feature requirement for the text block.
+
+        Args:
+            key: The feature name.
+            version: The minimum version required.
+
+        Returns:
+            The builder instance for method chaining.
+        """
+        if 'requires' not in self._block:
+            self._block['requires'] = {}
+        self._block['requires'][key] = version
+        return self
+
     def with_select_action(self, action: dict) -> TextBlockBuilder:
         """Sets the action invoked when the text block is selected.
 

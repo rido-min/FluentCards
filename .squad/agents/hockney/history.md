@@ -28,3 +28,17 @@
 ### 2026-04-15: Coordinated Full-Team Codebase Review
 
 Participated in full-squad review coordinated by Keaton. Hockney focused on Python-specific issues: stale `fluent_cards/` pre-migration directory should be deleted, type hints on Callable parameters are bare (should be `Callable[[TextBlockBuilder], None]` for IDE support), `AdaptiveCardBuilder.with_background_image` takes raw dict instead of lambda pattern (inconsistent with ContainerBuilder), `ActionBuilder` silently no-ops before type set, `from_json()` swallows all exceptions (should catch JSONDecodeError specifically), `FactSetBuilder.add_fact` value parameter inconsistency, missing `py.typed` marker (violates PEP 561), old Optional import style, `_strip_none` doesn't strip empty strings, missing unit tests for helper builders. Compiled into hockney-codebase-review.md. Cross-port finding: Python and TypeScript test suites are near-mirrors (same structure, identical coverage counts) — future parity work should batch TS/Python together.
+
+### 2026-04-15 — Fix 7 Python Schema Conformance Gaps
+
+Fixed all 7 gaps identified by Keaton's audit (mirroring TS PR #67):
+1. **TextRunBuilder.with_font_type()** — added, imports FontType from enums.
+2. **MediaBuilder.add_caption_source()** — added with setdefault pattern for captionSources list.
+3. **CaptionSource model** — added TypedDict to models.py, exported from `__init__.py`.
+4. **TextBlockBuilder base element methods** — added `with_height()`, `with_fallback()`, `with_requires(key, version)` matching the established `(key, version)` pattern used by all other builders (not `dict` as initially suggested in task).
+5. **AssociatedInputs casing** — changed from `"auto"/"none"` to `"Auto"/"None"` per schema. Updated 4 test assertions in test_schema_conformance.py and test_serialization.py.
+6. **ColumnBuilder.with_width()** — widened type hint to `str | int | float` (file already uses `from __future__ import annotations`).
+7. **BlockElementHeight enum** — added to enums.py, exported from `__init__.py`.
+
+Key pattern learned: `with_requires` consistently uses `(key: str, version: str)` across all 18+ builders — not `(requires: dict)`. Always follow existing codebase patterns over task descriptions.
+

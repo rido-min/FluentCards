@@ -28,11 +28,11 @@ class ColumnBuilder:
         self._column['id'] = id
         return self
 
-    def with_width(self, width: str) -> ColumnBuilder:
+    def with_width(self, width: str | int | float) -> ColumnBuilder:
         """Sets the width of the column.
 
         Args:
-            width: The column width ('auto', 'stretch', or a pixel/weight value).
+            width: The column width ('auto', 'stretch', a pixel string, or a numeric weight).
 
         Returns:
             The builder instance for method chaining.

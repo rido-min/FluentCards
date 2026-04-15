@@ -106,6 +106,26 @@ class MediaBuilder:
             self._media['sources'].append(url_or_source)
         return self
 
+    def add_caption_source(self, mime_type: str, url: str, label: str) -> MediaBuilder:
+        """Adds a caption source to the media element.
+
+        Args:
+            mime_type: The MIME type of the caption (e.g. 'text/vtt').
+            url: The URL of the caption file.
+            label: The label for the caption source.
+
+        Returns:
+            The builder instance for method chaining.
+        """
+        self._media.setdefault('captionSources', [])
+        self._media['captionSources'].append({
+            'type': 'CaptionSource',
+            'mimeType': mime_type,
+            'url': url,
+            'label': label,
+        })
+        return self
+
     def build(self) -> dict:
         """Builds and returns the configured Media dictionary.
 

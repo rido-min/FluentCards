@@ -7,10 +7,17 @@ from fluent_cards import (
     ImageBuilder,
     ContainerBuilder,
     ColumnSetBuilder,
+    ColumnBuilder,
     FactSetBuilder,
     RichTextBlockBuilder,
     ActionSetBuilder,
     TableBuilder,
+    MediaBuilder,
+    ImageSetBuilder,
+    ActionBuilder,
+    RefreshBuilder,
+    AuthenticationBuilder,
+    BackgroundImageBuilder,
     TextSize,
     TextWeight,
     TextColor,
@@ -26,6 +33,10 @@ from fluent_cards import (
     BackgroundImageFillMode,
     TextInputStyle,
     ChoiceInputStyle,
+    AssociatedInputs,
+    ActionMode,
+    InputLabelPosition,
+    InputStyle,
 )
 
 
@@ -580,3 +591,533 @@ class TestInputSchemaConformance:
         assert inp["isMultiSelect"] is True
         assert len(inp["choices"]) == 3
         assert inp["choices"][0] == {"title": "Red", "value": "red"}
+
+
+class TestMediaSchemaConformance:
+    def test_media_all_properties(self):
+        m = (
+            MediaBuilder()
+            .with_id("media1")
+            .with_poster("https://example.com/poster.png")
+            .with_alt_text("A video")
+            .add_source("https://example.com/video.mp4", "video/mp4")
+            .with_spacing(Spacing.Large)
+            .with_separator(True)
+            .with_is_visible(True)
+            .build()
+        )
+        assert m["type"] == "Media"
+        assert m["id"] == "media1"
+        assert m["poster"] == "https://example.com/poster.png"
+        assert m["altText"] == "A video"
+        assert len(m["sources"]) == 1
+        assert m["sources"][0]["mimeType"] == "video/mp4"
+        assert m["sources"][0]["url"] == "https://example.com/video.mp4"
+        assert m["spacing"] == "large"
+        assert m["separator"] is True
+        assert m["isVisible"] is True
+
+
+class TestImageSetSchemaConformance:
+    def test_image_set_all_properties(self):
+        iset = (
+            ImageSetBuilder()
+            .with_id("imgset1")
+            .with_image_size(ImageSize.Medium)
+            .add_image(lambda img: img.with_url("https://example.com/1.png"))
+            .add_image(lambda img: img.with_url("https://example.com/2.png"))
+            .with_spacing(Spacing.Small)
+            .with_separator(True)
+            .with_is_visible(True)
+            .build()
+        )
+        assert iset["type"] == "ImageSet"
+        assert iset["id"] == "imgset1"
+        assert iset["imageSize"] == "medium"
+        assert len(iset["images"]) == 2
+        assert iset["images"][0]["url"] == "https://example.com/1.png"
+        assert iset["spacing"] == "small"
+        assert iset["separator"] is True
+        assert iset["isVisible"] is True
+
+
+class TestColumnSchemaConformance:
+    def test_column_all_properties(self):
+        col = (
+            ColumnBuilder()
+            .with_id("col1")
+            .with_width("2")
+            .with_style(ContainerStyle.Emphasis)
+            .with_vertical_content_alignment(VerticalAlignment.Center)
+            .with_bleed(True)
+            .with_min_height("100px")
+            .with_background_image(
+                lambda bg: bg.with_url("https://example.com/bg.png")
+            )
+            .with_select_action(lambda a: a.open_url("https://example.com"))
+            .with_spacing(Spacing.Medium)
+            .with_separator(True)
+            .with_is_visible(True)
+            .add_text_block(lambda tb: tb.with_text("In column"))
+            .build()
+        )
+        assert col["type"] == "Column"
+        assert col["id"] == "col1"
+        assert col["width"] == "2"
+        assert col["style"] == "emphasis"
+        assert col["verticalContentAlignment"] == "center"
+        assert col["bleed"] is True
+        assert col["minHeight"] == "100px"
+        assert col["backgroundImage"]["url"] == "https://example.com/bg.png"
+        assert col["selectAction"]["type"] == "Action.OpenUrl"
+        assert col["spacing"] == "medium"
+        assert col["separator"] is True
+        assert col["isVisible"] is True
+        assert len(col["items"]) == 1
+        assert col["items"][0]["type"] == "TextBlock"
+
+
+class TestActionSchemaConformance:
+    def test_open_url_action_all_properties(self):
+        a = (
+            ActionBuilder()
+            .open_url("https://example.com")
+            .with_title("Open Link")
+            .with_icon_url("https://example.com/icon.png")
+            .with_id("action1")
+            .with_style(ActionStyle.Positive)
+            .with_tooltip("Opens a link")
+            .with_is_enabled(True)
+            .with_mode(ActionMode.Primary)
+            .build()
+        )
+        assert a["type"] == "Action.OpenUrl"
+        assert a["url"] == "https://example.com"
+        assert a["title"] == "Open Link"
+        assert a["iconUrl"] == "https://example.com/icon.png"
+        assert a["id"] == "action1"
+        assert a["style"] == "positive"
+        assert a["tooltip"] == "Opens a link"
+        assert a["isEnabled"] is True
+        assert a["mode"] == "primary"
+
+    def test_submit_action_all_properties(self):
+        a = (
+            ActionBuilder()
+            .submit("Send")
+            .with_data({"key": "value"})
+            .with_associated_inputs(AssociatedInputs.Auto)
+            .with_icon_url("https://example.com/icon.png")
+            .with_id("submit1")
+            .with_style(ActionStyle.Destructive)
+            .with_tooltip("Submits data")
+            .with_is_enabled(True)
+            .with_mode(ActionMode.Secondary)
+            .build()
+        )
+        assert a["type"] == "Action.Submit"
+        assert a["title"] == "Send"
+        assert a["data"] == {"key": "value"}
+        assert a["associatedInputs"] == "Auto"
+        assert a["iconUrl"] == "https://example.com/icon.png"
+        assert a["id"] == "submit1"
+        assert a["style"] == "destructive"
+        assert a["tooltip"] == "Submits data"
+        assert a["isEnabled"] is True
+        assert a["mode"] == "secondary"
+
+    def test_execute_action_all_properties(self):
+        a = (
+            ActionBuilder()
+            .execute("Run")
+            .with_verb("doSomething")
+            .with_data({"param": 1})
+            .with_associated_inputs(AssociatedInputs.None_)
+            .with_icon_url("https://example.com/icon.png")
+            .with_id("exec1")
+            .with_style(ActionStyle.Positive)
+            .with_tooltip("Executes an action")
+            .with_is_enabled(True)
+            .with_mode(ActionMode.Primary)
+            .build()
+        )
+        assert a["type"] == "Action.Execute"
+        assert a["title"] == "Run"
+        assert a["verb"] == "doSomething"
+        assert a["data"] == {"param": 1}
+        assert a["associatedInputs"] == "None"
+        assert a["iconUrl"] == "https://example.com/icon.png"
+        assert a["id"] == "exec1"
+        assert a["style"] == "positive"
+        assert a["tooltip"] == "Executes an action"
+        assert a["isEnabled"] is True
+        assert a["mode"] == "primary"
+
+    def test_show_card_action_all_properties(self):
+        inner_card = (
+            AdaptiveCardBuilder.create()
+            .add_text_block(lambda tb: tb.with_text("Inner card"))
+            .build()
+        )
+        a = (
+            ActionBuilder()
+            .show_card("Details")
+            .with_card(inner_card)
+            .with_icon_url("https://example.com/icon.png")
+            .with_id("showcard1")
+            .with_style(ActionStyle.Default)
+            .with_tooltip("Shows a card")
+            .with_is_enabled(True)
+            .with_mode(ActionMode.Secondary)
+            .build()
+        )
+        assert a["type"] == "Action.ShowCard"
+        assert a["title"] == "Details"
+        assert a["card"]["type"] == "AdaptiveCard"
+        assert a["iconUrl"] == "https://example.com/icon.png"
+        assert a["id"] == "showcard1"
+        assert a["style"] == "default"
+        assert a["tooltip"] == "Shows a card"
+        assert a["isEnabled"] is True
+        assert a["mode"] == "secondary"
+
+    def test_toggle_visibility_action_all_properties(self):
+        a = (
+            ActionBuilder()
+            .toggle_visibility("Toggle")
+            .add_target_element("elem1", True)
+            .add_target_element("elem2", False)
+            .with_icon_url("https://example.com/icon.png")
+            .with_id("toggle1")
+            .with_style(ActionStyle.Positive)
+            .with_tooltip("Toggles visibility")
+            .with_is_enabled(True)
+            .with_mode(ActionMode.Primary)
+            .build()
+        )
+        assert a["type"] == "Action.ToggleVisibility"
+        assert a["title"] == "Toggle"
+        assert len(a["targetElements"]) == 2
+        assert a["iconUrl"] == "https://example.com/icon.png"
+        assert a["id"] == "toggle1"
+        assert a["style"] == "positive"
+        assert a["tooltip"] == "Toggles visibility"
+        assert a["isEnabled"] is True
+        assert a["mode"] == "primary"
+
+
+class TestEnumSchemaConformance:
+    def test_text_size_enum(self):
+        values = [m.value for m in TextSize]
+        assert "small" in values
+        assert "default" in values
+        assert "medium" in values
+        assert "large" in values
+        assert "extraLarge" in values
+        assert len(TextSize) == 5
+
+    def test_text_weight_enum(self):
+        values = [m.value for m in TextWeight]
+        assert "lighter" in values
+        assert "default" in values
+        assert "bolder" in values
+        assert len(TextWeight) == 3
+
+    def test_text_color_enum(self):
+        values = [m.value for m in TextColor]
+        assert "default" in values
+        assert "dark" in values
+        assert "light" in values
+        assert "accent" in values
+        assert "good" in values
+        assert "warning" in values
+        assert "attention" in values
+        assert len(TextColor) == 7
+
+    def test_font_type_enum(self):
+        values = [m.value for m in FontType]
+        assert "default" in values
+        assert "monospace" in values
+        assert len(FontType) == 2
+
+    def test_text_block_style_enum(self):
+        values = [m.value for m in TextBlockStyle]
+        assert "default" in values
+        assert "heading" in values
+        assert len(TextBlockStyle) == 2
+
+    def test_horizontal_alignment_enum(self):
+        values = [m.value for m in HorizontalAlignment]
+        assert "left" in values
+        assert "center" in values
+        assert "right" in values
+        assert len(HorizontalAlignment) == 3
+
+    def test_vertical_alignment_enum(self):
+        values = [m.value for m in VerticalAlignment]
+        assert "top" in values
+        assert "center" in values
+        assert "bottom" in values
+        assert len(VerticalAlignment) == 3
+
+    def test_image_size_enum(self):
+        values = [m.value for m in ImageSize]
+        assert "auto" in values
+        assert "stretch" in values
+        assert "small" in values
+        assert "medium" in values
+        assert "large" in values
+        assert len(ImageSize) == 5
+
+    def test_image_style_enum(self):
+        values = [m.value for m in ImageStyle]
+        assert "default" in values
+        assert "person" in values
+        assert len(ImageStyle) == 2
+
+    def test_container_style_enum(self):
+        values = [m.value for m in ContainerStyle]
+        assert "default" in values
+        assert "emphasis" in values
+        assert "good" in values
+        assert "attention" in values
+        assert "warning" in values
+        assert "accent" in values
+        assert len(ContainerStyle) == 6
+
+    def test_spacing_enum(self):
+        values = [m.value for m in Spacing]
+        assert "default" in values
+        assert "none" in values
+        assert "small" in values
+        assert "medium" in values
+        assert "large" in values
+        assert "extraLarge" in values
+        assert "padding" in values
+        assert len(Spacing) == 7
+
+    def test_action_style_enum(self):
+        values = [m.value for m in ActionStyle]
+        assert "default" in values
+        assert "positive" in values
+        assert "destructive" in values
+        assert len(ActionStyle) == 3
+
+    def test_action_mode_enum(self):
+        values = [m.value for m in ActionMode]
+        assert "primary" in values
+        assert "secondary" in values
+        assert len(ActionMode) == 2
+
+    def test_associated_inputs_enum(self):
+        values = [m.value for m in AssociatedInputs]
+        assert "Auto" in values
+        assert "None" in values
+        assert len(AssociatedInputs) == 2
+
+    def test_choice_input_style_enum(self):
+        values = [m.value for m in ChoiceInputStyle]
+        assert "compact" in values
+        assert "expanded" in values
+        assert "filtered" in values
+        assert len(ChoiceInputStyle) == 3
+
+    def test_text_input_style_enum(self):
+        values = [m.value for m in TextInputStyle]
+        assert "text" in values
+        assert "tel" in values
+        assert "url" in values
+        assert "email" in values
+        assert "password" in values
+        assert len(TextInputStyle) == 5
+
+    def test_input_label_position_enum(self):
+        values = [m.value for m in InputLabelPosition]
+        assert "inline" in values
+        assert "above" in values
+        assert len(InputLabelPosition) == 2
+
+    def test_background_image_fill_mode_enum(self):
+        values = [m.value for m in BackgroundImageFillMode]
+        assert "cover" in values
+        assert "repeatHorizontally" in values
+        assert "repeatVertically" in values
+        assert "repeat" in values
+        assert len(BackgroundImageFillMode) == 4
+
+    def test_input_style_enum(self):
+        values = [m.value for m in InputStyle]
+        assert "default" in values
+        assert "revealOnHover" in values
+        assert len(InputStyle) == 2
+
+
+class TestAdvancedFeaturesSchemaConformance:
+    def test_refresh_all_properties(self):
+        card = (
+            AdaptiveCardBuilder.create()
+            .with_refresh(
+                lambda r: r.with_action(
+                    lambda a: a.execute("Refresh").with_verb("refresh")
+                )
+                .add_user_id("user1")
+                .add_user_id("user2")
+                .with_expires("2025-12-31T23:59:59Z")
+            )
+            .add_text_block(lambda tb: tb.with_text("Refreshable"))
+            .build()
+        )
+        refresh = card["refresh"]
+        assert refresh["action"]["type"] == "Action.Execute"
+        assert refresh["action"]["verb"] == "refresh"
+        assert "user1" in refresh["userIds"]
+        assert "user2" in refresh["userIds"]
+        assert refresh["expires"] == "2025-12-31T23:59:59Z"
+
+    def test_authentication_all_properties(self):
+        card = (
+            AdaptiveCardBuilder.create()
+            .with_authentication(
+                lambda auth: auth.with_text("Please sign in")
+                .with_connection_name("myConnection")
+                .with_token_exchange_resource(
+                    {"id": "ter1", "uri": "https://example.com/token", "providerId": "provider1"}
+                )
+                .add_button({"type": "signin", "title": "Sign In", "value": "https://example.com/signin"})
+            )
+            .add_text_block(lambda tb: tb.with_text("Auth card"))
+            .build()
+        )
+        auth = card["authentication"]
+        assert auth["text"] == "Please sign in"
+        assert auth["connectionName"] == "myConnection"
+        assert auth["tokenExchangeResource"]["id"] == "ter1"
+        assert auth["tokenExchangeResource"]["uri"] == "https://example.com/token"
+        assert auth["tokenExchangeResource"]["providerId"] == "provider1"
+        assert len(auth["buttons"]) == 1
+        assert auth["buttons"][0]["title"] == "Sign In"
+
+    def test_metadata_web_url(self):
+        card = (
+            AdaptiveCardBuilder.create()
+            .with_metadata("https://example.com/card")
+            .build()
+        )
+        assert card["metadata"] == {"webUrl": "https://example.com/card"}
+
+    def test_background_image_all_properties(self):
+        card = (
+            AdaptiveCardBuilder.create()
+            .with_background_image(
+                lambda bg: bg.with_url("https://example.com/bg.png")
+                .with_fill_mode(BackgroundImageFillMode.Cover)
+                .with_horizontal_alignment(HorizontalAlignment.Right)
+                .with_vertical_alignment(VerticalAlignment.Bottom)
+            )
+            .build()
+        )
+        bg = card["backgroundImage"]
+        assert bg["url"] == "https://example.com/bg.png"
+        assert bg["fillMode"] == "cover"
+        assert bg["horizontalAlignment"] == "right"
+        assert bg["verticalAlignment"] == "bottom"
+
+    def test_data_query_choices_data(self):
+        card = (
+            AdaptiveCardBuilder.create()
+            .add_input_choice_set(
+                lambda i: i.with_id("people1")
+                .with_label("Select person")
+                .with_choices_data("graph.microsoft.com/users")
+            )
+            .build()
+        )
+        inp = card["body"][0]
+        assert inp["type"] == "Input.ChoiceSet"
+        assert inp["choices.data"]["dataset"] == "graph.microsoft.com/users"
+
+    def test_adaptive_card_all_top_level_properties(self):
+        card = (
+            AdaptiveCardBuilder.create()
+            .with_version("1.6")
+            .with_fallback_text("Cannot render this card")
+            .with_speak("This card says hello")
+            .with_lang("en-US")
+            .with_rtl(True)
+            .with_min_height("300px")
+            .with_metadata("https://example.com/card")
+            .with_vertical_content_alignment(VerticalAlignment.Center)
+            .with_background_image(
+                lambda bg: bg.with_url("https://example.com/bg.png")
+            )
+            .with_select_action({"type": "Action.OpenUrl", "url": "https://example.com"})
+            .with_refresh(
+                lambda r: r.with_action(lambda a: a.execute("Refresh").with_verb("refresh"))
+            )
+            .with_authentication(
+                lambda auth: auth.with_text("Sign in")
+                .with_connection_name("conn1")
+            )
+            .add_text_block(lambda tb: tb.with_text("Body content"))
+            .build()
+        )
+        assert card["type"] == "AdaptiveCard"
+        assert card["version"] == "1.6"
+        assert "$schema" in card
+        assert card["fallbackText"] == "Cannot render this card"
+        assert card["speak"] == "This card says hello"
+        assert card["lang"] == "en-US"
+        assert card["rtl"] is True
+        assert card["minHeight"] == "300px"
+        assert card["metadata"]["webUrl"] == "https://example.com/card"
+        assert card["verticalContentAlignment"] == "center"
+        assert card["backgroundImage"]["url"] == "https://example.com/bg.png"
+        assert card["selectAction"]["type"] == "Action.OpenUrl"
+        assert card["refresh"]["action"]["type"] == "Action.Execute"
+        assert card["authentication"]["text"] == "Sign in"
+        assert len(card["body"]) == 1
+        assert card["body"][0]["type"] == "TextBlock"
+
+    def test_input_text_with_inline_action_and_label_props(self):
+        card = (
+            AdaptiveCardBuilder.create()
+            .add_input_text(
+                lambda i: i.with_id("search")
+                .with_label("Search")
+                .with_placeholder("Type here")
+                .with_label_position(InputLabelPosition.Above)
+                .with_label_width("200px")
+                .with_input_style(InputStyle.RevealOnHover)
+                .with_inline_action(
+                    lambda a: a.submit("Go").with_icon_url("https://example.com/go.png")
+                )
+            )
+            .build()
+        )
+        inp = card["body"][0]
+        assert inp["type"] == "Input.Text"
+        assert inp["id"] == "search"
+        assert inp["label"] == "Search"
+        assert inp["labelPosition"] == "above"
+        assert inp["labelWidth"] == "200px"
+        assert inp["inputStyle"] == "revealOnHover"
+        assert inp["inlineAction"]["type"] == "Action.Submit"
+        assert inp["inlineAction"]["iconUrl"] == "https://example.com/go.png"
+
+    def test_input_number_with_label_props(self):
+        card = (
+            AdaptiveCardBuilder.create()
+            .add_input_number(
+                lambda i: i.with_id("num2")
+                .with_label("Amount")
+                .with_label_position(InputLabelPosition.Inline)
+                .with_label_width("150px")
+                .with_input_style(InputStyle.Default)
+            )
+            .build()
+        )
+        inp = card["body"][0]
+        assert inp["type"] == "Input.Number"
+        assert inp["labelPosition"] == "inline"
+        assert inp["labelWidth"] == "150px"
+        assert inp["inputStyle"] == "default"

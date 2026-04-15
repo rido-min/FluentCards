@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import Callable, TYPE_CHECKING
-from ..enums import TextColor, TextSize, TextWeight
+from ..enums import FontType, TextColor, TextSize, TextWeight
 
 if TYPE_CHECKING:
     from .action_builder import ActionBuilder
@@ -118,6 +118,18 @@ class TextRunBuilder:
             The builder instance for method chaining.
         """
         self._run['highlight'] = highlight
+        return self
+
+    def with_font_type(self, font_type: FontType) -> TextRunBuilder:
+        """Sets the font type for the text run.
+
+        Args:
+            font_type: The font type.
+
+        Returns:
+            The builder instance for method chaining.
+        """
+        self._run['fontType'] = font_type.value
         return self
 
     def with_select_action(self, configure: Callable[[ActionBuilder], None]) -> TextRunBuilder:

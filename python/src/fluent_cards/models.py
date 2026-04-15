@@ -29,6 +29,15 @@ class MediaSource(TypedDict, total=False):
     mimeType: str
 
 
+class CaptionSource(TypedDict, total=False):
+    """Represents a caption source for a Media element."""
+
+    type: str  # 'CaptionSource'
+    mimeType: str
+    url: str
+    label: str
+
+
 class BackgroundImage(TypedDict, total=False):
     """Represents a background image with fill mode and alignment options."""
 

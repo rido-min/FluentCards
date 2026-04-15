@@ -26,3 +26,13 @@
 ### 2026-04-15: Coordinated Full-Team Codebase Review
 
 Participated in comprehensive multi-port assessment led by Keaton with Fenster (TS), McManus (.NET), Hockney (Python). Verbal produced detailed test parity analysis showing .NET as clear reference (583 tests). Key finding: schema conformance tests are missing entirely from TS/Python/Go — this is the single biggest test parity gap and must be addressed first. Other gaps: input-specific deep tests (TS/Python ~10 vs .NET 84), serialization edge cases and converters (.NET-only), version/auth/refresh/fallback tests (.NET-only), integration tests (.NET-only). TS/Python mirror structure makes future parity work efficient — batching changes across both recommended. Go notably thinner and would benefit from validation test expansion (13 vs 29 elsewhere). Compiled complete matrix and prioritized recommendations in verbal-codebase-review.md.
+
+### 2026-04-15 — Python Schema Conformance Test Expansion
+
+- Expanded `python/tests/test_schema_conformance.py` from **35 tests** to **70 tests** (2× increase).
+- .NET reference has **47 conformance tests** (not 84 — the 84 figure was across all test files). Python now exceeds .NET conformance count.
+- Added 35 new tests across 6 new test classes: `TestMediaSchemaConformance` (1), `TestImageSetSchemaConformance` (1), `TestColumnSchemaConformance` (1), `TestActionSchemaConformance` (5), `TestEnumSchemaConformance` (19), `TestAdvancedFeaturesSchemaConformance` (8).
+- All 19 enums tested with value membership + exact count assertions (catches phantom values).
+- Advanced features now covered: Refresh, Authentication, TokenExchangeResource, Metadata, BackgroundImage, DataQuery (choices.data), input label properties (labelPosition, labelWidth, inputStyle, inlineAction).
+- MediaBuilder has no `add_caption_source` method — CaptionSource builder test would require a library addition.
+- Python has no runtime on this dev machine — syntax validated structurally but tests cannot be executed locally.
