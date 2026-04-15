@@ -37,3 +37,18 @@ Performed exhaustive conformance audit of .NET port against Adaptive Cards 1.6.0
 ### 2025-07-22: Python Port Schema Conformance Audit
 
 Performed full conformance audit of the Python port against the Adaptive Cards 1.6.0 schema. **Result: FAIL — 7 gaps found (3 Medium, 4 Low, 0 Critical).** Python shares all 8 gaps originally found in the TS port (PR #67): TextRun missing fontType, Media missing captionSources, CaptionSource model absent, TextBlockBuilder missing height/fallback/requires, AssociatedInputs enum uses lowercase instead of PascalCase, ColumnBuilder.with_width() type hint is str-only (schema allows string|number), no BlockElementHeight enum. No unique Python-only gaps found beyond these shared issues. Design notes: TextBlock.selectAction is a deliberate extension beyond schema; with_rtl() is over-broad on many element builders where schema doesn't define it. Full audit report: .squad/decisions/inbox/keaton-python-schema-audit.md. Confidence: Very High.
+### 2025-07-22: TypeScript Port — Full Schema Conformance Audit
+
+Performed full schema conformance audit of the TypeScript port (`node/packages/fluent-cards/src/`) against the Adaptive Cards 1.6.0 specification. **Result: FAIL — 8 actionable gaps found, no critical blockers.**
+
+Key findings:
+- **TextRun missing `fontType`** — property absent from model and builder (Medium)
+- **Media missing `captionSources`** — v1.6 feature not implemented; `CaptionSource` interface entirely absent (Medium)
+- **Column.width and TableColumnDefinition.width typed as `string` only** — schema allows `string | number` for relative weights (Medium)
+- **TextBlockBuilder missing 4 base element methods** — `withHeight()`, `withFallback()`, `withRequires()`, `withRtl()` present in all other element builders (Low)
+- **AssociatedInputs enum uses camelCase** (`'auto'`/`'none'`) but schema canonical values are PascalCase (`'Auto'`/`'None'`); schema regex allows both (Low)
+- **TextBlock.selectAction** is an intentional team extension not in the 1.6.0 schema — documented as design note
+- All 5 action types, all 6 input types, all advanced features (Auth, Refresh, Metadata) are fully conformant
+- 17 of 18 enums match schema exactly
+- Existing test file has 21 tests; ~60 more needed for .NET parity (~84 tests)
+- Full audit report: `.squad/decisions/inbox/keaton-ts-schema-audit.md`

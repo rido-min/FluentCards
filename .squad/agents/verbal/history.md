@@ -36,3 +36,17 @@ Participated in comprehensive multi-port assessment led by Keaton with Fenster (
 - Advanced features now covered: Refresh, Authentication, TokenExchangeResource, Metadata, BackgroundImage, DataQuery (choices.data), input label properties (labelPosition, labelWidth, inputStyle, inlineAction).
 - `MediaBuilder.add_caption_source()` is now available in Python, so the earlier CaptionSource builder limitation no longer applies.
 - Python has no runtime on this dev machine — syntax validated structurally but tests cannot be executed locally.
+### 2026-04-15 — TS Schema Conformance Test Expansion
+
+Expanded `node/packages/fluent-cards/tests/schema-conformance.test.ts` from 21 to 67 tests (46 new). All 247 total tests pass (was 201). New categories added:
+
+- **Input elements (11 tests):** Input.Text (all props + omit), Input.Number (all props + omit), Input.Date, Input.Time, Input.Toggle (all props + omit), Input.ChoiceSet (all props + dynamic dataset via choices.data)
+- **ImageSet (1 test):** All properties including imageSize, spacing, separator, images
+- **Media (1 test):** All properties including sources, `captionSources`, poster, altText
+- **RichTextBlock/TextRun:** Includes `TextRun.fontType` coverage via builder and model assertions
+- **Action details (5 tests):** Action.OpenUrl with all base props (iconUrl, style, tooltip, isEnabled, mode), Action.Submit (data, associatedInputs), Action.Execute (verb, data, associatedInputs), Action.ShowCard (embedded card), Action.ToggleVisibility (targetElements)
+- **Enum value tests (19 tests):** All 19 enums verified for values AND count — TextSize(5), TextWeight(3), TextColor(7), FontType(2), TextBlockStyle(2), HorizontalAlignment(3), VerticalAlignment(3), ImageSize(5), ImageStyle(2), ContainerStyle(6), ActionStyle(3), ChoiceInputStyle(3), AssociatedInputs(2), Spacing(7), BackgroundImageFillMode(4), ActionMode(2), TextInputStyle(5), InputLabelPosition(2), InputStyle(2)
+- **Advanced features (2 tests):** Authentication (text, connectionName, tokenExchangeResource, buttons), Refresh (action, userIds, expires)
+- **Common element properties (8 tests):** separator, spacing, isVisible, fallback, height tested on TextBlock, Container, ColumnSet, Image, RichTextBlock, FactSet, ActionSet, Input.Text
+
+**No gaps found.** All builders, models, and enums in the TS port matched what was needed for tests. The TS port has full coverage for all categories requested.

@@ -96,7 +96,7 @@ export interface ColumnSet extends AdaptiveElementBase {
 export interface Column {
   type: 'Column';
   items?: AdaptiveElement[];
-  width?: string;
+  width?: string | number;
   id?: string;
   style?: ContainerStyle;
   verticalContentAlignment?: VerticalAlignment;
@@ -139,6 +139,7 @@ export interface TextRun {
   size?: TextSize;
   weight?: TextWeight;
   color?: TextColor;
+  fontType?: FontType;
   isSubtle?: boolean;
   italic?: boolean;
   strikethrough?: boolean;
@@ -157,8 +158,16 @@ export interface ActionSet extends AdaptiveElementBase {
 export interface Media extends AdaptiveElementBase {
   type: 'Media';
   sources?: MediaSource[];
+  captionSources?: CaptionSource[];
   poster?: string;
   altText?: string;
+}
+
+/** A caption source for a {@link Media} element (Adaptive Cards 1.6+). */
+export interface CaptionSource {
+  mimeType: string;
+  url: string;
+  label: string;
 }
 
 /** A single media source (URL + MIME type) within a {@link Media} element. */
@@ -210,7 +219,7 @@ export interface TableCell {
 
 /** Defines the width and alignment for a single column in a {@link Table}. */
 export interface TableColumnDefinition {
-  width?: string;
+  width?: string | number;
   horizontalCellContentAlignment?: HorizontalAlignment;
   verticalCellContentAlignment?: VerticalAlignment;
 }

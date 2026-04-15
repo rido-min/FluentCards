@@ -42,14 +42,14 @@ export class ColumnSetBuilder {
 
   /** Adds a column using a configure callback. @param configure A callback to configure the Column builder. @returns The builder instance for method chaining. */
   addColumn(configure: (b: ColumnBuilder) => void): this;
-  /** Adds a column with an explicit width. @param width The column width (e.g. `"auto"`, `"stretch"`, or a pixel value). @param configure A callback to configure the Column builder. @returns The builder instance for method chaining. */
-  addColumn(width: string, configure: (b: ColumnBuilder) => void): this;
+  /** Adds a column with an explicit width. @param width The column width (e.g. `"auto"`, `"stretch"`, a pixel value, or a number for relative weight). @param configure A callback to configure the Column builder. @returns The builder instance for method chaining. */
+  addColumn(width: string | number, configure: (b: ColumnBuilder) => void): this;
   addColumn(
-    configureOrWidth: string | ((b: ColumnBuilder) => void),
+    configureOrWidth: string | number | ((b: ColumnBuilder) => void),
     configure?: (b: ColumnBuilder) => void,
   ): this {
     let b = new ColumnBuilder();
-    if (typeof configureOrWidth === 'string') {
+    if (typeof configureOrWidth === 'string' || typeof configureOrWidth === 'number') {
       b.withWidth(configureOrWidth);
       configure!(b);
     } else {
