@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import Union
+from urllib.parse import urlparse
 from ..enums import Spacing
 
 
@@ -132,10 +133,11 @@ class MediaBuilder:
             if (
                 mime_type is not None
                 and '/' in url_or_source
-                and '://' not in url_or_source
                 and '://' in mime_type
             ):
-                url, mime_type = mime_type, url_or_source
+                parsed = urlparse(mime_type)
+                if parsed.scheme and parsed.netloc:
+                    url, mime_type = mime_type, url_or_source
 
             self._media['captionSources'].append({
                 'type': 'CaptionSource',
