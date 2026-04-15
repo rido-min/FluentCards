@@ -2,13 +2,21 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 
-namespace FluentCards.Serialization;
+namespace FluentCards;
 
 /// <summary>
 /// Static helper class for AOT-compatible serialization of AdaptiveCard instances.
 /// </summary>
 public static class AdaptiveCardSerializer
 {
+    private static readonly JsonSerializerOptions CompactOptions = new()
+    {
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        WriteIndented = false,
+        TypeInfoResolver = FluentCardsJsonContext.Default
+    };
+
     /// <summary>
     /// Serializes an AdaptiveCard to JSON string using source-generated context.
     /// </summary>
@@ -22,15 +30,7 @@ public static class AdaptiveCardSerializer
             return JsonSerializer.Serialize(card, FluentCardsJsonContext.Default.AdaptiveCard);
         }
 
-        var options = new JsonSerializerOptions
-        {
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            WriteIndented = false,
-            TypeInfoResolver = FluentCardsJsonContext.Default
-        };
-
-        return JsonSerializer.Serialize(card, options.GetTypeInfo(typeof(AdaptiveCard)) as JsonTypeInfo<AdaptiveCard>
+        return JsonSerializer.Serialize(card, CompactOptions.GetTypeInfo(typeof(AdaptiveCard)) as JsonTypeInfo<AdaptiveCard>
             ?? throw new InvalidOperationException("Failed to resolve AdaptiveCard type info."));
     }
     

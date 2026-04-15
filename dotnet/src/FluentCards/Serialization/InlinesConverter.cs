@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace FluentCards.Serialization;
+namespace FluentCards;
 
 /// <summary>
 /// Custom JSON converter for RichTextBlock.Inlines that can contain strings or TextRun objects.
