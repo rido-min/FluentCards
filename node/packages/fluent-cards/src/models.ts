@@ -104,6 +104,13 @@ export interface Column {
   minHeight?: string;
   backgroundImage?: BackgroundImage;
   selectAction?: AdaptiveAction;
+  isVisible?: boolean;
+  spacing?: Spacing;
+  separator?: boolean;
+  height?: string;
+  fallback?: 'drop' | AdaptiveElement;
+  requires?: Record<string, string>;
+  rtl?: boolean;
 }
 
 /** A set of name/value pairs displayed in a table layout. */

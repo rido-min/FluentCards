@@ -49,39 +49,52 @@ export class ActionBuilder {
     return this;
   }
 
+  /** Ensures an action type has been set before modifying properties. @throws Error if no action type has been selected. */
+  private ensureActionTypeSet(): void {
+    if (!this.action) {
+      throw new Error('No action type has been specified. Call openUrl(), submit(), showCard(), toggleVisibility(), or execute() before setting properties.');
+    }
+  }
+
   /** Sets the unique identifier for the action. @param id The unique identifier. @returns The builder instance for method chaining. */
   withId(id: string): this {
-    if (this.action) this.action.id = id;
+    this.ensureActionTypeSet();
+    this.action!.id = id;
     return this;
   }
 
   /** Sets the button title. @param title The button label text. @returns The builder instance for method chaining. */
   withTitle(title: string): this {
-    if (this.action) this.action.title = title;
+    this.ensureActionTypeSet();
+    this.action!.title = title;
     return this;
   }
 
   /** Sets the icon URL displayed on the button. @param iconUrl The icon URL. @returns The builder instance for method chaining. */
   withIconUrl(iconUrl: string): this {
-    if (this.action) this.action.iconUrl = iconUrl;
+    this.ensureActionTypeSet();
+    this.action!.iconUrl = iconUrl;
     return this;
   }
 
   /** Sets the visual style of the action button. @param style The action style. @returns The builder instance for method chaining. */
   withStyle(style: ActionStyle): this {
-    if (this.action) this.action.style = style;
+    this.ensureActionTypeSet();
+    this.action!.style = style;
     return this;
   }
 
   /** Sets whether the action is enabled. @param isEnabled True to enable the action. @returns The builder instance for method chaining. */
   withIsEnabled(isEnabled: boolean): this {
-    if (this.action) this.action.isEnabled = isEnabled;
+    this.ensureActionTypeSet();
+    this.action!.isEnabled = isEnabled;
     return this;
   }
 
   /** Sets the tooltip shown on hover. @param tooltip The tooltip text. @returns The builder instance for method chaining. */
   withTooltip(tooltip: string): this {
-    if (this.action) this.action.tooltip = tooltip;
+    this.ensureActionTypeSet();
+    this.action!.tooltip = tooltip;
     return this;
   }
 
@@ -89,7 +102,8 @@ export class ActionBuilder {
 
   /** Sets the data payload (for Submit or Execute actions). @param data The data to submit. @returns The builder instance for method chaining. */
   withData(data: unknown): this {
-    if (this.action?.type === 'Action.Submit' || this.action?.type === 'Action.Execute') {
+    this.ensureActionTypeSet();
+    if (this.action!.type === 'Action.Submit' || this.action!.type === 'Action.Execute') {
       (this.action as SubmitAction | ExecuteAction).data = data;
     }
     return this;
@@ -97,7 +111,8 @@ export class ActionBuilder {
 
   /** Sets which inputs are included when the action is submitted (for Submit or Execute actions). @param associatedInputs The associated inputs option. @returns The builder instance for method chaining. */
   withAssociatedInputs(associatedInputs: AssociatedInputs): this {
-    if (this.action?.type === 'Action.Submit' || this.action?.type === 'Action.Execute') {
+    this.ensureActionTypeSet();
+    if (this.action!.type === 'Action.Submit' || this.action!.type === 'Action.Execute') {
       (this.action as SubmitAction | ExecuteAction).associatedInputs = associatedInputs;
     }
     return this;
@@ -107,7 +122,8 @@ export class ActionBuilder {
 
   /** Sets the verb for an Execute action. @param verb The command verb. @returns The builder instance for method chaining. */
   withVerb(verb: string): this {
-    if (this.action?.type === 'Action.Execute') {
+    this.ensureActionTypeSet();
+    if (this.action!.type === 'Action.Execute') {
       (this.action as ExecuteAction).verb = verb;
     }
     return this;
@@ -117,7 +133,8 @@ export class ActionBuilder {
 
   /** Sets the card to reveal for a ShowCard action. @param card The embedded AdaptiveCard. @returns The builder instance for method chaining. */
   withCard(card: AdaptiveCard): this {
-    if (this.action?.type === 'Action.ShowCard') {
+    this.ensureActionTypeSet();
+    if (this.action!.type === 'Action.ShowCard') {
       (this.action as ShowCardAction).card = card;
     }
     return this;
@@ -127,7 +144,8 @@ export class ActionBuilder {
 
   /** Adds a target element to toggle for a ToggleVisibility action. @param elementId The ID of the element to toggle. @param isVisible Optional forced visibility state. @returns The builder instance for method chaining. */
   addTargetElement(elementId: string, isVisible?: boolean): this {
-    if (this.action?.type === 'Action.ToggleVisibility') {
+    this.ensureActionTypeSet();
+    if (this.action!.type === 'Action.ToggleVisibility') {
       const a = this.action as ToggleVisibilityAction;
       a.targetElements ??= [];
       if (isVisible === undefined) {

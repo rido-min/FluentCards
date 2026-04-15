@@ -1,5 +1,5 @@
 import type { Column, AdaptiveElement } from '../models.js';
-import { ContainerStyle, VerticalAlignment } from '../enums.js';
+import { ContainerStyle, Spacing, VerticalAlignment } from '../enums.js';
 import { TextBlockBuilder } from './TextBlockBuilder.js';
 import { ImageBuilder } from './ImageBuilder.js';
 import { ContainerBuilder } from './ContainerBuilder.js';
@@ -38,6 +38,21 @@ export class ColumnBuilder {
     this.column.selectAction = b.build();
     return this;
   }
+
+  /** Sets whether the column is visible. @param isVisible True if visible. @returns The builder instance for method chaining. */
+  withIsVisible(isVisible: boolean): this { this.column.isVisible = isVisible; return this; }
+  /** Sets the spacing between this column and the previous one. @param spacing The spacing value. @returns The builder instance for method chaining. */
+  withSpacing(spacing: Spacing): this { this.column.spacing = spacing; return this; }
+  /** Sets whether a separator line is drawn at the left of the column. @param separator True to show separator. @returns The builder instance for method chaining. */
+  withSeparator(separator = true): this { this.column.separator = separator; return this; }
+  /** Sets the height of the column. @param height The height ('auto' or 'stretch'). @returns The builder instance for method chaining. */
+  withHeight(height: string): this { this.column.height = height; return this; }
+  /** Sets the fallback behavior when the column is unsupported. @param fallback The fallback value ('drop' or an element). @returns The builder instance for method chaining. */
+  withFallback(fallback: 'drop' | AdaptiveElement): this { this.column.fallback = fallback; return this; }
+  /** Sets the feature requirements for the column. @param key The feature name. @param version The minimum required version. @returns The builder instance for method chaining. */
+  withRequires(key: string, version: string): this { this.column.requires = { ...this.column.requires, [key]: version }; return this; }
+  /** Sets whether content should be laid out right-to-left. @param rtl True for RTL. @returns The builder instance for method chaining. */
+  withRtl(rtl = true): this { this.column.rtl = rtl; return this; }
 
   /** Adds a TextBlock element. @param configure A callback to configure the TextBlockBuilder. @returns The builder instance for method chaining. */
   addTextBlock(configure: (b: TextBlockBuilder) => void): this {
