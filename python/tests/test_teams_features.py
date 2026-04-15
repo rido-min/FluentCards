@@ -253,6 +253,7 @@ class TestMentionValidation:
         orphaned = [i for i in issues if i.code == 'ORPHANED_MENTION_ENTITY']
         assert len(orphaned) == 1
         assert orphaned[0].severity == ValidationSeverity.Warning
+        assert 'entities[0]' in orphaned[0].path
 
     def test_orphaned_at_token(self):
         card = (AdaptiveCardBuilder.create()

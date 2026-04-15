@@ -129,25 +129,31 @@ func validateCard(card map[string]any, issues *[]ValidationIssue, ids map[string
 	// Teams mention validation
 	if msteams, ok := card["msteams"].(map[string]any); ok {
 		entities, _ := msteams["entities"].([]any)
+		type mentionInfo struct {
+			name  string
+			index int
+		}
+		var mentions []mentionInfo
 		mentionNames := map[string]bool{}
-		for _, entity := range entities {
+		for i, entity := range entities {
 			if e, ok := entity.(map[string]any); ok && e["type"] == "mention" {
 				if text, ok := e["text"].(string); ok {
 					if strings.HasPrefix(text, "<at>") && strings.HasSuffix(text, "</at>") {
 						name := text[4 : len(text)-5]
+						mentions = append(mentions, mentionInfo{name: name, index: i})
 						mentionNames[name] = true
 					}
 				}
 			}
 		}
 
-		if len(mentionNames) > 0 {
+		if len(mentions) > 0 {
 			bodyText := collectBodyText(body)
-			for name := range mentionNames {
-				token := "<at>" + name + "</at>"
+			for _, m := range mentions {
+				token := "<at>" + m.name + "</at>"
 				if !strings.Contains(bodyText, token) {
-					addIssue(issues, ValidationSeverityWarning, "msteams.entities", "ORPHANED_MENTION_ENTITY",
-						fmt.Sprintf("Mention entity for '%s' has no matching <at>%s</at> text in the card body.", name, name))
+					addIssue(issues, ValidationSeverityWarning, fmt.Sprintf("msteams.entities[%d]", m.index), "ORPHANED_MENTION_ENTITY",
+						fmt.Sprintf("Mention entity for '%s' has no matching <at>%s</at> text in the card body.", m.name, m.name))
 				}
 			}
 			checkOrphanedAtTokens(bodyText, mentionNames, issues)

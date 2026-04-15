@@ -6,7 +6,6 @@ import type {
   CardMetadata,
   Column,
   RefreshConfiguration,
-  TeamsCardProperties,
 } from '../models.js';
 import { VerticalAlignment } from '../enums.js';
 import { TextBlockBuilder } from './TextBlockBuilder.js';
@@ -307,7 +306,7 @@ export class AdaptiveCardBuilder {
   }
 
   /** Sets the Teams msteams card property from a raw object (escape hatch). @param value The raw TeamsCardProperties object. @returns The builder instance for method chaining. @throws Error if withTeamsCard was already called. */
-  withTeamsCardRaw(value: TeamsCardProperties): this {
+  withTeamsCardRaw(value: Record<string, unknown>): this {
     if (this.teamsCardTypedSet) {
       throw new Error('Cannot use both withTeamsCard and withTeamsCardRaw on the same card. Use one or the other.');
     }

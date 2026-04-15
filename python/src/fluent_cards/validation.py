@@ -123,24 +123,24 @@ def _validate_card(card, issues, ids):
     msteams = card.get('msteams')
     if isinstance(msteams, dict):
         entities = msteams.get('entities') or []
-        mention_names = set()
-        for entity in entities:
+        mention_names = {}
+        for i, entity in enumerate(entities):
             if isinstance(entity, dict) and entity.get('type') == 'mention':
                 text = entity.get('text', '')
                 if text.startswith('<at>') and text.endswith('</at>'):
                     name = text[4:-5]
-                    mention_names.add(name)
+                    mention_names[name] = i
 
         if mention_names:
             body_text = _collect_body_text(card.get('body') or [])
-            for name in mention_names:
+            for name, idx in mention_names.items():
                 token = f'<at>{name}</at>'
                 if token not in body_text:
-                    _issue(issues, ValidationSeverity.Warning, 'msteams.entities',
+                    _issue(issues, ValidationSeverity.Warning, f'msteams.entities[{idx}]',
                            'ORPHANED_MENTION_ENTITY',
                            f"Mention entity for '{name}' has no matching <at>{name}</at> text in the card body.")
             # Check for orphaned <at> tokens
-            _check_orphaned_at_tokens(body_text, mention_names, issues)
+            _check_orphaned_at_tokens(body_text, set(mention_names.keys()), issues)
 
 
 def _collect_body_text(elements: list) -> str:

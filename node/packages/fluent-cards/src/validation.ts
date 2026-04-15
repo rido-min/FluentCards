@@ -457,7 +457,9 @@ function collectTextContent(elements: AdaptiveElement[], texts: string[]): void 
       texts.push((el as TextBlock).text);
     } else if (el.type === 'RichTextBlock' && (el as RichTextBlock).inlines) {
       for (const inline of (el as RichTextBlock).inlines!) {
-        if (typeof inline === 'object' && inline.type === 'TextRun' && inline.text) {
+        if (typeof inline === 'string') {
+          texts.push(inline);
+        } else if (typeof inline === 'object' && inline.type === 'TextRun' && inline.text) {
           texts.push(inline.text);
         }
       }

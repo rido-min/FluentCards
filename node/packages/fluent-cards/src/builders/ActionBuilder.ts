@@ -7,7 +7,6 @@ import type {
   ExecuteAction,
   TargetElement,
   AdaptiveCard,
-  TeamsSubmitActionProperties,
 } from '../models.js';
 import { ActionMode, ActionStyle, AssociatedInputs } from '../enums.js';
 import { TeamsDataBuilder } from './TeamsDataBuilder.js';
@@ -227,7 +226,7 @@ export class ActionBuilder {
   }
 
   /** Sets the Teams action-level msteams property from a raw object (escape hatch). Only available on Submit actions. @param value The raw msteams properties object. @returns The builder instance for method chaining. @throws Error if not a Submit action or if withTeamsSubmitFeedback was already called. */
-  withTeamsSubmitRaw(value: TeamsSubmitActionProperties): this {
+  withTeamsSubmitRaw(value: Record<string, unknown>): this {
     this.ensureSubmitOnly('withTeamsSubmitRaw');
     if (this.teamsSubmitTypedSet) {
       throw new Error('Cannot use both withTeamsSubmitFeedback and withTeamsSubmitRaw on the same action. Use one or the other.');

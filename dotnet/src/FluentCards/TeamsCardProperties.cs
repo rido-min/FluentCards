@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace FluentCards;
@@ -19,4 +20,11 @@ public class TeamsCardProperties
     /// </summary>
     [JsonPropertyName("entities")]
     public List<Mention>? Entities { get; set; }
+
+    /// <summary>
+    /// Captures any additional Teams properties not modeled by this class,
+    /// ensuring unknown keys round-trip through serialization.
+    /// </summary>
+    [JsonExtensionData]
+    public Dictionary<string, JsonElement>? ExtensionData { get; set; }
 }

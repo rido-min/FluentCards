@@ -807,9 +807,14 @@ public static class AdaptiveCardValidator
                 case RichTextBlock rtb when rtb.Inlines != null:
                     foreach (var inline in rtb.Inlines)
                     {
-                        if (inline is TextRun tr && !string.IsNullOrEmpty(tr.Text))
+                        switch (inline)
                         {
-                            texts.Add(tr.Text);
+                            case TextRun tr when !string.IsNullOrEmpty(tr.Text):
+                                texts.Add(tr.Text);
+                                break;
+                            case string text when !string.IsNullOrEmpty(text):
+                                texts.Add(text);
+                                break;
                         }
                     }
                     break;
