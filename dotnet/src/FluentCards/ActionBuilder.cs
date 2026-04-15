@@ -190,8 +190,13 @@ public class ActionBuilder
     /// <returns>The builder instance for method chaining.</returns>
     public ActionBuilder WithData(string jsonData)
     {
+        if (_action is not SubmitAction && _action is not ExecuteAction)
+        {
+            return this;
+        }
+
         using var document = JsonDocument.Parse(jsonData);
-        return WithData(document.RootElement.Clone());
+        return WithData(document.RootElement);
     }
 
     /// <summary>
