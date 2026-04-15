@@ -45,6 +45,50 @@ The .NET port demonstrates **exceptional schema conformance** to the Adaptive Ca
 
 ---
 
+### 2026-04-15: Issue #75 — Native Object Serialization Methods
+**Status:** Implemented  
+**Participants:** McManus (.NET), Fenster (TypeScript), Hockney (Python), Verbal (Tester)  
+**Branch:** squad/75-native-object-methods
+
+#### Context
+Consumers embedding Adaptive Cards into larger JSON payloads (e.g., Bot Framework activities, Teams messages) were forced to serialize to string via `ToJson()`/`toJson()`/`to_json()` and then re-parse, causing double serialization overhead.
+
+#### Decision
+Implement native object serialization methods across all three core ports that apply the same cleanup as their respective `toJson` family (null/undefined/None stripping, enum conversion) but return the native type:
+
+**C# / .NET:**
+- `SerializeToElement()` and `SerializeToNode()` static methods on `AdaptiveCardSerializer`
+- `ToJsonElement()` and `ToJsonNode()` extension methods on `AdaptiveCard`
+- `WithData<T>()` generic overload on `ActionBuilder` for direct serialization of typed data
+- All use source-generated `FluentCardsJsonContext` for AOT compatibility
+
+**TypeScript/Node.js:**
+- `toObject(card)` module-level function with recursive `stripUndefined` helper
+- Never mutates input; skips undefined keys, recursively cleans nested objects/arrays
+- Semantically equivalent to `JSON.parse(JSON.stringify(card))` without string allocation
+
+**Python:**
+- `to_dict(card)` module-level function with `_clean()` helper
+- Strips None values and converts Enum instances to plain strings recursively
+- Matches cleanup semantics of `to_json()`
+
+#### Key Design Principles
+- Two API surfaces (.NET static + extension) match existing `Serialize`/`ToJson` pattern
+- `WithData<T>()` requires explicit `[JsonSerializable]` registration — deliberate AOT constraint
+- Module-level functions (TypeScript, Python) align with ecosystem conventions
+- All implementations apply identical cleanup logic to their `toJson` counterparts
+
+#### Test Results
+- **.NET:** 12 new tests (707 total, was 698)
+- **TypeScript:** 7 new tests (283 total, was 277)
+- **Python:** 8 new tests (370 total, was 363)
+- All tests pass ✅
+
+#### Go Port
+Skipped pending architecture decision (`go:needs-research` label). Decision framework applies when Go approach is determined.
+
+---
+
 ## Governance
 
 - All meaningful changes require team consensus

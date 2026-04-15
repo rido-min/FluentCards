@@ -54,3 +54,7 @@ Fixed all 8 gaps from Keaton's TS schema audit plus the enum casing fix:
 - Updated `program.ts` sample to demonstrate `toObject()`.
 - **Key pattern:** Tests resolve imports from `dist/` (CJS via tsx), so `npm run build` must run before `npm test` when adding new exports. The workspace `npm install` does not auto-build.
 - All 283 tests pass. Typecheck clean.
+
+### 2026-04-15 — Native Object Serialization (#75) — Cross-Team Coordination
+
+Collaborated with McManus (.NET), Hockney (Python), and Verbal (Tester) on Issue #75. TypeScript implementation complete with 6 new tests in `native-object.test.ts`. All three core ports (dotnet, node, python) now provide native object methods: .NET `ToJsonElement()`/`ToJsonNode()`, TypeScript `toObject()`, Python `to_dict()`. Test parity maintained — all ports cover identical semantic scenarios (round-trip, equivalence, complex card, minimal card, enum strings, field stripping). Verbal's cross-port test framework ensures all implementations produce bit-identical results to `JSON.parse(toJson())`. Go skipped pending architecture review (`go:needs-research`).

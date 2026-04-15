@@ -50,3 +50,7 @@ Key pattern learned: `with_requires` consistently uses `(key: str, version: str)
 - **Exported**: Added `to_dict` to `__init__.py` imports and `__all__`.
 - **Tests**: 7 new tests in `TestToDict` class, including equivalence test against `json.loads(to_json(card))`.
 - **Sample**: Updated `program.py` with `to_dict` demo section.
+
+### 2026-04-15 — Native Object Serialization (#75) — Cross-Team Coordination
+
+Collaborated with McManus (.NET), Fenster (TypeScript), and Verbal (Tester) on Issue #75 implementation. Python `to_dict()` function complete with 8 new tests (371 total, was 363). All three core ports now provide equivalent native object methods with identical cleanup semantics: .NET `ToJsonElement()`/`ToJsonNode()`, TypeScript `toObject()`, Python `to_dict()`. Cross-port equivalence tests written by Verbal validate that all implementations produce identical output to `JSON.parse(toJson())` / `json.loads(to_json())`. Go port deferred pending architecture decision.
