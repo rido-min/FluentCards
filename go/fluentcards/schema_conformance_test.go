@@ -1367,8 +1367,8 @@ func TestSchemaConformance_Enum_InputStyle(t *testing.T) {
 func TestSchemaConformance_Enum_AssociatedInputs(t *testing.T) {
 	t.Parallel()
 	values := []string{string(AssociatedInputsAuto), string(AssociatedInputsNone)}
-	assert.Contains(t, values, "Auto")
-	assert.Contains(t, values, "None")
+	assert.Contains(t, values, "auto")
+	assert.Contains(t, values, "none")
 	assert.Len(t, values, 2)
 }
 

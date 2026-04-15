@@ -42,6 +42,16 @@ func TestTextBlockBuilder_AllProperties(t *testing.T) {
 	assert.Equal(t, "tb1", el["id"])
 }
 
+func TestTextBlockBuilder_WithRtl(t *testing.T) {
+	t.Parallel()
+	card := fluentcards.NewAdaptiveCardBuilder().
+		AddTextBlock(func(tb *fluentcards.TextBlockBuilder) {
+			tb.WithText("مرحبا").WithRtl(true)
+		}).Build()
+	el := card["body"].([]any)[0].(map[string]any)
+	assert.Equal(t, true, el["rtl"])
+}
+
 func TestImageBuilder_Properties(t *testing.T) {
 	t.Parallel()
 	card := fluentcards.NewAdaptiveCardBuilder().

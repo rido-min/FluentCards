@@ -168,8 +168,8 @@ const (
 type AssociatedInputs string
 
 const (
-	AssociatedInputsAuto AssociatedInputs = "Auto"
-	AssociatedInputsNone AssociatedInputs = "None"
+	AssociatedInputsAuto AssociatedInputs = "auto"
+	AssociatedInputsNone AssociatedInputs = "none"
 )
 
 // BackgroundImageFillMode controls how a background image fills its container.

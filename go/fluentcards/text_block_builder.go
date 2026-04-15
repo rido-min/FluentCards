@@ -113,6 +113,12 @@ func (b *TextBlockBuilder) WithRequires(key, version string) *TextBlockBuilder {
 	return b
 }
 
+// WithRtl sets whether text should be presented right to left.
+func (b *TextBlockBuilder) WithRtl(rtl bool) *TextBlockBuilder {
+	b.data["rtl"] = rtl
+	return b
+}
+
 func (b *TextBlockBuilder) Build() Card {
 	return b.data
 }
