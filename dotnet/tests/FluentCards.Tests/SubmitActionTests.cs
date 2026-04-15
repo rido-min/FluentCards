@@ -172,6 +172,7 @@ public class SubmitActionTests
             .AddAction(a => a
                 .Submit("Submit Form")
                 .WithId("submit1")
+                .WithData("{\"formId\":\"123\",\"action\":\"save\"}")
                 .WithStyle(ActionStyle.Positive))
             .Build();
 
@@ -182,6 +183,9 @@ public class SubmitActionTests
         Assert.NotNull(action);
         Assert.Equal("submit1", action.Id);
         Assert.Equal("Submit Form", action.Title);
+        Assert.NotNull(action.Data);
+        Assert.Equal("123", action.Data.Value.GetProperty("formId").GetString());
+        Assert.Equal("save", action.Data.Value.GetProperty("action").GetString());
         Assert.Equal(ActionStyle.Positive, action.Style);
     }
 

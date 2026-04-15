@@ -114,6 +114,8 @@ public class ExecuteActionTests
             .AddAction(a => a
                 .Execute("Execute")
                 .WithId("exec1")
+                .WithVerb("doAction")
+                .WithData("{\"command\":\"refresh\",\"targetId\":\"123\"}")
                 .WithStyle(ActionStyle.Positive))
             .Build();
 
@@ -124,6 +126,10 @@ public class ExecuteActionTests
         Assert.NotNull(action);
         Assert.Equal("exec1", action.Id);
         Assert.Equal("Execute", action.Title);
+        Assert.Equal("doAction", action.Verb);
+        Assert.NotNull(action.Data);
+        Assert.Equal("refresh", action.Data.Value.GetProperty("command").GetString());
+        Assert.Equal("123", action.Data.Value.GetProperty("targetId").GetString());
         Assert.Equal(ActionStyle.Positive, action.Style);
     }
 
