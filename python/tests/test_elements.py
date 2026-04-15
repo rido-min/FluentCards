@@ -247,7 +247,12 @@ class TestMediaBuilder:
             'url': 'https://example.com/video-es.vtt',
             'label': 'Spanish',
         }
-        media = MediaBuilder().add_source('https://example.com/video.mp4', 'video/mp4').add_caption_source(caption).build()
+        media = (
+            MediaBuilder()
+            .add_source('https://example.com/video.mp4', 'video/mp4')
+            .add_caption_source(caption)
+            .build()
+        )
 
         assert media['captionSources'][0] == caption
 

@@ -4,6 +4,18 @@ from urllib.parse import urlparse
 from ..enums import Spacing
 
 
+def _looks_like_url(value: str) -> bool:
+    parsed = urlparse(value)
+    return bool(parsed.scheme and parsed.netloc)
+
+
+def _looks_like_mime_type(value: str) -> bool:
+    if value.count('/') != 1 or '://' in value:
+        return False
+    major, minor = value.split('/', 1)
+    return bool(major and minor)
+
+
 class MediaBuilder:
     """Fluent builder for creating Media elements."""
 
@@ -126,16 +138,6 @@ class MediaBuilder:
             The builder instance for method chaining.
         """
         self._media.setdefault('captionSources', [])
-
-        def _looks_like_url(value: str) -> bool:
-            parsed = urlparse(value)
-            return bool(parsed.scheme and parsed.netloc)
-
-        def _looks_like_mime_type(value: str) -> bool:
-            if value.count('/') != 1 or '://' in value:
-                return False
-            major, minor = value.split('/', 1)
-            return bool(major and minor)
 
         if isinstance(url_or_source, str):
             url = url_or_source
