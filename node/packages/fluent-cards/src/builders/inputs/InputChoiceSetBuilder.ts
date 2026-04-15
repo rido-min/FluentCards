@@ -16,7 +16,7 @@ export class InputChoiceSetBuilder {
   /** Sets the display style (compact dropdown or expanded list). @param style The choice input style. @returns The builder instance for method chaining. */
   withStyle(style: ChoiceInputStyle): this { this.input.style = style; return this; }
   /** Sets whether multiple choices can be selected. @param isMultiSelect True to allow multi-select. @returns The builder instance for method chaining. */
-  isMultiSelect(isMultiSelect = true): this { this.input.isMultiSelect = isMultiSelect; return this; }
+  withIsMultiSelect(isMultiSelect = true): this { this.input.isMultiSelect = isMultiSelect; return this; }
   /** Sets whether choice labels wrap. @param wrap True to allow wrapping. @returns The builder instance for method chaining. */
   withWrap(wrap = true): this { this.input.wrap = wrap; return this; }
   /** Sets whether a selection is required. @param isRequired True if required. @returns The builder instance for method chaining. */
