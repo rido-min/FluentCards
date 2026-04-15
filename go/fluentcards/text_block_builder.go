@@ -90,6 +90,29 @@ func (b *TextBlockBuilder) WithSelectAction(action Card) *TextBlockBuilder {
 	return b
 }
 
+// WithHeight sets the height of the TextBlock ("auto" or "stretch").
+func (b *TextBlockBuilder) WithHeight(height string) *TextBlockBuilder {
+	b.data["height"] = height
+	return b
+}
+
+// WithFallback sets the fallback content if the TextBlock is not supported.
+func (b *TextBlockBuilder) WithFallback(fallback any) *TextBlockBuilder {
+	b.data["fallback"] = fallback
+	return b
+}
+
+// WithRequires adds a host capability requirement for this TextBlock.
+func (b *TextBlockBuilder) WithRequires(key, version string) *TextBlockBuilder {
+	reqs, ok := b.data["requires"].(map[string]any)
+	if !ok {
+		reqs = map[string]any{}
+	}
+	reqs[key] = version
+	b.data["requires"] = reqs
+	return b
+}
+
 func (b *TextBlockBuilder) Build() Card {
 	return b.data
 }

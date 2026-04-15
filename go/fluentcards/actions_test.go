@@ -87,7 +87,7 @@ func TestActionBuilder_Execute(t *testing.T) {
 	action := card["actions"].([]any)[0].(map[string]any)
 	assert.Equal(t, "Action.Execute", action["type"])
 	assert.Equal(t, "doSomething", action["verb"])
-	assert.Equal(t, "auto", action["associatedInputs"])
+	assert.Equal(t, "Auto", action["associatedInputs"])
 }
 
 func TestActionBuilder_Build_PanicsWithoutType(t *testing.T) {

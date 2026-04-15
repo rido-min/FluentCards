@@ -1186,7 +1186,7 @@ func TestSchemaConformance_Enum_TextColor(t *testing.T) {
 	values := []string{
 		string(TextColorDefault), string(TextColorDark), string(TextColorLight),
 		string(TextColorAccent), string(TextColorGood), string(TextColorAttention),
-		string(TextColorWarning), string(TextColorWhite),
+		string(TextColorWarning),
 	}
 	assert.Contains(t, values, "default")
 	assert.Contains(t, values, "dark")
@@ -1195,8 +1195,7 @@ func TestSchemaConformance_Enum_TextColor(t *testing.T) {
 	assert.Contains(t, values, "good")
 	assert.Contains(t, values, "attention")
 	assert.Contains(t, values, "warning")
-	assert.Contains(t, values, "white")
-	assert.Len(t, values, 8)
+	assert.Len(t, values, 7)
 }
 
 func TestSchemaConformance_Enum_FontType(t *testing.T) {
@@ -1358,8 +1357,8 @@ func TestSchemaConformance_Enum_InputStyle(t *testing.T) {
 func TestSchemaConformance_Enum_AssociatedInputs(t *testing.T) {
 	t.Parallel()
 	values := []string{string(AssociatedInputsAuto), string(AssociatedInputsNone)}
-	assert.Contains(t, values, "auto")
-	assert.Contains(t, values, "none")
+	assert.Contains(t, values, "Auto")
+	assert.Contains(t, values, "None")
 	assert.Len(t, values, 2)
 }
 
