@@ -144,6 +144,28 @@ class ImageBuilder:
         self._image['separator'] = separator
         return self
 
+    def with_is_visible(self, is_visible: bool) -> ImageBuilder:
+        """Sets whether the element is visible."""
+        self._image['isVisible'] = is_visible
+        return self
+
+    def with_fallback(self, fallback) -> ImageBuilder:
+        """Sets the fallback content if the element is unsupported."""
+        self._image['fallback'] = fallback
+        return self
+
+    def with_requires(self, key: str, version: str) -> ImageBuilder:
+        """Sets a feature requirement for the element."""
+        if 'requires' not in self._image:
+            self._image['requires'] = {}
+        self._image['requires'][key] = version
+        return self
+
+    def with_rtl(self, rtl: bool = True) -> ImageBuilder:
+        """Sets right-to-left text direction."""
+        self._image['rtl'] = rtl
+        return self
+
     def with_select_action(self, configure: Callable[[ActionBuilder], None]) -> ImageBuilder:
         """Sets the action invoked when the image is selected.
 

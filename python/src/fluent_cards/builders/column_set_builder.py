@@ -97,6 +97,33 @@ class ColumnSetBuilder:
         self._column_set['separator'] = separator
         return self
 
+    def with_is_visible(self, is_visible: bool) -> ColumnSetBuilder:
+        """Sets whether the element is visible."""
+        self._column_set['isVisible'] = is_visible
+        return self
+
+    def with_height(self, height: str) -> ColumnSetBuilder:
+        """Sets the height of the element."""
+        self._column_set['height'] = height
+        return self
+
+    def with_fallback(self, fallback) -> ColumnSetBuilder:
+        """Sets the fallback content if the element is unsupported."""
+        self._column_set['fallback'] = fallback
+        return self
+
+    def with_requires(self, key: str, version: str) -> ColumnSetBuilder:
+        """Sets a feature requirement for the element."""
+        if 'requires' not in self._column_set:
+            self._column_set['requires'] = {}
+        self._column_set['requires'][key] = version
+        return self
+
+    def with_rtl(self, rtl: bool = True) -> ColumnSetBuilder:
+        """Sets right-to-left text direction."""
+        self._column_set['rtl'] = rtl
+        return self
+
     def with_select_action(self, configure: Callable[[ActionBuilder], None]) -> ColumnSetBuilder:
         """Sets the action invoked when the column set is selected.
 

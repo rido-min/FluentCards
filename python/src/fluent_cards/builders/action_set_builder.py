@@ -36,6 +36,38 @@ class ActionSetBuilder:
         self._action_set['spacing'] = spacing.value
         return self
 
+    def with_is_visible(self, is_visible: bool) -> ActionSetBuilder:
+        """Sets whether the element is visible."""
+        self._action_set['isVisible'] = is_visible
+        return self
+
+    def with_separator(self, separator: bool = True) -> ActionSetBuilder:
+        """Sets whether a separator line is drawn above the element."""
+        self._action_set['separator'] = separator
+        return self
+
+    def with_height(self, height: str) -> ActionSetBuilder:
+        """Sets the height of the element."""
+        self._action_set['height'] = height
+        return self
+
+    def with_fallback(self, fallback) -> ActionSetBuilder:
+        """Sets the fallback content if the element is unsupported."""
+        self._action_set['fallback'] = fallback
+        return self
+
+    def with_requires(self, key: str, version: str) -> ActionSetBuilder:
+        """Sets a feature requirement for the element."""
+        if 'requires' not in self._action_set:
+            self._action_set['requires'] = {}
+        self._action_set['requires'][key] = version
+        return self
+
+    def with_rtl(self, rtl: bool = True) -> ActionSetBuilder:
+        """Sets right-to-left text direction."""
+        self._action_set['rtl'] = rtl
+        return self
+
     def add_action(self, configure: Callable[[ActionBuilder], None]) -> ActionSetBuilder:
         """Adds an action to the action set.
 

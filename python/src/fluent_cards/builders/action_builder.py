@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import Optional, Union
-from ..enums import ActionStyle, AssociatedInputs
+from ..enums import ActionStyle, AssociatedInputs, ActionMode
 
 
 class ActionBuilder:
@@ -229,6 +229,26 @@ class ActionBuilder:
                 self._action['targetElements'].append(element_id)
             else:
                 self._action['targetElements'].append({'elementId': element_id, 'isVisible': is_visible})
+        return self
+
+    def with_mode(self, mode: ActionMode) -> ActionBuilder:
+        """Sets whether the action is primary or secondary."""
+        self._ensure_action_type_set()
+        self._action['mode'] = mode.value
+        return self
+
+    def with_requires(self, key: str, version: str) -> ActionBuilder:
+        """Sets a feature requirement for the action."""
+        self._ensure_action_type_set()
+        if 'requires' not in self._action:
+            self._action['requires'] = {}
+        self._action['requires'][key] = version
+        return self
+
+    def with_fallback(self, fallback) -> ActionBuilder:
+        """Sets the fallback content if the action is unsupported."""
+        self._ensure_action_type_set()
+        self._action['fallback'] = fallback
         return self
 
     def build(self) -> dict:

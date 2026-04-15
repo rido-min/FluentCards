@@ -48,6 +48,38 @@ class ImageSetBuilder:
         self._image_set['spacing'] = spacing.value
         return self
 
+    def with_is_visible(self, is_visible: bool) -> ImageSetBuilder:
+        """Sets whether the element is visible."""
+        self._image_set['isVisible'] = is_visible
+        return self
+
+    def with_separator(self, separator: bool = True) -> ImageSetBuilder:
+        """Sets whether a separator line is drawn above the element."""
+        self._image_set['separator'] = separator
+        return self
+
+    def with_height(self, height: str) -> ImageSetBuilder:
+        """Sets the height of the element."""
+        self._image_set['height'] = height
+        return self
+
+    def with_fallback(self, fallback) -> ImageSetBuilder:
+        """Sets the fallback content if the element is unsupported."""
+        self._image_set['fallback'] = fallback
+        return self
+
+    def with_requires(self, key: str, version: str) -> ImageSetBuilder:
+        """Sets a feature requirement for the element."""
+        if 'requires' not in self._image_set:
+            self._image_set['requires'] = {}
+        self._image_set['requires'][key] = version
+        return self
+
+    def with_rtl(self, rtl: bool = True) -> ImageSetBuilder:
+        """Sets right-to-left text direction."""
+        self._image_set['rtl'] = rtl
+        return self
+
     def add_image(self, configure_or_image: Union[Callable[[ImageBuilder], None], dict]) -> ImageSetBuilder:
         """Adds an image to the image set.
 

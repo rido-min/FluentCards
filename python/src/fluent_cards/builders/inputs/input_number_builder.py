@@ -1,5 +1,5 @@
 from __future__ import annotations
-from ...enums import Spacing
+from ...enums import Spacing, InputLabelPosition, InputStyle
 
 
 class InputNumberBuilder:
@@ -114,6 +114,53 @@ class InputNumberBuilder:
             The builder instance for method chaining.
         """
         self._input['spacing'] = spacing.value
+        return self
+
+    def with_is_visible(self, is_visible: bool) -> InputNumberBuilder:
+        """Sets whether the element is visible."""
+        self._input['isVisible'] = is_visible
+        return self
+
+    def with_separator(self, separator: bool = True) -> InputNumberBuilder:
+        """Sets whether a separator line is drawn above the element."""
+        self._input['separator'] = separator
+        return self
+
+    def with_height(self, height: str) -> InputNumberBuilder:
+        """Sets the height of the element."""
+        self._input['height'] = height
+        return self
+
+    def with_fallback(self, fallback) -> InputNumberBuilder:
+        """Sets the fallback content if the element is unsupported."""
+        self._input['fallback'] = fallback
+        return self
+
+    def with_requires(self, key: str, version: str) -> InputNumberBuilder:
+        """Sets a feature requirement for the element."""
+        if 'requires' not in self._input:
+            self._input['requires'] = {}
+        self._input['requires'][key] = version
+        return self
+
+    def with_rtl(self, rtl: bool = True) -> InputNumberBuilder:
+        """Sets right-to-left text direction."""
+        self._input['rtl'] = rtl
+        return self
+
+    def with_label_position(self, position: InputLabelPosition) -> InputNumberBuilder:
+        """Sets the position of the label relative to the input."""
+        self._input['labelPosition'] = position.value
+        return self
+
+    def with_label_width(self, width: str) -> InputNumberBuilder:
+        """Sets the width of the label."""
+        self._input['labelWidth'] = width
+        return self
+
+    def with_input_style(self, style: InputStyle) -> InputNumberBuilder:
+        """Sets the visual style of the input."""
+        self._input['inputStyle'] = style.value
         return self
 
     def build(self) -> dict:

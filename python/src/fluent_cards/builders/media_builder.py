@@ -57,6 +57,38 @@ class MediaBuilder:
         self._media['spacing'] = spacing.value
         return self
 
+    def with_is_visible(self, is_visible: bool) -> MediaBuilder:
+        """Sets whether the element is visible."""
+        self._media['isVisible'] = is_visible
+        return self
+
+    def with_separator(self, separator: bool = True) -> MediaBuilder:
+        """Sets whether a separator line is drawn above the element."""
+        self._media['separator'] = separator
+        return self
+
+    def with_height(self, height: str) -> MediaBuilder:
+        """Sets the height of the element."""
+        self._media['height'] = height
+        return self
+
+    def with_fallback(self, fallback) -> MediaBuilder:
+        """Sets the fallback content if the element is unsupported."""
+        self._media['fallback'] = fallback
+        return self
+
+    def with_requires(self, key: str, version: str) -> MediaBuilder:
+        """Sets a feature requirement for the element."""
+        if 'requires' not in self._media:
+            self._media['requires'] = {}
+        self._media['requires'][key] = version
+        return self
+
+    def with_rtl(self, rtl: bool = True) -> MediaBuilder:
+        """Sets right-to-left text direction."""
+        self._media['rtl'] = rtl
+        return self
+
     def add_source(self, url_or_source: Union[str, dict], mime_type: str = None) -> MediaBuilder:
         """Adds a media source to the element.
 

@@ -115,6 +115,28 @@ class ContainerBuilder:
         self._container['isVisible'] = is_visible
         return self
 
+    def with_height(self, height: str) -> ContainerBuilder:
+        """Sets the height of the element."""
+        self._container['height'] = height
+        return self
+
+    def with_fallback(self, fallback) -> ContainerBuilder:
+        """Sets the fallback content if the element is unsupported."""
+        self._container['fallback'] = fallback
+        return self
+
+    def with_requires(self, key: str, version: str) -> ContainerBuilder:
+        """Sets a feature requirement for the element."""
+        if 'requires' not in self._container:
+            self._container['requires'] = {}
+        self._container['requires'][key] = version
+        return self
+
+    def with_rtl(self, rtl: bool = True) -> ContainerBuilder:
+        """Sets right-to-left text direction."""
+        self._container['rtl'] = rtl
+        return self
+
     def with_background_image(self, configure: Callable[[BackgroundImageBuilder], None]) -> ContainerBuilder:
         """Sets the background image for the container.
 

@@ -48,6 +48,38 @@ class RichTextBlockBuilder:
         self._rich_text['spacing'] = spacing.value
         return self
 
+    def with_is_visible(self, is_visible: bool) -> RichTextBlockBuilder:
+        """Sets whether the element is visible."""
+        self._rich_text['isVisible'] = is_visible
+        return self
+
+    def with_separator(self, separator: bool = True) -> RichTextBlockBuilder:
+        """Sets whether a separator line is drawn above the element."""
+        self._rich_text['separator'] = separator
+        return self
+
+    def with_height(self, height: str) -> RichTextBlockBuilder:
+        """Sets the height of the element."""
+        self._rich_text['height'] = height
+        return self
+
+    def with_fallback(self, fallback) -> RichTextBlockBuilder:
+        """Sets the fallback content if the element is unsupported."""
+        self._rich_text['fallback'] = fallback
+        return self
+
+    def with_requires(self, key: str, version: str) -> RichTextBlockBuilder:
+        """Sets a feature requirement for the element."""
+        if 'requires' not in self._rich_text:
+            self._rich_text['requires'] = {}
+        self._rich_text['requires'][key] = version
+        return self
+
+    def with_rtl(self, rtl: bool = True) -> RichTextBlockBuilder:
+        """Sets right-to-left text direction."""
+        self._rich_text['rtl'] = rtl
+        return self
+
     def add_text(self, text: str) -> RichTextBlockBuilder:
         """Adds a plain text inline string to the rich text block.
 
