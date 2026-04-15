@@ -102,7 +102,9 @@ func TestActionBuilder_Build_PanicsWithoutType(t *testing.T) {
 
 func TestActionBuilder_ModifierIgnoredWithoutType(t *testing.T) {
 	t.Parallel()
-	// Ensure modifier calls on an untyped builder don't panic before Build()
+	// Modifier calls on an untyped builder should now panic
 	ab := &fluentcards.ActionBuilder{}
-	ab.WithTitle("ignored") // should not panic
+	assert.PanicsWithValue(t, "ActionBuilder: no action type specified — call OpenURL, Submit, ShowCard, ToggleVisibility, or Execute before setting properties", func() {
+		ab.WithTitle("ignored")
+	})
 }
