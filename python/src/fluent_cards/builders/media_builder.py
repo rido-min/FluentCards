@@ -5,11 +5,13 @@ from ..enums import Spacing
 
 
 def _is_absolute_url(value: str) -> bool:
+    """Returns whether the value is an absolute URL with scheme and host."""
     parsed = urlparse(value)
     return bool(parsed.scheme and parsed.netloc)
 
 
 def _looks_like_mime_type(value: str) -> bool:
+    """Returns whether the value heuristically matches a MIME type pattern."""
     if value.count('/') != 1 or '://' in value:
         return False
     major, minor = value.split('/', 1)
