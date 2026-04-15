@@ -729,7 +729,7 @@ class TestActionSchemaConformance:
         assert a["type"] == "Action.Submit"
         assert a["title"] == "Send"
         assert a["data"] == {"key": "value"}
-        assert a["associatedInputs"] == "Auto"
+        assert a["associatedInputs"] == "auto"
         assert a["iconUrl"] == "https://example.com/icon.png"
         assert a["id"] == "submit1"
         assert a["style"] == "destructive"
@@ -756,7 +756,7 @@ class TestActionSchemaConformance:
         assert a["title"] == "Run"
         assert a["verb"] == "doSomething"
         assert a["data"] == {"param": 1}
-        assert a["associatedInputs"] == "None"
+        assert a["associatedInputs"] == "none"
         assert a["iconUrl"] == "https://example.com/icon.png"
         assert a["id"] == "exec1"
         assert a["style"] == "positive"
@@ -922,8 +922,8 @@ class TestEnumSchemaConformance:
 
     def test_associated_inputs_enum(self):
         values = [m.value for m in AssociatedInputs]
-        assert "Auto" in values
-        assert "None" in values
+        assert "auto" in values
+        assert "none" in values
         assert len(AssociatedInputs) == 2
 
     def test_choice_input_style_enum(self):
