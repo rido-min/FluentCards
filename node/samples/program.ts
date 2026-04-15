@@ -25,6 +25,7 @@ import {
   createComprehensiveCard,
 } from './richContentSample.js';
 import { createPeoplePickerCard } from './peoplePickerSample.js';
+import { createActionSubmitExecuteCard } from './actionSubmitExecuteSample.js';
 import { runValidationSamples } from './validationSample.js';
 
 console.log('=== FluentCards Demo ===\n');
@@ -102,6 +103,7 @@ printSample('Table Card', createTableCard());
 printSample('Media Card', createMediaCard());
 printSample('Comprehensive Card', createComprehensiveCard());
 printSample('People Picker Card', createPeoplePickerCard());
+printSample('Action Submit/Execute Card', createActionSubmitExecuteCard());
 
 // Validation samples
 runValidationSamples();

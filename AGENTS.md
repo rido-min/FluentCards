@@ -51,6 +51,7 @@ All four language ports share an identical set of sample programs. **When adding
 | `layout_card_sample` | ColumnSet, Container, FactSet |
 | `people_picker_sample` | People picker via `with_choices_data` / dynamic dataset |
 | `rich_content_sample` | RichTextBlock, ImageSet, Media, ActionSet |
+| `action_submit_execute_sample` | Action.Execute and Action.Submit with custom verbs/data payloads |
 | `validation_sample` | `validate()`, `validate_and_throw()`, error handling |
 | `program` / `main` | Entry point that calls all samples |
 

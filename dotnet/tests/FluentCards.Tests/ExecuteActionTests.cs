@@ -114,6 +114,8 @@ public class ExecuteActionTests
             .AddAction(a => a
                 .Execute("Execute")
                 .WithId("exec1")
+                .WithVerb("doAction")
+                .WithData("{\"command\":\"refresh\",\"targetId\":\"123\"}")
                 .WithStyle(ActionStyle.Positive))
             .Build();
 
@@ -124,7 +126,29 @@ public class ExecuteActionTests
         Assert.NotNull(action);
         Assert.Equal("exec1", action.Id);
         Assert.Equal("Execute", action.Title);
+        Assert.Equal("doAction", action.Verb);
+        Assert.NotNull(action.Data);
+        Assert.Equal("refresh", action.Data.Value.GetProperty("command").GetString());
+        Assert.Equal("123", action.Data.Value.GetProperty("targetId").GetString());
         Assert.Equal(ActionStyle.Positive, action.Style);
+    }
+
+    [Fact]
+    public void ExecuteAction_WithBuilder_WithAssociatedInputs_SetsProperty()
+    {
+        // Arrange & Act
+        var card = AdaptiveCardBuilder.Create()
+            .AddAction(a => a
+                .Execute("Execute")
+                .WithAssociatedInputs(AssociatedInputs.None))
+            .Build();
+
+        // Assert
+        Assert.NotNull(card.Actions);
+        Assert.Single(card.Actions);
+        var action = card.Actions[0] as ExecuteAction;
+        Assert.NotNull(action);
+        Assert.Equal(AssociatedInputs.None, action.AssociatedInputs);
     }
 
     [Fact]

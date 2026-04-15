@@ -1,3 +1,5 @@
+using System.Text.Json;
+
 namespace FluentCards;
 
 /// <summary>
@@ -164,6 +166,72 @@ public class ActionBuilder
     }
 
     /// <summary>
+    /// Sets the data payload for Submit and Execute actions.
+    /// </summary>
+    /// <param name="data">The data payload as a JSON element.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public ActionBuilder WithData(JsonElement data)
+    {
+        if (_action is SubmitAction submitAction)
+        {
+            submitAction.Data = data.Clone();
+        }
+        else if (_action is ExecuteAction executeAction)
+        {
+            executeAction.Data = data.Clone();
+        }
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the data payload for Submit and Execute actions from a JSON string.
+    /// </summary>
+    /// <param name="jsonData">The JSON payload string.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public ActionBuilder WithData(string jsonData)
+    {
+        if (_action is not SubmitAction && _action is not ExecuteAction)
+        {
+            return this;
+        }
+
+        using var document = JsonDocument.Parse(jsonData);
+        return WithData(document.RootElement);
+    }
+
+    /// <summary>
+    /// Sets which inputs are associated with Submit and Execute actions.
+    /// </summary>
+    /// <param name="associatedInputs">The associated inputs setting.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public ActionBuilder WithAssociatedInputs(AssociatedInputs associatedInputs)
+    {
+        if (_action is SubmitAction submitAction)
+        {
+            submitAction.AssociatedInputs = associatedInputs;
+        }
+        else if (_action is ExecuteAction executeAction)
+        {
+            executeAction.AssociatedInputs = associatedInputs;
+        }
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the semantic verb for Execute actions.
+    /// </summary>
+    /// <param name="verb">The action verb.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public ActionBuilder WithVerb(string verb)
+    {
+        if (_action is ExecuteAction executeAction)
+        {
+            executeAction.Verb = verb;
+        }
+        return this;
+    }
+
+    /// <summary>
     /// Sets the fallback behavior for the action.
     /// </summary>
     /// <param name="fallback">The fallback value ("drop" or another action).</param>
@@ -220,4 +288,5 @@ public class ActionBuilder
         }
         return _action;
     }
+
 }
