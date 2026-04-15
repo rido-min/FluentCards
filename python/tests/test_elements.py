@@ -231,6 +231,15 @@ class TestMediaBuilder:
         assert media['captionSources'][0]['mimeType'] == 'text/vtt'
         assert media['captionSources'][0]['label'] == 'English'
 
+    def test_adds_caption_source_with_legacy_signature_order(self):
+        media = (MediaBuilder()
+                 .add_source('https://example.com/video.mp4', 'video/mp4')
+                 .add_caption_source('text/vtt', 'https://example.com/video-en.vtt', 'English')
+                 .build())
+
+        assert media['captionSources'][0]['url'] == 'https://example.com/video-en.vtt'
+        assert media['captionSources'][0]['mimeType'] == 'text/vtt'
+
     def test_adds_caption_source_from_dict(self):
         caption = {
             'type': 'CaptionSource',
@@ -241,6 +250,17 @@ class TestMediaBuilder:
         media = MediaBuilder().add_source('https://example.com/video.mp4', 'video/mp4').add_caption_source(caption).build()
 
         assert media['captionSources'][0] == caption
+
+    def test_raises_when_dict_caption_source_receives_extra_args(self):
+        caption = {
+            'type': 'CaptionSource',
+            'mimeType': 'text/vtt',
+            'url': 'https://example.com/video-es.vtt',
+            'label': 'Spanish',
+        }
+
+        with pytest.raises(ValueError):
+            MediaBuilder().add_caption_source(caption, 'text/vtt', 'Spanish')
 
 
 class TestImageSetBuilder:

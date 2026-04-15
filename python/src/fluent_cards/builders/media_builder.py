@@ -127,17 +127,27 @@ class MediaBuilder:
         """
         self._media.setdefault('captionSources', [])
 
+        def _looks_like_url(value: str) -> bool:
+            parsed = urlparse(value)
+            return bool(parsed.scheme and parsed.netloc)
+
+        def _looks_like_mime_type(value: str) -> bool:
+            if value.count('/') != 1 or '://' in value:
+                return False
+            major, minor = value.split('/', 1)
+            return bool(major and minor)
+
         if isinstance(url_or_source, str):
             url = url_or_source
 
+            # Backward compatibility: accept legacy positional order
+            # add_caption_source(mime_type, url, label).
             if (
                 mime_type is not None
-                and '/' in url_or_source
-                and '://' in mime_type
+                and _looks_like_mime_type(url_or_source)
+                and _looks_like_url(mime_type)
             ):
-                parsed = urlparse(mime_type)
-                if parsed.scheme and parsed.netloc:
-                    url, mime_type = mime_type, url_or_source
+                url, mime_type = mime_type, url_or_source
 
             self._media['captionSources'].append({
                 'type': 'CaptionSource',
@@ -146,6 +156,8 @@ class MediaBuilder:
                 'label': label,
             })
         else:
+            if mime_type is not None or label is not None:
+                raise ValueError('mime_type and label must be omitted when url_or_source is a dict')
             self._media['captionSources'].append(url_or_source)
         return self
 
