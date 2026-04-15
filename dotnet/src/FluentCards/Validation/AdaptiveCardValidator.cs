@@ -150,6 +150,7 @@ public static class AdaptiveCardValidator
                         Message = "TextBlock is missing the required 'text' property."
                     });
                 }
+                ValidateSelectAction(textBlock.SelectAction, issues, $"{path}.selectAction");
                 break;
                 
             case Image image:
@@ -601,6 +602,9 @@ public static class AdaptiveCardValidator
             // Walk into nested structures and check element-level selectActions
             switch (element)
             {
+                case TextBlock textBlock:
+                    CheckSelectActionVersion(textBlock.SelectAction, cardVersion, issues, $"{elementPath}.selectAction");
+                    break;
                 case Container container:
                     if (container.Items != null)
                         CheckElementVersions(container.Items, cardVersion, issues, $"{elementPath}.items");

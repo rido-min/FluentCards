@@ -88,10 +88,8 @@ public class ActionBuilder
     /// <returns>The builder instance for method chaining.</returns>
     public ActionBuilder WithId(string id)
     {
-        if (_action != null)
-        {
-            _action.Id = id;
-        }
+        EnsureActionTypeSet();
+        _action.Id = id;
         return this;
     }
 
@@ -102,10 +100,8 @@ public class ActionBuilder
     /// <returns>The builder instance for method chaining.</returns>
     public ActionBuilder WithTitle(string title)
     {
-        if (_action != null)
-        {
-            _action.Title = title;
-        }
+        EnsureActionTypeSet();
+        _action.Title = title;
         return this;
     }
 
@@ -116,10 +112,8 @@ public class ActionBuilder
     /// <returns>The builder instance for method chaining.</returns>
     public ActionBuilder WithIconUrl(string iconUrl)
     {
-        if (_action != null)
-        {
-            _action.IconUrl = iconUrl;
-        }
+        EnsureActionTypeSet();
+        _action.IconUrl = iconUrl;
         return this;
     }
 
@@ -130,10 +124,8 @@ public class ActionBuilder
     /// <returns>The builder instance for method chaining.</returns>
     public ActionBuilder WithStyle(ActionStyle style)
     {
-        if (_action != null)
-        {
-            _action.Style = style;
-        }
+        EnsureActionTypeSet();
+        _action.Style = style;
         return this;
     }
 
@@ -144,10 +136,8 @@ public class ActionBuilder
     /// <returns>The builder instance for method chaining.</returns>
     public ActionBuilder WithIsEnabled(bool isEnabled)
     {
-        if (_action != null)
-        {
-            _action.IsEnabled = isEnabled;
-        }
+        EnsureActionTypeSet();
+        _action.IsEnabled = isEnabled;
         return this;
     }
 
@@ -158,10 +148,8 @@ public class ActionBuilder
     /// <returns>The builder instance for method chaining.</returns>
     public ActionBuilder WithTooltip(string tooltip)
     {
-        if (_action != null)
-        {
-            _action.Tooltip = tooltip;
-        }
+        EnsureActionTypeSet();
+        _action.Tooltip = tooltip;
         return this;
     }
 
@@ -172,6 +160,7 @@ public class ActionBuilder
     /// <returns>The builder instance for method chaining.</returns>
     public ActionBuilder WithData(JsonElement data)
     {
+        EnsureActionTypeSet();
         if (_action is SubmitAction submitAction)
         {
             submitAction.Data = data.Clone();
@@ -190,6 +179,7 @@ public class ActionBuilder
     /// <returns>The builder instance for method chaining.</returns>
     public ActionBuilder WithData(string jsonData)
     {
+        EnsureActionTypeSet();
         if (_action is not SubmitAction && _action is not ExecuteAction)
         {
             return this;
@@ -206,6 +196,7 @@ public class ActionBuilder
     /// <returns>The builder instance for method chaining.</returns>
     public ActionBuilder WithAssociatedInputs(AssociatedInputs associatedInputs)
     {
+        EnsureActionTypeSet();
         if (_action is SubmitAction submitAction)
         {
             submitAction.AssociatedInputs = associatedInputs;
@@ -224,6 +215,7 @@ public class ActionBuilder
     /// <returns>The builder instance for method chaining.</returns>
     public ActionBuilder WithVerb(string verb)
     {
+        EnsureActionTypeSet();
         if (_action is ExecuteAction executeAction)
         {
             executeAction.Verb = verb;
@@ -238,10 +230,8 @@ public class ActionBuilder
     /// <returns>The builder instance for method chaining.</returns>
     public ActionBuilder WithFallback(object fallback)
     {
-        if (_action != null)
-        {
-            _action.Fallback = fallback;
-        }
+        EnsureActionTypeSet();
+        _action.Fallback = fallback;
         return this;
     }
 
@@ -252,10 +242,8 @@ public class ActionBuilder
     /// <returns>The builder instance for method chaining.</returns>
     public ActionBuilder WithMode(ActionMode mode)
     {
-        if (_action != null)
-        {
-            _action.Mode = mode;
-        }
+        EnsureActionTypeSet();
+        _action.Mode = mode;
         return this;
     }
 
@@ -267,12 +255,20 @@ public class ActionBuilder
     /// <returns>The builder instance for method chaining.</returns>
     public ActionBuilder WithRequires(string feature, string version)
     {
-        if (_action != null)
-        {
-            _action.Requires ??= new Dictionary<string, string>();
-            _action.Requires[feature] = version;
-        }
+        EnsureActionTypeSet();
+        _action.Requires ??= new Dictionary<string, string>();
+        _action.Requires[feature] = version;
         return this;
+    }
+
+    [System.Diagnostics.CodeAnalysis.MemberNotNull(nameof(_action))]
+    private void EnsureActionTypeSet()
+    {
+        if (_action == null)
+        {
+            throw new InvalidOperationException(
+                "No action type has been specified. Call OpenUrl(), Submit(), ShowCard(), ToggleVisibility(), or Execute() before setting properties.");
+        }
     }
 
     /// <summary>
