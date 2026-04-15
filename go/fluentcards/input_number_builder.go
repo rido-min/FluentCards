@@ -54,6 +54,56 @@ func (b *InputNumberBuilder) WithSpacing(spacing Spacing) *InputNumberBuilder {
 	return b
 }
 
-func (b *InputNumberBuilder) Build() Card {
+func (b *InputNumberBuilder) WithIsVisible(isVisible bool) *InputNumberBuilder {
+	b.data["isVisible"] = isVisible
+	return b
+}
+
+func (b *InputNumberBuilder) WithSeparator(separator bool) *InputNumberBuilder {
+	b.data["separator"] = separator
+	return b
+}
+
+func (b *InputNumberBuilder) WithHeight(height string) *InputNumberBuilder {
+	b.data["height"] = height
+	return b
+}
+
+func (b *InputNumberBuilder) WithFallback(fallback any) *InputNumberBuilder {
+	b.data["fallback"] = fallback
+	return b
+}
+
+func (b *InputNumberBuilder) WithRequires(key, version string) *InputNumberBuilder {
+	reqs, ok := b.data["requires"].(map[string]any)
+	if !ok {
+		reqs = map[string]any{}
+	}
+	reqs[key] = version
+	b.data["requires"] = reqs
+	return b
+}
+
+func (b *InputNumberBuilder) WithRtl(rtl bool) *InputNumberBuilder {
+	b.data["rtl"] = rtl
+	return b
+}
+
+func (b *InputNumberBuilder) WithLabelPosition(position InputLabelPosition) *InputNumberBuilder {
+	b.data["labelPosition"] = string(position)
+	return b
+}
+
+func (b *InputNumberBuilder) WithLabelWidth(width string) *InputNumberBuilder {
+	b.data["labelWidth"] = width
+	return b
+}
+
+func (b *InputNumberBuilder) WithInputStyle(style InputStyle) *InputNumberBuilder {
+	b.data["inputStyle"] = string(style)
+	return b
+}
+
+func (b *InputNumberBuilder) Build()Card {
 	return b.data
 }

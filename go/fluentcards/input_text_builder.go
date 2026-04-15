@@ -64,6 +64,56 @@ func (b *InputTextBuilder) WithSpacing(spacing Spacing) *InputTextBuilder {
 	return b
 }
 
+func (b *InputTextBuilder) WithIsVisible(isVisible bool) *InputTextBuilder {
+	b.data["isVisible"] = isVisible
+	return b
+}
+
+func (b *InputTextBuilder) WithSeparator(separator bool) *InputTextBuilder {
+	b.data["separator"] = separator
+	return b
+}
+
+func (b *InputTextBuilder) WithHeight(height string) *InputTextBuilder {
+	b.data["height"] = height
+	return b
+}
+
+func (b *InputTextBuilder) WithFallback(fallback any) *InputTextBuilder {
+	b.data["fallback"] = fallback
+	return b
+}
+
+func (b *InputTextBuilder) WithRequires(key, version string) *InputTextBuilder {
+	reqs, ok := b.data["requires"].(map[string]any)
+	if !ok {
+		reqs = map[string]any{}
+	}
+	reqs[key] = version
+	b.data["requires"] = reqs
+	return b
+}
+
+func (b *InputTextBuilder) WithRtl(rtl bool) *InputTextBuilder {
+	b.data["rtl"] = rtl
+	return b
+}
+
+func (b *InputTextBuilder) WithLabelPosition(position InputLabelPosition) *InputTextBuilder {
+	b.data["labelPosition"] = string(position)
+	return b
+}
+
+func (b *InputTextBuilder) WithLabelWidth(width string) *InputTextBuilder {
+	b.data["labelWidth"] = width
+	return b
+}
+
+func (b *InputTextBuilder) WithInputStyle(style InputStyle) *InputTextBuilder {
+	b.data["inputStyle"] = string(style)
+	return b
+}
+
 func (b *InputTextBuilder) WithInlineAction(configure func(*ActionBuilder)) *InputTextBuilder {
 	ab := newActionBuilder()
 	configure(ab)

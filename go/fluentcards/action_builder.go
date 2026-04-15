@@ -155,6 +155,29 @@ func (b *ActionBuilder) AddTargetElement(elementID string, isVisible *bool) *Act
 	return b
 }
 
+func (b *ActionBuilder) WithMode(mode ActionMode) *ActionBuilder {
+	b.ensureActionTypeSet()
+	b.data["mode"] = string(mode)
+	return b
+}
+
+func (b *ActionBuilder) WithRequires(key, version string) *ActionBuilder {
+	b.ensureActionTypeSet()
+	reqs, ok := b.data["requires"].(map[string]any)
+	if !ok {
+		reqs = map[string]any{}
+	}
+	reqs[key] = version
+	b.data["requires"] = reqs
+	return b
+}
+
+func (b *ActionBuilder) WithFallback(fallback any) *ActionBuilder {
+	b.ensureActionTypeSet()
+	b.data["fallback"] = fallback
+	return b
+}
+
 // Build returns the built action Card. Panics if no action type was set.
 func (b *ActionBuilder) Build() Card {
 	if b.data == nil {

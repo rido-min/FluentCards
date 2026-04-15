@@ -19,6 +19,41 @@ func (b *ActionSetBuilder) WithSpacing(spacing Spacing) *ActionSetBuilder {
 	return b
 }
 
+func (b *ActionSetBuilder) WithIsVisible(isVisible bool) *ActionSetBuilder {
+	b.data["isVisible"] = isVisible
+	return b
+}
+
+func (b *ActionSetBuilder) WithSeparator(separator bool) *ActionSetBuilder {
+	b.data["separator"] = separator
+	return b
+}
+
+func (b *ActionSetBuilder) WithHeight(height string) *ActionSetBuilder {
+	b.data["height"] = height
+	return b
+}
+
+func (b *ActionSetBuilder) WithFallback(fallback any) *ActionSetBuilder {
+	b.data["fallback"] = fallback
+	return b
+}
+
+func (b *ActionSetBuilder) WithRequires(key, version string) *ActionSetBuilder {
+	reqs, ok := b.data["requires"].(map[string]any)
+	if !ok {
+		reqs = map[string]any{}
+	}
+	reqs[key] = version
+	b.data["requires"] = reqs
+	return b
+}
+
+func (b *ActionSetBuilder) WithRtl(rtl bool) *ActionSetBuilder {
+	b.data["rtl"] = rtl
+	return b
+}
+
 func (b *ActionSetBuilder) AddAction(configure func(*ActionBuilder)) *ActionSetBuilder {
 	ab := newActionBuilder()
 	configure(ab)

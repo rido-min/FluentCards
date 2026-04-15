@@ -56,6 +56,56 @@ func (b *InputDateBuilder) WithSpacing(spacing Spacing) *InputDateBuilder {
 	return b
 }
 
-func (b *InputDateBuilder) Build() Card {
+func (b *InputDateBuilder) WithIsVisible(isVisible bool) *InputDateBuilder {
+	b.data["isVisible"] = isVisible
+	return b
+}
+
+func (b *InputDateBuilder) WithSeparator(separator bool) *InputDateBuilder {
+	b.data["separator"] = separator
+	return b
+}
+
+func (b *InputDateBuilder) WithHeight(height string) *InputDateBuilder {
+	b.data["height"] = height
+	return b
+}
+
+func (b *InputDateBuilder) WithFallback(fallback any) *InputDateBuilder {
+	b.data["fallback"] = fallback
+	return b
+}
+
+func (b *InputDateBuilder) WithRequires(key, version string) *InputDateBuilder {
+	reqs, ok := b.data["requires"].(map[string]any)
+	if !ok {
+		reqs = map[string]any{}
+	}
+	reqs[key] = version
+	b.data["requires"] = reqs
+	return b
+}
+
+func (b *InputDateBuilder) WithRtl(rtl bool) *InputDateBuilder {
+	b.data["rtl"] = rtl
+	return b
+}
+
+func (b *InputDateBuilder) WithLabelPosition(position InputLabelPosition) *InputDateBuilder {
+	b.data["labelPosition"] = string(position)
+	return b
+}
+
+func (b *InputDateBuilder) WithLabelWidth(width string) *InputDateBuilder {
+	b.data["labelWidth"] = width
+	return b
+}
+
+func (b *InputDateBuilder) WithInputStyle(style InputStyle) *InputDateBuilder {
+	b.data["inputStyle"] = string(style)
+	return b
+}
+
+func (b *InputDateBuilder) Build()Card {
 	return b.data
 }

@@ -44,7 +44,42 @@ func (b *TableBuilder) WithSpacing(spacing Spacing) *TableBuilder {
 	return b
 }
 
-// AddColumn adds a table column definition map (e.g. {"width": 1}).
+func (b *TableBuilder) WithIsVisible(isVisible bool) *TableBuilder {
+	b.data["isVisible"] = isVisible
+	return b
+}
+
+func (b *TableBuilder) WithSeparator(separator bool) *TableBuilder {
+	b.data["separator"] = separator
+	return b
+}
+
+func (b *TableBuilder) WithHeight(height string) *TableBuilder {
+	b.data["height"] = height
+	return b
+}
+
+func (b *TableBuilder) WithFallback(fallback any) *TableBuilder {
+	b.data["fallback"] = fallback
+	return b
+}
+
+func (b *TableBuilder) WithRequires(key, version string) *TableBuilder {
+	reqs, ok := b.data["requires"].(map[string]any)
+	if !ok {
+		reqs = map[string]any{}
+	}
+	reqs[key] = version
+	b.data["requires"] = reqs
+	return b
+}
+
+func (b *TableBuilder) WithRtl(rtl bool) *TableBuilder {
+	b.data["rtl"] = rtl
+	return b
+}
+
+// AddColumnadds a table column definition map (e.g. {"width": 1}).
 func (b *TableBuilder) AddColumn(column map[string]any) *TableBuilder {
 	cols := b.data["columns"].([]any)
 	b.data["columns"] = append(cols, column)

@@ -24,7 +24,42 @@ func (b *RichTextBlockBuilder) WithSpacing(spacing Spacing) *RichTextBlockBuilde
 	return b
 }
 
-// AddText adds a plain string inline.
+func (b *RichTextBlockBuilder) WithIsVisible(isVisible bool) *RichTextBlockBuilder {
+	b.data["isVisible"] = isVisible
+	return b
+}
+
+func (b *RichTextBlockBuilder) WithSeparator(separator bool) *RichTextBlockBuilder {
+	b.data["separator"] = separator
+	return b
+}
+
+func (b *RichTextBlockBuilder) WithHeight(height string) *RichTextBlockBuilder {
+	b.data["height"] = height
+	return b
+}
+
+func (b *RichTextBlockBuilder) WithFallback(fallback any) *RichTextBlockBuilder {
+	b.data["fallback"] = fallback
+	return b
+}
+
+func (b *RichTextBlockBuilder) WithRequires(key, version string) *RichTextBlockBuilder {
+	reqs, ok := b.data["requires"].(map[string]any)
+	if !ok {
+		reqs = map[string]any{}
+	}
+	reqs[key] = version
+	b.data["requires"] = reqs
+	return b
+}
+
+func (b *RichTextBlockBuilder) WithRtl(rtl bool) *RichTextBlockBuilder {
+	b.data["rtl"] = rtl
+	return b
+}
+
+// AddTextadds a plain string inline.
 func (b *RichTextBlockBuilder) AddText(text string) *RichTextBlockBuilder {
 	inlines := b.data["inlines"].([]any)
 	b.data["inlines"] = append(inlines, text)

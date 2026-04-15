@@ -44,6 +44,36 @@ func (b *ColumnSetBuilder) WithSeparator(separator bool) *ColumnSetBuilder {
 	return b
 }
 
+func (b *ColumnSetBuilder) WithIsVisible(isVisible bool) *ColumnSetBuilder {
+	b.data["isVisible"] = isVisible
+	return b
+}
+
+func (b *ColumnSetBuilder) WithHeight(height string) *ColumnSetBuilder {
+	b.data["height"] = height
+	return b
+}
+
+func (b *ColumnSetBuilder) WithFallback(fallback any) *ColumnSetBuilder {
+	b.data["fallback"] = fallback
+	return b
+}
+
+func (b *ColumnSetBuilder) WithRequires(key, version string) *ColumnSetBuilder {
+	reqs, ok := b.data["requires"].(map[string]any)
+	if !ok {
+		reqs = map[string]any{}
+	}
+	reqs[key] = version
+	b.data["requires"] = reqs
+	return b
+}
+
+func (b *ColumnSetBuilder) WithRtl(rtl bool) *ColumnSetBuilder {
+	b.data["rtl"] = rtl
+	return b
+}
+
 func (b *ColumnSetBuilder) WithSelectAction(configure func(*ActionBuilder)) *ColumnSetBuilder {
 	ab := newActionBuilder()
 	configure(ab)

@@ -59,6 +59,56 @@ func (b *InputToggleBuilder) WithSpacing(spacing Spacing) *InputToggleBuilder {
 	return b
 }
 
-func (b *InputToggleBuilder) Build() Card {
+func (b *InputToggleBuilder) WithIsVisible(isVisible bool) *InputToggleBuilder {
+	b.data["isVisible"] = isVisible
+	return b
+}
+
+func (b *InputToggleBuilder) WithSeparator(separator bool) *InputToggleBuilder {
+	b.data["separator"] = separator
+	return b
+}
+
+func (b *InputToggleBuilder) WithHeight(height string) *InputToggleBuilder {
+	b.data["height"] = height
+	return b
+}
+
+func (b *InputToggleBuilder) WithFallback(fallback any) *InputToggleBuilder {
+	b.data["fallback"] = fallback
+	return b
+}
+
+func (b *InputToggleBuilder) WithRequires(key, version string) *InputToggleBuilder {
+	reqs, ok := b.data["requires"].(map[string]any)
+	if !ok {
+		reqs = map[string]any{}
+	}
+	reqs[key] = version
+	b.data["requires"] = reqs
+	return b
+}
+
+func (b *InputToggleBuilder) WithRtl(rtl bool) *InputToggleBuilder {
+	b.data["rtl"] = rtl
+	return b
+}
+
+func (b *InputToggleBuilder) WithLabelPosition(position InputLabelPosition) *InputToggleBuilder {
+	b.data["labelPosition"] = string(position)
+	return b
+}
+
+func (b *InputToggleBuilder) WithLabelWidth(width string) *InputToggleBuilder {
+	b.data["labelWidth"] = width
+	return b
+}
+
+func (b *InputToggleBuilder) WithInputStyle(style InputStyle) *InputToggleBuilder {
+	b.data["inputStyle"] = string(style)
+	return b
+}
+
+func (b *InputToggleBuilder) Build()Card {
 	return b.data
 }
