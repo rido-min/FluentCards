@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 
 namespace FluentCards;
 
@@ -205,6 +206,37 @@ public class ActionBuilder
 
         using var document = JsonDocument.Parse(jsonData);
         return WithData(document.RootElement);
+    }
+
+    /// <summary>
+    /// Sets the data payload for Submit and Execute actions by serializing an object to a <see cref="JsonElement"/>.
+    /// Uses the source-generated <see cref="FluentCardsJsonContext"/> for AOT-compatible serialization.
+    /// </summary>
+    /// <typeparam name="T">The type of the data object. Must be registered in <see cref="FluentCardsJsonContext"/>.</typeparam>
+    /// <param name="data">The data object to serialize.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when <see cref="WithTeamsData"/> or <see cref="WithTeamsTaskFetch"/> was already called,
+    /// or when the type is not registered in the source-generated context.</exception>
+    public ActionBuilder WithData<T>(T data)
+    {
+        EnsureActionTypeSet();
+        if (_teamsDataSet)
+        {
+            throw new InvalidOperationException(
+                "Cannot use both WithData and WithTeamsData on the same action. Use WithTeamsData to combine msteams properties with custom data, or WithData for raw JSON.");
+        }
+        if (_action is not SubmitAction && _action is not ExecuteAction)
+        {
+            return this;
+        }
+
+        var typeInfo = FluentCardsJsonContext.Default.GetTypeInfo(typeof(T))
+            ?? throw new InvalidOperationException(
+                $"Type '{typeof(T).Name}' is not registered in FluentCardsJsonContext. " +
+                "Add [JsonSerializable(typeof({type}))] to FluentCardsJsonContext to use WithData<T>().");
+
+        var element = JsonSerializer.SerializeToElement(data, typeInfo);
+        return WithData(element);
     }
 
     /// <summary>

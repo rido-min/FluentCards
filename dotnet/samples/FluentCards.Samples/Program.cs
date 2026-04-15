@@ -65,3 +65,20 @@ ValidationSample.Run();
 
 Console.WriteLine("\n=== Action Submit/Execute Sample ===");
 Console.WriteLine(ActionSubmitExecuteSample.CreateActionSubmitExecuteCard().ToJson());
+
+// Demonstrate native object serialization (no double serialization)
+Console.WriteLine("\n=== Native Object Serialization ===");
+var nativeCard = BasicCardSample.CreateWelcomeCard();
+
+// ToJsonElement — returns a JsonElement directly, no string intermediary
+var jsonElement = nativeCard.ToJsonElement();
+Console.WriteLine($"✓ ToJsonElement: ValueKind={jsonElement.ValueKind}, has 'type'={jsonElement.GetProperty("type").GetString()}");
+
+// ToJsonNode — returns a mutable JsonNode for post-build modifications
+var jsonNode = nativeCard.ToJsonNode();
+if (jsonNode != null)
+{
+    jsonNode["$schema"] = "https://adaptivecards.io/schemas/adaptive-card.json";
+    Console.WriteLine($"✓ ToJsonNode: Modified $schema to '{jsonNode["$schema"]}'");
+    Console.WriteLine($"  Final JSON (compact): {jsonNode.ToJsonString()}");
+}
