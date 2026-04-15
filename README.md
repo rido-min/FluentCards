@@ -16,6 +16,7 @@ A multi-language library for building [Adaptive Cards](https://adaptivecards.io/
 | TypeScript / Node.js | [`node/`](node/) | [![npm](https://img.shields.io/badge/npm-fluent--cards-blue)](https://www.npmjs.com/package/fluent-cards) |
 | Python | [`python/`](python/) | [![PyPI](https://img.shields.io/pypi/v/fluent-cards.svg)](https://pypi.org/project/fluent-cards/) |
 | Go | [`go/`](go/) | [![Go Reference](https://pkg.go.dev/badge/github.com/rido-min/FluentCards/go/fluentcards.svg)](https://pkg.go.dev/github.com/rido-min/FluentCards/go/fluentcards) |
+| Swift | [`swift/`](swift/) | Swift Package Manager |
 
 ## Quick Start
 
@@ -103,6 +104,29 @@ card := fluentcards.NewAdaptiveCardBuilder().
 
 json, _ := fluentcards.ToJSON(card)
 fmt.Println(json)
+```
+
+### Swift
+
+Add to your `Package.swift`:
+```swift
+.package(url: "https://github.com/rido-min/FluentCards", from: "1.0.0")
+```
+
+```swift
+import FluentCards
+
+let card = AdaptiveCardBuilder()
+    .withVersion("1.5")
+    .addTextBlock { tb in
+        tb.withText("Hello, FluentCards!")
+        tb.withSize(.large)
+        tb.withWeight(.bolder)
+        tb.withWrap(true)
+    }
+    .build()
+
+if let json = try? toJSON(card) { print(json) }
 ```
 
 ## Documentation

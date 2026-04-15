@@ -10,6 +10,7 @@ FluentCards is a multi-language library. Each language port lives in its own top
 | `node/` | TypeScript / Node.js | Stable |
 | `python/` | Python 3.10+ | Stable |
 | `go/` | Go 1.22+ | Stable |
+| `swift/` | Swift 5.9+ | Stable |
 
 Shared assets (docs, screenshots, root README) live at the repository root.
 
@@ -42,7 +43,7 @@ When implementing a port for a new language, follow these steps:
 
 ## Sample Parity
 
-All four language ports share an identical set of sample programs. **When adding, removing, or changing a sample in one language, apply the equivalent change to all others.** The canonical sample list is:
+All five language ports share an identical set of sample programs. **When adding, removing, or changing a sample in one language, apply the equivalent change to all others.** The canonical sample list is:
 
 | Sample file (stem) | What it demonstrates |
 |--------------------|----------------------|
@@ -63,6 +64,7 @@ Naming conventions by language:
 | TypeScript | camelCase `.ts` | `basicCardSample.ts` |
 | Python | snake_case `.py` | `basic_card_sample.py` |
 | Go | snake_case `.go` | `basic_card_sample.go` |
+| Swift | snake_case `.swift` | `basic_card_sample.swift` |
 
 ---
 
@@ -183,6 +185,42 @@ go run .
 - Do not use `interface{}` — prefer `any` (Go 1.18+ alias).
 
 ### Constraints (go)
+- Keep diffs minimal and scoped to the request.
+- Update or add tests for any behavior change.
+- Do not modify CI, dependency versions, or security settings unless asked.
+- Never print, log, or commit secrets.
+
+---
+
+## swift/
+
+### Verification
+```
+cd swift
+swift build
+swift test
+```
+To run samples:
+```
+cd swift
+swift run Samples
+```
+
+### Environment
+- Swift 5.9+ tools (Swift 6.3 compiler). No third-party runtime dependencies.
+- Library lives in `swift/Sources/FluentCards/`. Tests live in `swift/Tests/FluentCardsTests/`. Samples in `swift/Samples/` as an executable target.
+- Uses Swift Package Manager (SPM).
+
+### Guardrails
+- This library implements the **Adaptive Cards 1.6.0 specification**. All elements, properties, actions, and enums must conform to the schema.
+- `typealias Card = [String: Any]` — mirrors Go's `type Card = map[string]any`.
+- All builders are `final class` with `@discardableResult` methods returning the concrete builder type.
+- Enums use `String` raw values with camelCase cases. Use backticks for Swift keywords: `` `default` ``, `` `repeat` ``.
+- Builder closures: `(_ configure: (BuilderType) -> Void)` — trailing closure syntax, builder is modified in-place.
+- `toJSON(_ card: Card) throws -> String` and `fromJSON(_ json: String) -> Card?` for serialization.
+- `validate(_ card: Card) -> [ValidationIssue]` and `validateAndThrow(_ card: Card) throws` for validation.
+
+### Constraints (swift)
 - Keep diffs minimal and scoped to the request.
 - Update or add tests for any behavior change.
 - Do not modify CI, dependency versions, or security settings unless asked.
