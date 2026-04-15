@@ -109,6 +109,68 @@ public class ImageBuilder
     }
 
     /// <summary>
+    /// Sets the spacing between this element and the preceding element.
+    /// </summary>
+    /// <param name="spacing">The spacing value.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public ImageBuilder WithSpacing(Spacing spacing)
+    {
+        _image.Spacing = spacing;
+        return this;
+    }
+    /// <summary>
+    /// Sets whether a separator line is drawn at the top of the element.
+    /// </summary>
+    /// <param name="separator">True to show separator.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public ImageBuilder WithSeparator(bool separator = true)
+    {
+        _image.Separator = separator;
+        return this;
+    }
+    /// <summary>
+    /// Sets whether the element is visible.
+    /// </summary>
+    /// <param name="isVisible">True if visible, false if hidden.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public ImageBuilder WithIsVisible(bool isVisible)
+    {
+        _image.IsVisible = isVisible;
+        return this;
+    }
+    /// <summary>
+    /// Sets the fallback behavior for the element.
+    /// </summary>
+    /// <param name="fallback">The fallback value ("drop" or another element).</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public ImageBuilder WithFallback(object fallback)
+    {
+        _image.Fallback = fallback;
+        return this;
+    }
+    /// <summary>
+    /// Sets the feature requirements for the element.
+    /// </summary>
+    /// <param name="key">The feature key.</param>
+    /// <param name="version">The minimum version required.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public ImageBuilder WithRequires(string key, string version)
+    {
+        _image.Requires ??= new Dictionary<string, string>();
+        _image.Requires[key] = version;
+        return this;
+    }
+    /// <summary>
+    /// Sets whether content should be presented right to left.
+    /// </summary>
+    /// <param name="rtl">True for right-to-left.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public ImageBuilder WithRtl(bool rtl = true)
+    {
+        _image.Rtl = rtl;
+        return this;
+    }
+    /// <summary>
     /// Builds and returns the configured Image.
     /// </summary>
     /// <returns>The configured Image instance.</returns>

@@ -224,6 +224,7 @@ export interface InputElementBase extends AdaptiveElementBase {
   isRequired?: boolean;
   errorMessage?: string;
   labelPosition?: InputLabelPosition;
+  labelWidth?: string;
   inputStyle?: InputStyle;
 }
 
@@ -332,6 +333,9 @@ export interface AdaptiveActionBase {
   mode?: ActionMode;
   isEnabled?: boolean;
   tooltip?: string;
+  requires?: Record<string, string>;
+  /** "drop" or a fallback action */
+  fallback?: 'drop' | AdaptiveAction;
 }
 
 /** An action that opens a URL in a browser. */

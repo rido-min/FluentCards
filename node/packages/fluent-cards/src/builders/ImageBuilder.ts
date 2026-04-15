@@ -1,4 +1,4 @@
-import type { Image, AdaptiveAction } from '../models.js';
+import type { Image, AdaptiveAction, AdaptiveElement } from '../models.js';
 import { HorizontalAlignment, ImageSize, ImageStyle, Spacing } from '../enums.js';
 import { ActionBuilder } from './ActionBuilder.js';
 
@@ -28,8 +28,16 @@ export class ImageBuilder {
   withSpacing(spacing: Spacing): this { this.image.spacing = spacing; return this; }
   /** Sets whether a separator line is displayed above the element. @param separator True to show a separator. @returns The builder instance for method chaining. */
   withSeparator(separator: boolean): this { this.image.separator = separator; return this; }
+  /** Sets whether the element is visible. @param isVisible True to show the element. @returns The builder instance for method chaining. */
+  withIsVisible(isVisible: boolean): this { this.image.isVisible = isVisible; return this; }
+  /** Sets the fallback behavior when the element is unsupported. @param fallback The fallback value ('drop' or an element). @returns The builder instance for method chaining. */
+  withFallback(fallback: 'drop' | AdaptiveElement): this { this.image.fallback = fallback; return this; }
+  /** Sets the feature requirements for the element. @param key The feature name. @param version The minimum required version. @returns The builder instance for method chaining. */
+  withRequires(key: string, version: string): this { this.image.requires = { ...this.image.requires, [key]: version }; return this; }
+  /** Sets whether content should be laid out right-to-left. @param rtl True for RTL. @returns The builder instance for method chaining. */
+  withRtl(rtl = true): this { this.image.rtl = rtl; return this; }
 
-  /** Sets the action to invoke when the image is selected. @param configure A callback to configure the ActionBuilder. @returns The builder instance for method chaining. */
+  /** Sets the action to invoke when the image is selected.@param configure A callback to configure the ActionBuilder. @returns The builder instance for method chaining. */
   withSelectAction(configure: (b: ActionBuilder) => void): this {
     const b = new ActionBuilder();
     configure(b);

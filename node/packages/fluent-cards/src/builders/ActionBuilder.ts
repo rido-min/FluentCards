@@ -8,7 +8,7 @@ import type {
   TargetElement,
   AdaptiveCard,
 } from '../models.js';
-import { ActionStyle, AssociatedInputs } from '../enums.js';
+import { ActionMode, ActionStyle, AssociatedInputs } from '../enums.js';
 
 /**
  * Fluent builder for {@link AdaptiveAction} instances.
@@ -95,6 +95,27 @@ export class ActionBuilder {
   withTooltip(tooltip: string): this {
     this.ensureActionTypeSet();
     this.action!.tooltip = tooltip;
+    return this;
+  }
+
+  /** Sets the action mode (primary or secondary). @param mode The action mode. @returns The builder instance for method chaining. */
+  withMode(mode: ActionMode): this {
+    this.ensureActionTypeSet();
+    this.action!.mode = mode;
+    return this;
+  }
+
+  /** Sets the feature requirements for the action. @param key The feature name. @param version The minimum required version. @returns The builder instance for method chaining. */
+  withRequires(key: string, version: string): this {
+    this.ensureActionTypeSet();
+    this.action!.requires = { ...this.action!.requires, [key]: version };
+    return this;
+  }
+
+  /** Sets the fallback behavior when the action is unsupported. @param fallback The fallback value ('drop' or an action). @returns The builder instance for method chaining. */
+  withFallback(fallback: 'drop' | AdaptiveAction): this {
+    this.ensureActionTypeSet();
+    this.action!.fallback = fallback;
     return this;
   }
 

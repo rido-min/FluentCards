@@ -1,5 +1,5 @@
 import type { Container, AdaptiveElement } from '../models.js';
-import { ContainerStyle, VerticalAlignment, Spacing } from '../enums.js';
+import { ContainerStyle, Spacing, VerticalAlignment } from '../enums.js';
 import { TextBlockBuilder } from './TextBlockBuilder.js';
 import { ImageBuilder } from './ImageBuilder.js';
 import { ActionBuilder } from './ActionBuilder.js';
@@ -29,8 +29,16 @@ export class ContainerBuilder {
   withSeparator(separator: boolean): this { this.container.separator = separator; return this; }
   /** Sets whether the element is visible. @param isVisible True to show the element. @returns The builder instance for method chaining. */
   withIsVisible(isVisible: boolean): this { this.container.isVisible = isVisible; return this; }
+  /** Sets the height of the element. @param height The height ('auto' or 'stretch'). @returns The builder instance for method chaining. */
+  withHeight(height: string): this { this.container.height = height; return this; }
+  /** Sets the fallback behavior when the element is unsupported. @param fallback The fallback value ('drop' or an element). @returns The builder instance for method chaining. */
+  withFallback(fallback: 'drop' | AdaptiveElement): this { this.container.fallback = fallback; return this; }
+  /** Sets the feature requirements for the element. @param key The feature name. @param version The minimum required version. @returns The builder instance for method chaining. */
+  withRequires(key: string, version: string): this { this.container.requires = { ...this.container.requires, [key]: version }; return this; }
+  /** Sets whether content should be laid out right-to-left. @param rtl True for RTL. @returns The builder instance for method chaining. */
+  withRtl(rtl = true): this { this.container.rtl = rtl; return this; }
 
-  /** Sets the background image of the container. @param configure A callback to configure the BackgroundImageBuilder. @returns The builder instance for method chaining. */
+  /** Sets the background image of the container.@param configure A callback to configure the BackgroundImageBuilder. @returns The builder instance for method chaining. */
   withBackgroundImage(configure: (b: BackgroundImageBuilder) => void): this {
     const b = new BackgroundImageBuilder();
     configure(b);
