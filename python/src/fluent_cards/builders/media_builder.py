@@ -144,14 +144,13 @@ class MediaBuilder:
         if isinstance(url_or_source, str):
             url = url_or_source
 
-            # Backward compatibility: accept legacy positional order
+            # Backward compatibility: support legacy order
             # add_caption_source(mime_type, url, label).
             if (
                 mime_type is not None
                 and _looks_like_mime_type(url_or_source)
                 and _is_absolute_url(mime_type)
             ):
-                # Support legacy order: add_caption_source(mime_type, url, label).
                 url, mime_type = mime_type, url_or_source
 
             self._media['captionSources'].append({
@@ -162,7 +161,9 @@ class MediaBuilder:
             })
         else:
             if mime_type is not None or label is not None:
-                raise ValueError('mime_type and label must be omitted when url_or_source is a dict')
+                raise ValueError(
+                    'When url_or_source is a dict, mime_type and label must be None'
+                )
             self._media['captionSources'].append(url_or_source)
         return self
 
