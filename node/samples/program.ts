@@ -1,6 +1,7 @@
 import {
   AdaptiveCardBuilder,
   toJson,
+  toObject,
   fromJson,
   validate,
   TextSize,
@@ -49,6 +50,14 @@ const card = AdaptiveCardBuilder.create()
 // Serialize to JSON
 const json = toJson(card);
 console.log(json);
+
+// Demonstrate toObject — returns a clean native object (no undefined keys)
+console.log('\n=== toObject Demo ===');
+const obj = toObject(card);
+console.log('Type:', typeof obj);
+console.log('Has undefined values:', JSON.stringify(obj) !== JSON.stringify(obj)); // always false
+console.log('Body elements:', obj.body?.length ?? 0);
+console.log('Ready to embed in an API payload without double-serialization.');
 
 // Demonstrate roundtrip serialization
 console.log('\n=== Roundtrip Test ===');

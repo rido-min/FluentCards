@@ -105,7 +105,7 @@ export { InputToggleBuilder } from './builders/inputs/InputToggleBuilder.js';
 export { InputChoiceSetBuilder } from './builders/inputs/InputChoiceSetBuilder.js';
 
 // ─── Serialization ────────────────────────────────────────────────────────────
-export { toJson, fromJson } from './serialization.js';
+export { toJson, toObject, fromJson } from './serialization.js';
 
 // ─── Validation ───────────────────────────────────────────────────────────────
 export {
