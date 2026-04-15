@@ -26,3 +26,13 @@
 ### 2026-04-15: Coordinated Full-Team Codebase Review
 
 Led by Keaton with deep-dives from Fenster (TS), McManus (.NET), Hockney (Python), Verbal (tests). McManus audited .NET specifically and found: TextBlock missing selectAction property and builder methods (CRITICAL — spec conformance bug), namespace violation in Serialization/, serializer performance issue (allocates JsonSerializerOptions on every indented:false call), InputElement.Id shadowing, Column inheritance gaps, dual validation systems, weak typing (object?, List<object>), missing [JsonSerializable] registrations. These findings compiled into mcmanus-codebase-review.md. .NET identified as reference port for both feature completeness (583 tests vs 102–63 elsewhere) and coverage quality. TextBlock.selectAction fix prioritized as highest-severity task across all ports.
+
+### 2026 — Issue #75: Native Object Serialization Methods
+
+- Added `SerializeToElement()` and `SerializeToNode()` to `AdaptiveCardSerializer` — no string intermediary for embedding cards in larger payloads.
+- Added `ToJsonElement()` and `ToJsonNode()` extension methods on `AdaptiveCard` for ergonomic use.
+- Added `WithData<T>()` generic overload to `ActionBuilder` — serializes any type registered in `FluentCardsJsonContext` to `JsonElement` directly.
+- All new serialization goes through the source-generated `FluentCardsJsonContext` for AOT compatibility.
+- `JsonSerializer.SerializeToElement()` and `SerializeToNode()` are the .NET 8 built-in methods that work with source generators — no custom plumbing needed.
+- Test count increased from 698 to 707 (9 new tests in `NativeObjectSerializationTests.cs`).
+- Key files: `Serialization/AdaptiveCardSerializer.cs`, `AdaptiveCardExtensions.cs`, `ActionBuilder.cs`.

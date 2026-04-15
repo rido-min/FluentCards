@@ -42,3 +42,11 @@ Fixed all 7 gaps identified by Keaton's audit (mirroring TS PR #67):
 
 Key pattern learned: `with_requires` consistently uses `(key: str, version: str)` across all 18+ builders — not `(requires: dict)`. Always follow existing codebase patterns over task descriptions.
 
+### 2025-07-23 — Add to_dict() for Native Object Serialization (#75)
+
+- **New function**: `to_dict(card)` in `serialization.py` — applies same cleanup as `to_json()` (strips None, converts enums to plain strings) but returns a `dict` instead of JSON string. Avoids double-serialization when embedding in API responses.
+- **Implementation**: Added `_clean()` helper alongside existing `_strip_none()`. `_clean` also handles `Enum` → `str` coercion via `obj.value`.
+- **Key insight**: Python `str, Enum` members survive in raw dicts as enum instances. `json.dumps` implicitly converts them, but `to_dict` must do it explicitly for true parity with `json.loads(to_json(card))`.
+- **Exported**: Added `to_dict` to `__init__.py` imports and `__all__`.
+- **Tests**: 7 new tests in `TestToDict` class, including equivalence test against `json.loads(to_json(card))`.
+- **Sample**: Updated `program.py` with `to_dict` demo section.

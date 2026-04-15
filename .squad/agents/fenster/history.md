@@ -45,3 +45,12 @@ Fixed all 8 gaps from Keaton's TS schema audit plus the enum casing fix:
 - `CaptionSource` exported from `index.ts`.
 - Library source typechecks clean. All 247 tests pass.
 - Pre-existing test typecheck issues (68 errors from `values.includes('literal')` pattern in enum tests) were not introduced by these changes.
+
+### 2025-07-23 — Issue #75: toObject() for native object serialization
+
+- Added `toObject(card)` to `serialization.ts` — returns a clean `AdaptiveCard` object with all `undefined` values recursively stripped via a `stripUndefined` helper.
+- Exported from `index.ts` alongside `toJson` and `fromJson`.
+- 6 new tests in `serialization.test.ts` — stripping, immutability, array preservation, parity with `JSON.parse(toJson())`.
+- Updated `program.ts` sample to demonstrate `toObject()`.
+- **Key pattern:** Tests resolve imports from `dist/` (CJS via tsx), so `npm run build` must run before `npm test` when adding new exports. The workspace `npm install` does not auto-build.
+- All 283 tests pass. Typecheck clean.

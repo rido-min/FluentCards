@@ -57,3 +57,15 @@ Expanded `node/packages/fluent-cards/tests/schema-conformance.test.ts` from 21 t
 - New test categories added: Media, ImageSet, Column (standalone), TextRun decorations, BackgroundImage, all 5 action types (OpenUrl/Submit/Execute/ShowCard/ToggleVisibility), Refresh, Authentication, Metadata, CaptionSources, 19 enum conformance tests, common properties (fallback/requires/height/rtl) across 6 element types, card-level individual property tests, version/schema auto-mapping.
 - All 224 total Go tests pass (0 failures).
 - Remaining gap vs .NET: DataQuery/TokenExchangeResource detail tests, Column/ColumnSet deeper property permutations, input label position/width tests. These require .NET-only builder features not yet ported to Go.
+
+### 2026-04-15 — Native Object Tests (Issue #75)
+
+- Created test files for native object serialization across all three core ports:
+  - `.NET`: `dotnet/tests/FluentCards.Tests/NativeObjectTests.cs` — 12 tests covering `ToJsonElement()`, `ToJsonNode()`, `SerializeToElement()`, `SerializeToNode()`, `WithData()` overloads, mutability isolation, enum string serialization, null stripping, equivalence with `ToJson()`.
+  - **Node.js**: `node/packages/fluent-cards/tests/native-object.test.ts` — 7 tests covering `toObject()`: basic round-trip, equivalence with `toJson()`, complex card, minimal card, enum strings, undefined stripping, return type check.
+  - **Python**: `python/tests/test_native_object.py` — 8 tests covering `to_dict()`: basic round-trip, equivalence with `to_json()`, complex card, minimal card, enum strings, None stripping, return type check, immutability.
+- **Node.js** (283 tests) and **Python** (371 tests) pass fully — `toObject()` and `to_dict()` implementations already exist.
+- **.NET tests are structurally complete** but won't compile until McManus lands `SerializeToElement()`, `SerializeToNode()`, `ToJsonElement()`, `ToJsonNode()` in `AdaptiveCardSerializer.cs` and `AdaptiveCardExtensions.cs`.
+- **Python API difference caught**: `ActionBuilder.submit('Title')` not `as_submit().with_title('Title')` — Python uses a combined method. Always verify builder API per port.
+- Removed conflicting `NativeObjectSerializationTests.cs` from `Serialization/` subfolder (created by another agent) to avoid duplicate/competing test files.
+- **Edge case**: Python `to_dict()` uses `_clean()` which converts enums AND strips None, while `to_json()` uses `_strip_none()` only (enums handled by json.dumps). This means `to_dict()` and `json.loads(to_json())` should produce identical output — confirmed by equivalence test.
