@@ -104,8 +104,8 @@ class ChoiceInputStyle(str, Enum):
 class AssociatedInputs(str, Enum):
     """Controls which inputs are submitted when an action is invoked."""
 
-    Auto = "Auto"
-    None_ = "None"
+    Auto = "auto"
+    None_ = "none"
 
 
 class BackgroundImageFillMode(str, Enum):

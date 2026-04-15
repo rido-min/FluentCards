@@ -41,6 +41,8 @@ export class TextBlockBuilder {
   withFallback(fallback: 'drop' | AdaptiveElement): this { this.block.fallback = fallback; return this; }
   /** Sets the feature requirements for the element. @param key The feature name. @param version The minimum required version. @returns The builder instance for method chaining. */
   withRequires(key: string, version: string): this { this.block.requires = { ...this.block.requires, [key]: version }; return this; }
+  /** Sets whether the text should be rendered right-to-left. @param rtl True for right-to-left rendering. @returns The builder instance for method chaining. */
+  withRtl(rtl: boolean): this { this.block.rtl = rtl; return this; }
 
   /** Builds and returns the configured TextBlock. @returns The configured TextBlock instance. */
   build(): TextBlock { return this.block; }

@@ -228,6 +228,18 @@ class TextBlockBuilder:
         self._block['selectAction'] = action
         return self
 
+    def with_rtl(self, rtl: bool) -> TextBlockBuilder:
+        """Sets whether text should be rendered right-to-left.
+
+        Args:
+            rtl: True for right-to-left rendering.
+
+        Returns:
+            The builder instance for method chaining.
+        """
+        self._block['rtl'] = rtl
+        return self
+
     def build(self) -> dict:
         """Builds and returns the configured TextBlock dictionary.
 
