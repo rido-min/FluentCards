@@ -62,3 +62,6 @@ foreach (var issue in invalidIssues)
 
 // Validation samples
 ValidationSample.Run();
+
+Console.WriteLine("\n=== Action Submit/Execute Sample ===");
+Console.WriteLine(ActionSubmitExecuteSample.CreateActionSubmitExecuteCard().ToJson());

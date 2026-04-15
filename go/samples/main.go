@@ -89,6 +89,7 @@ func main() {
 	printSample("Media Card", createMediaCard())
 	printSample("Comprehensive Card", createComprehensiveCard())
 	printSample("People Picker Card", createPeoplePickerCard())
+	printSample("Action Submit/Execute Card", createActionSubmitExecuteCard())
 
 	// Validation samples
 	runValidationSamples()
