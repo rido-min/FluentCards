@@ -27,3 +27,21 @@
 ### 2026-04-15: Coordinated Full-Team Codebase Review
 
 Participated in comprehensive multi-port review led by Keaton with Fenster (TS), McManus (.NET), Hockney (Python), Verbal (tests). Focused on TypeScript-specific issues: package.json export field gaps (missing ESM), loose Node version requirement (should be >=20), Column interface incompleteness, naming inconsistencies across builders, validation rigor, and nested builder element coverage. Compiled into fenster-codebase-review.md. Cross-port consensus: build() mutability is a footgun, ActionBuilder silent no-op needs fixing, Column properties must be audited and fixed across all ports. Test parity gaps documented by Verbal show TS needs schema conformance and integration tests alongside other ports.
+
+### 2025-07-22 — Schema Conformance Fixes (Keaton Audit)
+
+Fixed all 8 gaps from Keaton's TS schema audit plus the enum casing fix:
+
+1. **CaptionSource interface** added to `models.ts` — new v1.6 type with `type`, `mimeType`, `url`, `label`.
+2. **Media.captionSources** added to `Media` interface.
+3. **TextRun.fontType** added (`FontType` enum).
+4. **Column.width & TableColumnDefinition.width** widened from `string` to `string | number` (numeric relative weights).
+5. **TextRunBuilder.withFontType()** added, imports `FontType`.
+6. **MediaBuilder.addCaptionSource()** added — creates `CaptionSource` objects inline.
+7. **TextBlockBuilder** got `withHeight()`, `withFallback()`, `withRequires()` — matched ContainerBuilder/MediaBuilder pattern.
+8. **ColumnBuilder.withWidth()** and **ColumnSetBuilder.addColumn()** width params updated to `string | number`.
+9. **AssociatedInputs enum** values changed to PascalCase (`'Auto'`, `'None'`) to match schema canonical values. Updated all affected test assertions.
+
+- `CaptionSource` exported from `index.ts`.
+- Library source typechecks clean. All 247 tests pass.
+- Pre-existing test typecheck issues (68 errors from `values.includes('literal')` pattern in enum tests) were not introduced by these changes.

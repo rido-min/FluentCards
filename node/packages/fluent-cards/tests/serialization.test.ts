@@ -106,8 +106,8 @@ describe('toJson', () => {
       .addAction((b) => b.submit('None').withAssociatedInputs(AssociatedInputs.None))
       .build();
     const json = toJson(card);
-    assert.ok(json.includes('"associatedInputs": "auto"'));
-    assert.ok(json.includes('"associatedInputs": "none"'));
+    assert.ok(json.includes('"associatedInputs": "Auto"'));
+    assert.ok(json.includes('"associatedInputs": "None"'));
   });
 
   it('omits action style when not set', () => {

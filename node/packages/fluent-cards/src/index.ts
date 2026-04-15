@@ -42,6 +42,7 @@ export type {
   AuthenticationConfiguration,
   TokenExchangeResource,
   AuthCardButton,
+  CaptionSource,
   CardMetadata,
 } from './models.js';
 

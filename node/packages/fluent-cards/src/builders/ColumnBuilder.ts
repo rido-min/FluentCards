@@ -12,8 +12,8 @@ export class ColumnBuilder {
 
   /** Sets the unique identifier. @param id The unique identifier. @returns The builder instance for method chaining. */
   withId(id: string): this { this.column.id = id; return this; }
-  /** Sets the column width (e.g. `'auto'`, `'stretch'`, `'50px'`, or a weight like `'1'`). @param width The column width. @returns The builder instance for method chaining. */
-  withWidth(width: string): this { this.column.width = width; return this; }
+  /** Sets the column width (e.g. `'auto'`, `'stretch'`, `'50px'`, a weight like `'1'`, or a number for relative weight). @param width The column width. @returns The builder instance for method chaining. */
+  withWidth(width: string | number): this { this.column.width = width; return this; }
   /** Sets the container style. @param style The container style. @returns The builder instance for method chaining. */
   withStyle(style: ContainerStyle): this { this.column.style = style; return this; }
   /** Sets the vertical alignment of the column content. @param alignment The vertical alignment. @returns The builder instance for method chaining. */

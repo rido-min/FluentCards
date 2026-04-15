@@ -1,4 +1,4 @@
-import type { TextBlock, AdaptiveAction } from '../models.js';
+import type { TextBlock, AdaptiveAction, AdaptiveElement } from '../models.js';
 import { FontType, HorizontalAlignment, Spacing, TextBlockStyle, TextColor, TextSize, TextWeight } from '../enums.js';
 
 /** Fluent builder for {@link TextBlock} elements. */
@@ -35,6 +35,12 @@ export class TextBlockBuilder {
   withSeparator(separator: boolean): this { this.block.separator = separator; return this; }
   /** Sets whether the element is visible. @param isVisible True to show the element. @returns The builder instance for method chaining. */
   withIsVisible(isVisible: boolean): this { this.block.isVisible = isVisible; return this; }
+  /** Sets the height of the element. @param height The height ('auto' or 'stretch'). @returns The builder instance for method chaining. */
+  withHeight(height: string): this { this.block.height = height; return this; }
+  /** Sets the fallback behavior when the element is unsupported. @param fallback The fallback value ('drop' or an element). @returns The builder instance for method chaining. */
+  withFallback(fallback: 'drop' | AdaptiveElement): this { this.block.fallback = fallback; return this; }
+  /** Sets the feature requirements for the element. @param key The feature name. @param version The minimum required version. @returns The builder instance for method chaining. */
+  withRequires(key: string, version: string): this { this.block.requires = { ...this.block.requires, [key]: version }; return this; }
 
   /** Builds and returns the configured TextBlock. @returns The configured TextBlock instance. */
   build(): TextBlock { return this.block; }
