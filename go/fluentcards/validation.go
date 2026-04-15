@@ -3,6 +3,7 @@ package fluentcards
 import (
 	"fmt"
 	"net/url"
+	"regexp"
 	"strings"
 )
 
@@ -124,6 +125,94 @@ func validateCard(card map[string]any, issues *[]ValidationIssue, ids map[string
 		}
 	}
 	validateSelectAction(card["selectAction"], issues, "selectAction")
+
+	// Teams mention validation
+	if msteams, ok := card["msteams"].(map[string]any); ok {
+		entities, _ := msteams["entities"].([]any)
+		mentionNames := map[string]bool{}
+		for _, entity := range entities {
+			if e, ok := entity.(map[string]any); ok && e["type"] == "mention" {
+				if text, ok := e["text"].(string); ok {
+					if strings.HasPrefix(text, "<at>") && strings.HasSuffix(text, "</at>") {
+						name := text[4 : len(text)-5]
+						mentionNames[name] = true
+					}
+				}
+			}
+		}
+
+		if len(mentionNames) > 0 {
+			bodyText := collectBodyText(body)
+			for name := range mentionNames {
+				token := "<at>" + name + "</at>"
+				if !strings.Contains(bodyText, token) {
+					addIssue(issues, ValidationSeverityWarning, "msteams.entities", "ORPHANED_MENTION_ENTITY",
+						fmt.Sprintf("Mention entity for '%s' has no matching <at>%s</at> text in the card body.", name, name))
+				}
+			}
+			checkOrphanedAtTokens(bodyText, mentionNames, issues)
+		}
+	}
+}
+
+func collectBodyText(elements []any) string {
+	var parts []string
+	for _, el := range elements {
+		m, ok := el.(map[string]any)
+		if !ok {
+			continue
+		}
+		t, _ := m["type"].(string)
+		switch t {
+		case "TextBlock":
+			if text, ok := m["text"].(string); ok {
+				parts = append(parts, text)
+			}
+		case "RichTextBlock":
+			if inlines, ok := m["inlines"].([]any); ok {
+				for _, inline := range inlines {
+					switch v := inline.(type) {
+					case map[string]any:
+						if v["type"] == "TextRun" {
+							if text, ok := v["text"].(string); ok {
+								parts = append(parts, text)
+							}
+						}
+					case string:
+						parts = append(parts, v)
+					}
+				}
+			}
+		case "Container":
+			if items, ok := m["items"].([]any); ok {
+				parts = append(parts, collectBodyText(items))
+			}
+		case "ColumnSet":
+			if cols, ok := m["columns"].([]any); ok {
+				for _, col := range cols {
+					if cm, ok := col.(map[string]any); ok {
+						if items, ok := cm["items"].([]any); ok {
+							parts = append(parts, collectBodyText(items))
+						}
+					}
+				}
+			}
+		}
+	}
+	return strings.Join(parts, " ")
+}
+
+var atTokenRegex = regexp.MustCompile(`<at>(.*?)</at>`)
+
+func checkOrphanedAtTokens(bodyText string, mentionNames map[string]bool, issues *[]ValidationIssue) {
+	matches := atTokenRegex.FindAllStringSubmatch(bodyText, -1)
+	for _, match := range matches {
+		name := match[1]
+		if !mentionNames[name] {
+			addIssue(issues, ValidationSeverityWarning, "body", "ORPHANED_AT_TOKEN",
+				fmt.Sprintf("Text contains <at>%s</at> but there is no matching mention entity.", name))
+		}
+	}
 }
 
 func validateElements(elements []any, issues *[]ValidationIssue, path string, ids map[string]bool) {

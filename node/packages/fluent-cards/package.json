@@ -17,7 +17,7 @@
   ],
   "scripts": {
     "build": "tsc",
-    "test": "c8 --reporter=lcov --reporter=text node --test --require tsx/cjs tests/actions.test.ts tests/builder.test.ts tests/elements.test.ts tests/inputs.test.ts tests/serialization.test.ts tests/teams.test.ts tests/validation.test.ts tests/schema-conformance.test.ts tests/inputs-deep.test.ts tests/serialization-edge.test.ts tests/advanced.test.ts",
+    "test": "c8 --reporter=lcov --reporter=text node --test --require tsx/cjs tests/actions.test.ts tests/builder.test.ts tests/elements.test.ts tests/inputs.test.ts tests/serialization.test.ts tests/teams.test.ts tests/teams-features.test.ts tests/validation.test.ts tests/schema-conformance.test.ts tests/inputs-deep.test.ts tests/serialization-edge.test.ts tests/advanced.test.ts",
     "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tests/tsconfig.json",
     "docs": "typedoc",
     "prepublishOnly": "npm run build"

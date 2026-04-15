@@ -44,6 +44,8 @@ class AdaptiveCardBuilder:
             'version': '1.5',
             '$schema': self.SCHEMA_URLS['1.5'],
         }
+        self._teams_card_typed_set: bool = False
+        self._teams_card_raw_set: bool = False
 
     @classmethod
     def create(cls) -> AdaptiveCardBuilder:
@@ -497,6 +499,51 @@ class AdaptiveCardBuilder:
         b = AuthenticationBuilder()
         configure(b)
         self._card['authentication'] = b.build()
+        return self
+
+    def with_teams_card(self, configure) -> AdaptiveCardBuilder:
+        """Configures Microsoft Teams card-level properties (width, mentions).
+
+        Args:
+            configure: A callable that receives a TeamsCardPropertiesBuilder.
+
+        Returns:
+            The builder instance for method chaining.
+
+        Raises:
+            ValueError: If with_teams_card_raw was already called.
+        """
+        from .teams_card_properties_builder import TeamsCardPropertiesBuilder
+        if self._teams_card_raw_set:
+            raise ValueError(
+                'Cannot use both with_teams_card and with_teams_card_raw '
+                'on the same card. Use one or the other.'
+            )
+        b = TeamsCardPropertiesBuilder()
+        configure(b)
+        self._card['msteams'] = b.build()
+        self._teams_card_typed_set = True
+        return self
+
+    def with_teams_card_raw(self, value: dict) -> AdaptiveCardBuilder:
+        """Sets the Teams msteams card property from a raw dict (escape hatch).
+
+        Args:
+            value: The raw msteams properties dictionary.
+
+        Returns:
+            The builder instance for method chaining.
+
+        Raises:
+            ValueError: If with_teams_card was already called.
+        """
+        if self._teams_card_typed_set:
+            raise ValueError(
+                'Cannot use both with_teams_card and with_teams_card_raw '
+                'on the same card. Use one or the other.'
+            )
+        self._card['msteams'] = dict(value)
+        self._teams_card_raw_set = True
         return self
 
     def build(self) -> dict:

@@ -7,8 +7,11 @@ import type {
   ExecuteAction,
   TargetElement,
   AdaptiveCard,
+  TeamsSubmitActionProperties,
 } from '../models.js';
 import { ActionMode, ActionStyle, AssociatedInputs } from '../enums.js';
+import { TeamsDataBuilder } from './TeamsDataBuilder.js';
+import { TeamsSubmitPropertiesBuilder } from './TeamsSubmitPropertiesBuilder.js';
 
 /**
  * Fluent builder for {@link AdaptiveAction} instances.
@@ -18,6 +21,10 @@ import { ActionMode, ActionStyle, AssociatedInputs } from '../enums.js';
  */
 export class ActionBuilder {
   private action: AdaptiveAction | undefined;
+  private dataSet = false;
+  private teamsDataSet = false;
+  private teamsSubmitTypedSet = false;
+  private teamsSubmitRawSet = false;
 
   /** Sets the action type to OpenUrl. @param url The URL to open. @param title Optional button title. @returns The builder instance for method chaining. */
   openUrl(url: string, title?: string): this {
@@ -121,11 +128,15 @@ export class ActionBuilder {
 
   // ─── SubmitAction / ExecuteAction specifics ───────────────────────────────
 
-  /** Sets the data payload (for Submit or Execute actions). @param data The data to submit. @returns The builder instance for method chaining. */
+  /** Sets the data payload (for Submit or Execute actions). @param data The data to submit. @returns The builder instance for method chaining. @throws Error if WithTeamsData or WithTeamsTaskFetch was already called. */
   withData(data: unknown): this {
     this.ensureActionTypeSet();
+    if (this.teamsDataSet) {
+      throw new Error('Cannot use both withData and withTeamsData on the same action. Use withTeamsData to combine msteams properties with custom data, or withData for raw data.');
+    }
     if (this.action!.type === 'Action.Submit' || this.action!.type === 'Action.Execute') {
       (this.action as SubmitAction | ExecuteAction).data = data;
+      this.dataSet = true;
     }
     return this;
   }
@@ -176,6 +187,67 @@ export class ActionBuilder {
       }
     }
     return this;
+  }
+
+  // ─── Teams-specific methods (Submit-only) ────────────────────────────────
+
+  /** Sets the action data to `{ msteams: { type: 'task/fetch' } }` for Submit actions. @returns The builder instance for method chaining. @throws Error if not a Submit action or if withData was already called. */
+  withTeamsTaskFetch(): this {
+    this.ensureSubmitOnly('withTeamsTaskFetch');
+    this.ensureNoDataConflict();
+    const b = new TeamsDataBuilder();
+    b.withTaskFetch();
+    (this.action as SubmitAction).data = b.build();
+    this.teamsDataSet = true;
+    return this;
+  }
+
+  /** Configures a Teams-specific data payload with msteams properties and/or custom data. Only available on Submit actions. @param configure A callback to configure the TeamsDataBuilder. @returns The builder instance for method chaining. @throws Error if not a Submit action or if withData was already called. */
+  withTeamsData(configure: (b: TeamsDataBuilder) => void): this {
+    this.ensureSubmitOnly('withTeamsData');
+    this.ensureNoDataConflict();
+    const b = new TeamsDataBuilder();
+    configure(b);
+    (this.action as SubmitAction).data = b.build();
+    this.teamsDataSet = true;
+    return this;
+  }
+
+  /** Configures Teams submit feedback properties (e.g. hide feedback). Only available on Submit actions. @param configure A callback to configure the TeamsSubmitPropertiesBuilder. @returns The builder instance for method chaining. @throws Error if not a Submit action or if withTeamsSubmitRaw was already called. */
+  withTeamsSubmitFeedback(configure: (b: TeamsSubmitPropertiesBuilder) => void): this {
+    this.ensureSubmitOnly('withTeamsSubmitFeedback');
+    if (this.teamsSubmitRawSet) {
+      throw new Error('Cannot use both withTeamsSubmitFeedback and withTeamsSubmitRaw on the same action. Use one or the other.');
+    }
+    const b = new TeamsSubmitPropertiesBuilder();
+    configure(b);
+    (this.action as SubmitAction).msteams = b.build();
+    this.teamsSubmitTypedSet = true;
+    return this;
+  }
+
+  /** Sets the Teams action-level msteams property from a raw object (escape hatch). Only available on Submit actions. @param value The raw msteams properties object. @returns The builder instance for method chaining. @throws Error if not a Submit action or if withTeamsSubmitFeedback was already called. */
+  withTeamsSubmitRaw(value: TeamsSubmitActionProperties): this {
+    this.ensureSubmitOnly('withTeamsSubmitRaw');
+    if (this.teamsSubmitTypedSet) {
+      throw new Error('Cannot use both withTeamsSubmitFeedback and withTeamsSubmitRaw on the same action. Use one or the other.');
+    }
+    (this.action as SubmitAction).msteams = { ...value };
+    this.teamsSubmitRawSet = true;
+    return this;
+  }
+
+  private ensureSubmitOnly(methodName: string): void {
+    this.ensureActionTypeSet();
+    if (this.action!.type !== 'Action.Submit') {
+      throw new Error(`${methodName} is only available on Submit actions. Call submit() before using this method.`);
+    }
+  }
+
+  private ensureNoDataConflict(): void {
+    if (this.dataSet) {
+      throw new Error('Cannot use both withData and withTeamsData on the same action. Use withTeamsData to combine msteams properties with custom data, or withData for raw data.');
+    }
   }
 
   /** Builds and returns the configured action. @returns The configured AdaptiveAction instance. @throws Error if no action type has been set. */

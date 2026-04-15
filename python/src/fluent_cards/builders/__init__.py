@@ -15,6 +15,9 @@ from .action_builder import ActionBuilder
 from .refresh_builder import RefreshBuilder
 from .authentication_builder import AuthenticationBuilder
 from .background_image_builder import BackgroundImageBuilder
+from .teams_card_properties_builder import TeamsCardPropertiesBuilder
+from .teams_data_builder import TeamsDataBuilder
+from .teams_submit_properties_builder import TeamsSubmitPropertiesBuilder
 from .inputs import (
     InputTextBuilder,
     InputNumberBuilder,
@@ -42,6 +45,9 @@ __all__ = [
     'RefreshBuilder',
     'AuthenticationBuilder',
     'BackgroundImageBuilder',
+    'TeamsCardPropertiesBuilder',
+    'TeamsDataBuilder',
+    'TeamsSubmitPropertiesBuilder',
     'InputTextBuilder',
     'InputNumberBuilder',
     'InputDateBuilder',

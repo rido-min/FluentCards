@@ -44,6 +44,12 @@ export type {
   AuthCardButton,
   CaptionSource,
   CardMetadata,
+  TeamsCardProperties,
+  TeamsCardWidth,
+  Mention,
+  MentionedEntity,
+  TeamsSubmitActionProperties,
+  TeamsSubmitActionFeedback,
 } from './models.js';
 
 // ─── Enums ────────────────────────────────────────────────────────────────────
@@ -88,6 +94,9 @@ export { ActionBuilder } from './builders/ActionBuilder.js';
 export { BackgroundImageBuilder } from './builders/BackgroundImageBuilder.js';
 export { RefreshBuilder } from './builders/RefreshBuilder.js';
 export { AuthenticationBuilder } from './builders/AuthenticationBuilder.js';
+export { TeamsCardPropertiesBuilder } from './builders/TeamsCardPropertiesBuilder.js';
+export { TeamsDataBuilder } from './builders/TeamsDataBuilder.js';
+export { TeamsSubmitPropertiesBuilder } from './builders/TeamsSubmitPropertiesBuilder.js';
 export { InputTextBuilder } from './builders/inputs/InputTextBuilder.js';
 export { InputNumberBuilder } from './builders/inputs/InputNumberBuilder.js';
 export { InputDateBuilder } from './builders/inputs/InputDateBuilder.js';

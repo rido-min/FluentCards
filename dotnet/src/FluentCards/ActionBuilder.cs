@@ -8,6 +8,10 @@ namespace FluentCards;
 public class ActionBuilder
 {
     private AdaptiveAction? _action;
+    private bool _dataSet;
+    private bool _teamsDataSet;
+    private bool _teamsSubmitTypedSet;
+    private bool _teamsSubmitRawSet;
 
     /// <summary>
     /// Creates an OpenUrl action.
@@ -158,16 +162,24 @@ public class ActionBuilder
     /// </summary>
     /// <param name="data">The data payload as a JSON element.</param>
     /// <returns>The builder instance for method chaining.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when <see cref="WithTeamsData"/> or <see cref="WithTeamsTaskFetch"/> was already called.</exception>
     public ActionBuilder WithData(JsonElement data)
     {
         EnsureActionTypeSet();
+        if (_teamsDataSet)
+        {
+            throw new InvalidOperationException(
+                "Cannot use both WithData and WithTeamsData on the same action. Use WithTeamsData to combine msteams properties with custom data, or WithData for raw JSON.");
+        }
         if (_action is SubmitAction submitAction)
         {
             submitAction.Data = data.Clone();
+            _dataSet = true;
         }
         else if (_action is ExecuteAction executeAction)
         {
             executeAction.Data = data.Clone();
+            _dataSet = true;
         }
         return this;
     }
@@ -177,9 +189,15 @@ public class ActionBuilder
     /// </summary>
     /// <param name="jsonData">The JSON payload string.</param>
     /// <returns>The builder instance for method chaining.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when <see cref="WithTeamsData"/> or <see cref="WithTeamsTaskFetch"/> was already called.</exception>
     public ActionBuilder WithData(string jsonData)
     {
         EnsureActionTypeSet();
+        if (_teamsDataSet)
+        {
+            throw new InvalidOperationException(
+                "Cannot use both WithData and WithTeamsData on the same action. Use WithTeamsData to combine msteams properties with custom data, or WithData for raw JSON.");
+        }
         if (_action is not SubmitAction && _action is not ExecuteAction)
         {
             return this;
@@ -259,6 +277,144 @@ public class ActionBuilder
         _action.Requires ??= new Dictionary<string, string>();
         _action.Requires[feature] = version;
         return this;
+    }
+
+    /// <summary>
+    /// Sets the action data to <c>{ "msteams": { "type": "task/fetch" } }</c> for Submit actions.
+    /// Shorthand for <c>WithTeamsData(td =&gt; td.WithTaskFetch())</c>.
+    /// </summary>
+    /// <returns>The builder instance for method chaining.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when the action is not a Submit action,
+    /// or when <see cref="WithData(JsonElement)"/> or <see cref="WithTeamsData"/> was already called.</exception>
+    public ActionBuilder WithTeamsTaskFetch()
+    {
+        EnsureSubmitOnly(nameof(WithTeamsTaskFetch));
+        EnsureNoDataConflict();
+        var builder = new TeamsDataBuilder();
+        builder.WithTaskFetch();
+        SetTeamsData(builder.Build());
+        return this;
+    }
+
+    /// <summary>
+    /// Configures a Teams-specific data payload with both <c>msteams</c> properties and custom data.
+    /// Only available on Submit actions.
+    /// </summary>
+    /// <param name="configure">Action to configure the Teams data builder.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when the action is not a Submit action,
+    /// or when <see cref="WithData(JsonElement)"/> was already called.</exception>
+    public ActionBuilder WithTeamsData(Action<TeamsDataBuilder> configure)
+    {
+        EnsureSubmitOnly(nameof(WithTeamsData));
+        EnsureNoDataConflict();
+        var builder = new TeamsDataBuilder();
+        configure(builder);
+        SetTeamsData(builder.Build());
+        return this;
+    }
+
+    /// <summary>
+    /// Configures Microsoft Teams–specific submit action properties (e.g. feedback control).
+    /// Only available on Submit actions.
+    /// </summary>
+    /// <param name="configure">Action to configure the Teams submit properties builder.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when the action is not a Submit action,
+    /// or when <see cref="WithTeamsSubmitRaw(string)"/> was already called.</exception>
+    public ActionBuilder WithTeamsSubmitFeedback(Action<TeamsSubmitPropertiesBuilder> configure)
+    {
+        EnsureSubmitOnly(nameof(WithTeamsSubmitFeedback));
+        if (_teamsSubmitRawSet)
+        {
+            throw new InvalidOperationException(
+                "Cannot use both WithTeamsSubmitFeedback and WithTeamsSubmitRaw on the same action. Use one or the other.");
+        }
+        var builder = new TeamsSubmitPropertiesBuilder();
+        configure(builder);
+        ((SubmitAction)_action!).Msteams = builder.Build();
+        _teamsSubmitTypedSet = true;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the Teams <c>msteams</c> action property from a raw JSON string (escape hatch).
+    /// Only available on Submit actions.
+    /// </summary>
+    /// <param name="rawJson">A JSON object string for the msteams value.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when the action is not a Submit action,
+    /// or when <see cref="WithTeamsSubmitFeedback"/> was already called.</exception>
+    /// <exception cref="ArgumentException">Thrown when the JSON is not an object.</exception>
+    public ActionBuilder WithTeamsSubmitRaw(string rawJson)
+    {
+        EnsureSubmitOnly(nameof(WithTeamsSubmitRaw));
+        if (_teamsSubmitTypedSet)
+        {
+            throw new InvalidOperationException(
+                "Cannot use both WithTeamsSubmitFeedback and WithTeamsSubmitRaw on the same action. Use one or the other.");
+        }
+        using var doc = JsonDocument.Parse(rawJson);
+        if (doc.RootElement.ValueKind != JsonValueKind.Object)
+        {
+            throw new ArgumentException("The msteams value must be a JSON object.", nameof(rawJson));
+        }
+        ((SubmitAction)_action!).Msteams = JsonSerializer.Deserialize<TeamsSubmitActionProperties>(
+            doc.RootElement, FluentCardsJsonContext.Default.TeamsSubmitActionProperties);
+        _teamsSubmitRawSet = true;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the Teams <c>msteams</c> action property from a <see cref="JsonElement"/> (escape hatch).
+    /// Only available on Submit actions.
+    /// </summary>
+    /// <param name="json">A JSON object element for the msteams value.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when the action is not a Submit action,
+    /// or when <see cref="WithTeamsSubmitFeedback"/> was already called.</exception>
+    /// <exception cref="ArgumentException">Thrown when the element is not an object.</exception>
+    public ActionBuilder WithTeamsSubmitRaw(JsonElement json)
+    {
+        EnsureSubmitOnly(nameof(WithTeamsSubmitRaw));
+        if (_teamsSubmitTypedSet)
+        {
+            throw new InvalidOperationException(
+                "Cannot use both WithTeamsSubmitFeedback and WithTeamsSubmitRaw on the same action. Use one or the other.");
+        }
+        if (json.ValueKind != JsonValueKind.Object)
+        {
+            throw new ArgumentException("The msteams value must be a JSON object.", nameof(json));
+        }
+        ((SubmitAction)_action!).Msteams = JsonSerializer.Deserialize<TeamsSubmitActionProperties>(
+            json, FluentCardsJsonContext.Default.TeamsSubmitActionProperties);
+        _teamsSubmitRawSet = true;
+        return this;
+    }
+
+    private void EnsureSubmitOnly(string methodName)
+    {
+        EnsureActionTypeSet();
+        if (_action is not SubmitAction)
+        {
+            throw new InvalidOperationException(
+                $"{methodName} is only available on Submit actions. Call Submit() before using this method.");
+        }
+    }
+
+    private void EnsureNoDataConflict()
+    {
+        if (_dataSet)
+        {
+            throw new InvalidOperationException(
+                "Cannot use both WithData and WithTeamsData on the same action. Use WithTeamsData to combine msteams properties with custom data, or WithData for raw JSON.");
+        }
+    }
+
+    private void SetTeamsData(JsonElement data)
+    {
+        ((SubmitAction)_action!).Data = data;
+        _teamsDataSet = true;
     }
 
     [System.Diagnostics.CodeAnalysis.MemberNotNull(nameof(_action))]

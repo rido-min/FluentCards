@@ -8,6 +8,10 @@ class ActionBuilder:
 
     def __init__(self):
         self._action: Optional[dict] = None
+        self._data_set: bool = False
+        self._teams_data_set: bool = False
+        self._teams_submit_typed_set: bool = False
+        self._teams_submit_raw_set: bool = False
 
     def open_url(self, url: str, title: Optional[str] = None) -> ActionBuilder:
         """Sets the action type to Action.OpenUrl and specifies the URL to open.
@@ -163,10 +167,20 @@ class ActionBuilder:
 
         Returns:
             The builder instance for method chaining.
+
+        Raises:
+            ValueError: If with_teams_data or with_teams_task_fetch was already called.
         """
         self._ensure_action_type_set()
+        if self._teams_data_set:
+            raise ValueError(
+                'Cannot use both with_data and with_teams_data on the same action. '
+                'Use with_teams_data to combine msteams properties with custom data, '
+                'or with_data for raw data.'
+            )
         if self._action.get('type') in ('Action.Submit', 'Action.Execute'):
             self._action['data'] = data
+            self._data_set = True
         return self
 
     def with_associated_inputs(self, associated_inputs: AssociatedInputs) -> ActionBuilder:
@@ -249,6 +263,110 @@ class ActionBuilder:
         """Sets the fallback content if the action is unsupported."""
         self._ensure_action_type_set()
         self._action['fallback'] = fallback
+        return self
+
+    # ── Teams-specific methods (Submit-only) ────────────────────────────────
+
+    def _ensure_submit_only(self, method_name: str) -> None:
+        self._ensure_action_type_set()
+        if self._action.get('type') != 'Action.Submit':
+            raise ValueError(
+                f'{method_name} is only available on Submit actions. '
+                'Call submit() before using this method.'
+            )
+
+    def _ensure_no_data_conflict(self) -> None:
+        if self._data_set:
+            raise ValueError(
+                'Cannot use both with_data and with_teams_data on the same action. '
+                'Use with_teams_data to combine msteams properties with custom data, '
+                'or with_data for raw data.'
+            )
+
+    def with_teams_task_fetch(self) -> ActionBuilder:
+        """Sets the action data to ``{'msteams': {'type': 'task/fetch'}}`` (Submit-only).
+
+        Returns:
+            The builder instance for method chaining.
+
+        Raises:
+            ValueError: If not a Submit action or if with_data was already called.
+        """
+        from .teams_data_builder import TeamsDataBuilder
+        self._ensure_submit_only('with_teams_task_fetch')
+        self._ensure_no_data_conflict()
+        b = TeamsDataBuilder()
+        b.with_task_fetch()
+        self._action['data'] = b.build()
+        self._teams_data_set = True
+        return self
+
+    def with_teams_data(self, configure) -> ActionBuilder:
+        """Configures a Teams-specific data payload (Submit-only).
+
+        Args:
+            configure: A callable that receives a TeamsDataBuilder.
+
+        Returns:
+            The builder instance for method chaining.
+
+        Raises:
+            ValueError: If not a Submit action or if with_data was already called.
+        """
+        from .teams_data_builder import TeamsDataBuilder
+        self._ensure_submit_only('with_teams_data')
+        self._ensure_no_data_conflict()
+        b = TeamsDataBuilder()
+        configure(b)
+        self._action['data'] = b.build()
+        self._teams_data_set = True
+        return self
+
+    def with_teams_submit_feedback(self, configure) -> ActionBuilder:
+        """Configures Teams submit feedback properties (Submit-only).
+
+        Args:
+            configure: A callable that receives a TeamsSubmitPropertiesBuilder.
+
+        Returns:
+            The builder instance for method chaining.
+
+        Raises:
+            ValueError: If not a Submit action or if with_teams_submit_raw was called.
+        """
+        from .teams_submit_properties_builder import TeamsSubmitPropertiesBuilder
+        self._ensure_submit_only('with_teams_submit_feedback')
+        if self._teams_submit_raw_set:
+            raise ValueError(
+                'Cannot use both with_teams_submit_feedback and with_teams_submit_raw '
+                'on the same action. Use one or the other.'
+            )
+        b = TeamsSubmitPropertiesBuilder()
+        configure(b)
+        self._action['msteams'] = b.build()
+        self._teams_submit_typed_set = True
+        return self
+
+    def with_teams_submit_raw(self, value: dict) -> ActionBuilder:
+        """Sets the Teams action-level msteams property from a raw dict (Submit-only).
+
+        Args:
+            value: The raw msteams properties dictionary.
+
+        Returns:
+            The builder instance for method chaining.
+
+        Raises:
+            ValueError: If not a Submit action or if with_teams_submit_feedback was called.
+        """
+        self._ensure_submit_only('with_teams_submit_raw')
+        if self._teams_submit_typed_set:
+            raise ValueError(
+                'Cannot use both with_teams_submit_feedback and with_teams_submit_raw '
+                'on the same action. Use one or the other.'
+            )
+        self._action['msteams'] = dict(value)
+        self._teams_submit_raw_set = True
         return self
 
     def build(self) -> dict:

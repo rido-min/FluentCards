@@ -358,6 +358,8 @@ export interface SubmitAction extends AdaptiveActionBase {
   type: 'Action.Submit';
   data?: unknown;
   associatedInputs?: AssociatedInputs;
+  /** Microsoft Teams–specific submit action properties (feedback control, etc.). */
+  msteams?: TeamsSubmitActionProperties;
 }
 
 /** An action that reveals an embedded card when clicked. */
@@ -459,4 +461,40 @@ export interface AdaptiveCard {
   refresh?: RefreshConfiguration;
   authentication?: AuthenticationConfiguration;
   metadata?: CardMetadata;
+  /** Microsoft Teams–specific card properties (width, mentions, etc.). */
+  msteams?: TeamsCardProperties;
+}
+
+// ─── Teams extension models ─────────────────────────────────────────────────
+
+/** Teams-specific card-level properties, serialized as the `msteams` object on AdaptiveCard. */
+export interface TeamsCardProperties {
+  width?: TeamsCardWidth;
+  entities?: Mention[];
+}
+
+/** Card width options for Teams-specific rendering. */
+export type TeamsCardWidth = 'Full';
+
+/** An @mention entity in a Teams Adaptive Card. */
+export interface Mention {
+  type: 'mention';
+  text: string;
+  mentioned: MentionedEntity;
+}
+
+/** A mentioned entity (user) in a Teams Adaptive Card. */
+export interface MentionedEntity {
+  id: string;
+  name: string;
+}
+
+/** Teams-specific action-level properties for Submit actions. */
+export interface TeamsSubmitActionProperties {
+  feedback?: TeamsSubmitActionFeedback;
+}
+
+/** Feedback settings for a Teams submit action. */
+export interface TeamsSubmitActionFeedback {
+  hide?: boolean;
 }

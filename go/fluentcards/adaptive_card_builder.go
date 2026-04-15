@@ -3,7 +3,9 @@ package fluentcards
 // AdaptiveCardBuilder builds a root Adaptive Card.
 // Use NewAdaptiveCardBuilder() to create one, chain With*/Add* methods, then call Build().
 type AdaptiveCardBuilder struct {
-	data map[string]any
+	data                map[string]any
+	teamsCardTypedSet   bool
+	teamsCardRawSet     bool
 }
 
 // NewAdaptiveCardBuilder returns a new AdaptiveCardBuilder with default version 1.5.
@@ -229,6 +231,32 @@ func (b *AdaptiveCardBuilder) WithAuthentication(configure func(*AuthenticationB
 	authb := newAuthenticationBuilder()
 	configure(authb)
 	b.data["authentication"] = authb.Build()
+	return b
+}
+
+// WithTeamsCard configures Microsoft Teams card-level properties (width, mentions).
+func (b *AdaptiveCardBuilder) WithTeamsCard(configure func(*TeamsCardPropertiesBuilder)) *AdaptiveCardBuilder {
+	if b.teamsCardRawSet {
+		panic("AdaptiveCardBuilder: cannot use both WithTeamsCard and WithTeamsCardRaw on the same card")
+	}
+	tcb := newTeamsCardPropertiesBuilder()
+	configure(tcb)
+	b.data["msteams"] = tcb.Build()
+	b.teamsCardTypedSet = true
+	return b
+}
+
+// WithTeamsCardRaw sets the Teams msteams card property from a raw map (escape hatch).
+func (b *AdaptiveCardBuilder) WithTeamsCardRaw(value map[string]any) *AdaptiveCardBuilder {
+	if b.teamsCardTypedSet {
+		panic("AdaptiveCardBuilder: cannot use both WithTeamsCard and WithTeamsCardRaw on the same card")
+	}
+	m := make(map[string]any, len(value))
+	for k, v := range value {
+		m[k] = v
+	}
+	b.data["msteams"] = m
+	b.teamsCardRawSet = true
 	return b
 }
 

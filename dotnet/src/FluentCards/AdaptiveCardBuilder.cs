@@ -1,3 +1,5 @@
+using System.Text.Json;
+
 namespace FluentCards;
 
 /// <summary>
@@ -6,6 +8,8 @@ namespace FluentCards;
 public class AdaptiveCardBuilder
 {
     private readonly AdaptiveCard _card = new();
+    private bool _teamsCardTypedSet;
+    private bool _teamsCardRawSet;
 
     /// <summary>
     /// Creates a new instance of AdaptiveCardBuilder.
@@ -493,6 +497,79 @@ public class AdaptiveCardBuilder
     public AdaptiveCardBuilder WithBackgroundImage(string url)
     {
         _card.BackgroundImage = new BackgroundImage { Url = url };
+        return this;
+    }
+
+    /// <summary>
+    /// Configures Microsoft Teams–specific card properties (width, mentions, etc.).
+    /// </summary>
+    /// <param name="configure">Action to configure Teams card properties.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when WithTeamsCardRaw was already called.</exception>
+    public AdaptiveCardBuilder WithTeamsCard(Action<TeamsCardPropertiesBuilder> configure)
+    {
+        if (_teamsCardRawSet)
+        {
+            throw new InvalidOperationException(
+                "Cannot use both WithTeamsCard and WithTeamsCardRaw on the same card. Use one or the other.");
+        }
+        var builder = new TeamsCardPropertiesBuilder();
+        configure(builder);
+        _card.Msteams = builder.Build();
+        _teamsCardTypedSet = true;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the Teams <c>msteams</c> card property from a raw JSON string (escape hatch).
+    /// </summary>
+    /// <param name="rawJson">A JSON object string for the msteams value.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when <see cref="WithTeamsCard"/> was already called.</exception>
+    /// <exception cref="ArgumentException">Thrown when the JSON is not an object.</exception>
+    public AdaptiveCardBuilder WithTeamsCardRaw(string rawJson)
+    {
+        if (_teamsCardTypedSet)
+        {
+            throw new InvalidOperationException(
+                "Cannot use both WithTeamsCard and WithTeamsCardRaw on the same card. Use one or the other.");
+        }
+        using var doc = JsonDocument.Parse(rawJson);
+        if (doc.RootElement.ValueKind != JsonValueKind.Object)
+        {
+            throw new ArgumentException("The msteams value must be a JSON object.", nameof(rawJson));
+        }
+        return WithTeamsCardRawCore(doc.RootElement.Clone());
+    }
+
+    /// <summary>
+    /// Sets the Teams <c>msteams</c> card property from a <see cref="JsonElement"/> (escape hatch).
+    /// </summary>
+    /// <param name="json">A JSON object element for the msteams value.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when <see cref="WithTeamsCard"/> was already called.</exception>
+    /// <exception cref="ArgumentException">Thrown when the element is not an object.</exception>
+    public AdaptiveCardBuilder WithTeamsCardRaw(JsonElement json)
+    {
+        if (_teamsCardTypedSet)
+        {
+            throw new InvalidOperationException(
+                "Cannot use both WithTeamsCard and WithTeamsCardRaw on the same card. Use one or the other.");
+        }
+        if (json.ValueKind != JsonValueKind.Object)
+        {
+            throw new ArgumentException("The msteams value must be a JSON object.", nameof(json));
+        }
+        return WithTeamsCardRawCore(json.Clone());
+    }
+
+    private AdaptiveCardBuilder WithTeamsCardRawCore(JsonElement clonedElement)
+    {
+        // Deserialize the raw JSON into TeamsCardProperties so it goes through the
+        // same serialization path as the typed builder.
+        _card.Msteams = JsonSerializer.Deserialize<TeamsCardProperties>(clonedElement,
+            FluentCardsJsonContext.Default.TeamsCardProperties);
+        _teamsCardRawSet = true;
         return this;
     }
 

@@ -6,6 +6,7 @@ import type {
   CardMetadata,
   Column,
   RefreshConfiguration,
+  TeamsCardProperties,
 } from '../models.js';
 import { VerticalAlignment } from '../enums.js';
 import { TextBlockBuilder } from './TextBlockBuilder.js';
@@ -28,6 +29,7 @@ import { InputDateBuilder } from './inputs/InputDateBuilder.js';
 import { InputTimeBuilder } from './inputs/InputTimeBuilder.js';
 import { InputToggleBuilder } from './inputs/InputToggleBuilder.js';
 import { InputChoiceSetBuilder } from './inputs/InputChoiceSetBuilder.js';
+import { TeamsCardPropertiesBuilder } from './TeamsCardPropertiesBuilder.js';
 
 /** Fluent builder for creating {@link AdaptiveCard} instances. */
 export class AdaptiveCardBuilder {
@@ -46,6 +48,8 @@ export class AdaptiveCardBuilder {
     version: '1.5',
     '$schema': AdaptiveCardBuilder.SCHEMA_URLS['1.5'],
   };
+  private teamsCardTypedSet = false;
+  private teamsCardRawSet = false;
 
   /** Creates a new AdaptiveCardBuilder instance. @returns A new AdaptiveCardBuilder. */
   static create(): AdaptiveCardBuilder {
@@ -285,6 +289,30 @@ export class AdaptiveCardBuilder {
     const b = new AuthenticationBuilder();
     configure(b);
     this.card.authentication = b.build();
+    return this;
+  }
+
+  // ─── Teams-specific ─────────────────────────────────────────────────────
+
+  /** Configures Microsoft Teams–specific card properties (width, mentions, etc.). @param configure A callback to configure the TeamsCardPropertiesBuilder. @returns The builder instance for method chaining. @throws Error if withTeamsCardRaw was already called. */
+  withTeamsCard(configure: (b: TeamsCardPropertiesBuilder) => void): this {
+    if (this.teamsCardRawSet) {
+      throw new Error('Cannot use both withTeamsCard and withTeamsCardRaw on the same card. Use one or the other.');
+    }
+    const b = new TeamsCardPropertiesBuilder();
+    configure(b);
+    this.card.msteams = b.build();
+    this.teamsCardTypedSet = true;
+    return this;
+  }
+
+  /** Sets the Teams msteams card property from a raw object (escape hatch). @param value The raw TeamsCardProperties object. @returns The builder instance for method chaining. @throws Error if withTeamsCard was already called. */
+  withTeamsCardRaw(value: TeamsCardProperties): this {
+    if (this.teamsCardTypedSet) {
+      throw new Error('Cannot use both withTeamsCard and withTeamsCardRaw on the same card. Use one or the other.');
+    }
+    this.card.msteams = { ...value };
+    this.teamsCardRawSet = true;
     return this;
   }
 

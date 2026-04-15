@@ -23,6 +23,8 @@ public static class AdaptiveCardValidator
         {
             ValidateVersionMismatch(card, cardVersion, issues);
         }
+
+        ValidateTeamsMentions(card, issues);
         
         return issues;
     }
@@ -730,4 +732,100 @@ public static class AdaptiveCardValidator
         ExecuteAction => "Action.Execute",
         _ => null
     };
+
+    private static void ValidateTeamsMentions(AdaptiveCard card, List<ValidationIssue> issues)
+    {
+        if (card.Msteams?.Entities == null || card.Msteams.Entities.Count == 0)
+        {
+            return;
+        }
+
+        // Collect all text content from body TextBlocks
+        var bodyTexts = new List<string>();
+        if (card.Body != null)
+        {
+            CollectTextContent(card.Body, bodyTexts);
+        }
+        var allText = string.Join(" ", bodyTexts);
+
+        // Check each mention entity has a matching <at>...</at> token in body
+        for (var i = 0; i < card.Msteams.Entities.Count; i++)
+        {
+            var mention = card.Msteams.Entities[i];
+            if (!allText.Contains(mention.Text, StringComparison.Ordinal))
+            {
+                issues.Add(new ValidationIssue
+                {
+                    Severity = ValidationSeverity.Warning,
+                    Path = $"msteams.entities[{i}]",
+                    Code = "ORPHANED_MENTION_ENTITY",
+                    Message = $"The mention entity '{mention.Text}' has no matching text in any TextBlock body. Add '{mention.Text}' to a TextBlock for the mention to render correctly."
+                });
+            }
+        }
+
+        // Check for <at>...</at> tokens in body that don't have a matching entity
+        foreach (var text in bodyTexts)
+        {
+            var searchStart = 0;
+            while (true)
+            {
+                var atStart = text.IndexOf("<at>", searchStart, StringComparison.Ordinal);
+                if (atStart < 0) break;
+                var atEnd = text.IndexOf("</at>", atStart, StringComparison.Ordinal);
+                if (atEnd < 0) break;
+
+                var token = text.Substring(atStart, atEnd - atStart + "</at>".Length);
+                var hasEntity = card.Msteams.Entities.Any(m =>
+                    string.Equals(m.Text, token, StringComparison.Ordinal));
+
+                if (!hasEntity)
+                {
+                    issues.Add(new ValidationIssue
+                    {
+                        Severity = ValidationSeverity.Warning,
+                        Path = "body",
+                        Code = "ORPHANED_AT_TOKEN",
+                        Message = $"The text contains '{token}' but no matching mention entity was found in msteams.entities."
+                    });
+                }
+
+                searchStart = atEnd + "</at>".Length;
+            }
+        }
+    }
+
+    private static void CollectTextContent(IEnumerable<AdaptiveElement> elements, List<string> texts)
+    {
+        foreach (var element in elements)
+        {
+            switch (element)
+            {
+                case TextBlock tb when !string.IsNullOrEmpty(tb.Text):
+                    texts.Add(tb.Text);
+                    break;
+                case RichTextBlock rtb when rtb.Inlines != null:
+                    foreach (var inline in rtb.Inlines)
+                    {
+                        if (inline is TextRun tr && !string.IsNullOrEmpty(tr.Text))
+                        {
+                            texts.Add(tr.Text);
+                        }
+                    }
+                    break;
+                case Container c when c.Items != null:
+                    CollectTextContent(c.Items, texts);
+                    break;
+                case ColumnSet cs when cs.Columns != null:
+                    foreach (var col in cs.Columns)
+                    {
+                        if (col.Items != null)
+                        {
+                            CollectTextContent(col.Items, texts);
+                        }
+                    }
+                    break;
+            }
+        }
+    }
 }

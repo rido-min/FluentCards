@@ -4,7 +4,11 @@ package fluentcards
 // Call one of OpenURL, Submit, ShowCard, ToggleVisibility, or Execute to set the action type,
 // then use With* methods to configure it.
 type ActionBuilder struct {
-	data map[string]any
+	data                 map[string]any
+	dataSet              bool
+	teamsDataSet         bool
+	teamsSubmitTypedSet  bool
+	teamsSubmitRawSet    bool
 }
 
 func newActionBuilder() *ActionBuilder {
@@ -98,9 +102,13 @@ func (b *ActionBuilder) WithTooltip(tooltip string) *ActionBuilder {
 // WithData sets the data payload for Action.Submit or Action.Execute.
 func (b *ActionBuilder) WithData(data any) *ActionBuilder {
 	b.ensureActionTypeSet()
+	if b.teamsDataSet {
+		panic("ActionBuilder: cannot use both WithData and WithTeamsData/WithTeamsTaskFetch on the same action")
+	}
 	t, _ := b.data["type"].(string)
 	if t == "Action.Submit" || t == "Action.Execute" {
 		b.data["data"] = data
+		b.dataSet = true
 	}
 	return b
 }
@@ -175,6 +183,71 @@ func (b *ActionBuilder) WithRequires(key, version string) *ActionBuilder {
 func (b *ActionBuilder) WithFallback(fallback any) *ActionBuilder {
 	b.ensureActionTypeSet()
 	b.data["fallback"] = fallback
+	return b
+}
+
+// ── Teams-specific methods (Submit-only) ──────────────────────────────────────
+
+func (b *ActionBuilder) ensureSubmitOnly(method string) {
+	b.ensureActionTypeSet()
+	if t, _ := b.data["type"].(string); t != "Action.Submit" {
+		panic("ActionBuilder: " + method + " is only available on Submit actions — call Submit() before using this method")
+	}
+}
+
+func (b *ActionBuilder) ensureNoDataConflict() {
+	if b.dataSet {
+		panic("ActionBuilder: cannot use both WithData and WithTeamsData/WithTeamsTaskFetch on the same action")
+	}
+}
+
+// WithTeamsTaskFetch sets the action data to {"msteams": {"type": "task/fetch"}} (Submit-only).
+func (b *ActionBuilder) WithTeamsTaskFetch() *ActionBuilder {
+	b.ensureSubmitOnly("WithTeamsTaskFetch")
+	b.ensureNoDataConflict()
+	db := newTeamsDataBuilder()
+	db.WithTaskFetch()
+	b.data["data"] = db.Build()
+	b.teamsDataSet = true
+	return b
+}
+
+// WithTeamsData configures a Teams-specific data payload (Submit-only).
+func (b *ActionBuilder) WithTeamsData(configure func(*TeamsDataBuilder)) *ActionBuilder {
+	b.ensureSubmitOnly("WithTeamsData")
+	b.ensureNoDataConflict()
+	db := newTeamsDataBuilder()
+	configure(db)
+	b.data["data"] = db.Build()
+	b.teamsDataSet = true
+	return b
+}
+
+// WithTeamsSubmitFeedback configures Teams submit feedback properties (Submit-only).
+func (b *ActionBuilder) WithTeamsSubmitFeedback(configure func(*TeamsSubmitPropertiesBuilder)) *ActionBuilder {
+	b.ensureSubmitOnly("WithTeamsSubmitFeedback")
+	if b.teamsSubmitRawSet {
+		panic("ActionBuilder: cannot use both WithTeamsSubmitFeedback and WithTeamsSubmitRaw on the same action")
+	}
+	sb := newTeamsSubmitPropertiesBuilder()
+	configure(sb)
+	b.data["msteams"] = sb.Build()
+	b.teamsSubmitTypedSet = true
+	return b
+}
+
+// WithTeamsSubmitRaw sets the Teams action-level msteams property from a raw map (Submit-only).
+func (b *ActionBuilder) WithTeamsSubmitRaw(value map[string]any) *ActionBuilder {
+	b.ensureSubmitOnly("WithTeamsSubmitRaw")
+	if b.teamsSubmitTypedSet {
+		panic("ActionBuilder: cannot use both WithTeamsSubmitFeedback and WithTeamsSubmitRaw on the same action")
+	}
+	m := make(map[string]any, len(value))
+	for k, v := range value {
+		m[k] = v
+	}
+	b.data["msteams"] = m
+	b.teamsSubmitRawSet = true
 	return b
 }
 
