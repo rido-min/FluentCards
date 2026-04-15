@@ -1,0 +1,17 @@
+{
+  "history_version": "1.0",
+  "assignments": [
+    {
+      "assignment_id": "fluentcards-init-2026-04-15",
+      "universe": "The Usual Suspects",
+      "created_at": "2026-04-15T03:31:12Z",
+      "agents": [
+        { "name": "Keaton", "role": "Lead / Architect" },
+        { "name": "Fenster", "role": "TypeScript Dev" },
+        { "name": "McManus", "role": ".NET Dev" },
+        { "name": "Hockney", "role": "Python Dev" },
+        { "name": "Verbal", "role": "Tester" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "registry_version": "1.0",
+  "entries": [
+    {
+      "persistent_name": "Keaton",
+      "role": "Lead / Architect",
+      "universe": "The Usual Suspects",
+      "created_at": "2026-04-15T03:31:12Z",
+      "legacy_named": false,
+      "status": "active"
+    },
+    {
+      "persistent_name": "Fenster",
+      "role": "TypeScript Dev",
+      "universe": "The Usual Suspects",
+      "created_at": "2026-04-15T03:31:12Z",
+      "legacy_named": false,
+      "status": "active"
+    },
+    {
+      "persistent_name": "McManus",
+      "role": ".NET Dev",
+      "universe": "The Usual Suspects",
+      "created_at": "2026-04-15T03:31:12Z",
+      "legacy_named": false,
+      "status": "active"
+    },
+    {
+      "persistent_name": "Hockney",
+      "role": "Python Dev",
+      "universe": "The Usual Suspects",
+      "created_at": "2026-04-15T03:31:12Z",
+      "legacy_named": false,
+      "status": "active"
+    },
+    {
+      "persistent_name": "Verbal",
+      "role": "Tester",
+      "universe": "The Usual Suspects",
+      "created_at": "2026-04-15T03:31:12Z",
+      "legacy_named": false,
+      "status": "active"
+    }
+  ]
+}
