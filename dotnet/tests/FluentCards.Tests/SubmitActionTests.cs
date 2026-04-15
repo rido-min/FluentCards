@@ -190,6 +190,24 @@ public class SubmitActionTests
     }
 
     [Fact]
+    public void SubmitAction_WithBuilder_WithAssociatedInputs_SetsProperty()
+    {
+        // Arrange & Act
+        var card = AdaptiveCardBuilder.Create()
+            .AddAction(a => a
+                .Submit("Submit Form")
+                .WithAssociatedInputs(AssociatedInputs.None))
+            .Build();
+
+        // Assert
+        Assert.NotNull(card.Actions);
+        Assert.Single(card.Actions);
+        var action = card.Actions[0] as SubmitAction;
+        Assert.NotNull(action);
+        Assert.Equal(AssociatedInputs.None, action.AssociatedInputs);
+    }
+
+    [Fact]
     public void SubmitAction_NullProperties_OmittedFromJson()
     {
         // Arrange

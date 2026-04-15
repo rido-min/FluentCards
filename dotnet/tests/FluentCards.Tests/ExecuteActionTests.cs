@@ -134,6 +134,24 @@ public class ExecuteActionTests
     }
 
     [Fact]
+    public void ExecuteAction_WithBuilder_WithAssociatedInputs_SetsProperty()
+    {
+        // Arrange & Act
+        var card = AdaptiveCardBuilder.Create()
+            .AddAction(a => a
+                .Execute("Execute")
+                .WithAssociatedInputs(AssociatedInputs.None))
+            .Build();
+
+        // Assert
+        Assert.NotNull(card.Actions);
+        Assert.Single(card.Actions);
+        var action = card.Actions[0] as ExecuteAction;
+        Assert.NotNull(action);
+        Assert.Equal(AssociatedInputs.None, action.AssociatedInputs);
+    }
+
+    [Fact]
     public void ExecuteAction_AssociatedInputsAuto_SerializesCorrectly()
     {
         // Arrange
