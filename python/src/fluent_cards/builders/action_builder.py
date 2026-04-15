@@ -70,6 +70,13 @@ class ActionBuilder:
         self._action = {'type': 'Action.Execute', 'title': title}
         return self
 
+    def _ensure_action_type_set(self) -> None:
+        if self._action is None:
+            raise ValueError(
+                'No action type specified. Call open_url(), submit(), show_card(), '
+                'toggle_visibility(), or execute() before setting properties.'
+            )
+
     def with_id(self, id: str) -> ActionBuilder:
         """Sets the unique identifier for the action.
 
@@ -79,8 +86,8 @@ class ActionBuilder:
         Returns:
             The builder instance for method chaining.
         """
-        if self._action is not None:
-            self._action['id'] = id
+        self._ensure_action_type_set()
+        self._action['id'] = id
         return self
 
     def with_title(self, title: str) -> ActionBuilder:
@@ -92,8 +99,8 @@ class ActionBuilder:
         Returns:
             The builder instance for method chaining.
         """
-        if self._action is not None:
-            self._action['title'] = title
+        self._ensure_action_type_set()
+        self._action['title'] = title
         return self
 
     def with_icon_url(self, icon_url: str) -> ActionBuilder:
@@ -105,8 +112,8 @@ class ActionBuilder:
         Returns:
             The builder instance for method chaining.
         """
-        if self._action is not None:
-            self._action['iconUrl'] = icon_url
+        self._ensure_action_type_set()
+        self._action['iconUrl'] = icon_url
         return self
 
     def with_style(self, style: ActionStyle) -> ActionBuilder:
@@ -118,8 +125,8 @@ class ActionBuilder:
         Returns:
             The builder instance for method chaining.
         """
-        if self._action is not None:
-            self._action['style'] = style.value
+        self._ensure_action_type_set()
+        self._action['style'] = style.value
         return self
 
     def with_is_enabled(self, is_enabled: bool) -> ActionBuilder:
@@ -131,8 +138,8 @@ class ActionBuilder:
         Returns:
             The builder instance for method chaining.
         """
-        if self._action is not None:
-            self._action['isEnabled'] = is_enabled
+        self._ensure_action_type_set()
+        self._action['isEnabled'] = is_enabled
         return self
 
     def with_tooltip(self, tooltip: str) -> ActionBuilder:
@@ -144,8 +151,8 @@ class ActionBuilder:
         Returns:
             The builder instance for method chaining.
         """
-        if self._action is not None:
-            self._action['tooltip'] = tooltip
+        self._ensure_action_type_set()
+        self._action['tooltip'] = tooltip
         return self
 
     def with_data(self, data) -> ActionBuilder:
@@ -157,7 +164,8 @@ class ActionBuilder:
         Returns:
             The builder instance for method chaining.
         """
-        if self._action is not None and self._action.get('type') in ('Action.Submit', 'Action.Execute'):
+        self._ensure_action_type_set()
+        if self._action.get('type') in ('Action.Submit', 'Action.Execute'):
             self._action['data'] = data
         return self
 
@@ -170,7 +178,8 @@ class ActionBuilder:
         Returns:
             The builder instance for method chaining.
         """
-        if self._action is not None and self._action.get('type') in ('Action.Submit', 'Action.Execute'):
+        self._ensure_action_type_set()
+        if self._action.get('type') in ('Action.Submit', 'Action.Execute'):
             self._action['associatedInputs'] = associated_inputs.value
         return self
 
@@ -183,7 +192,8 @@ class ActionBuilder:
         Returns:
             The builder instance for method chaining.
         """
-        if self._action is not None and self._action.get('type') == 'Action.Execute':
+        self._ensure_action_type_set()
+        if self._action.get('type') == 'Action.Execute':
             self._action['verb'] = verb
         return self
 
@@ -196,7 +206,8 @@ class ActionBuilder:
         Returns:
             The builder instance for method chaining.
         """
-        if self._action is not None and self._action.get('type') == 'Action.ShowCard':
+        self._ensure_action_type_set()
+        if self._action.get('type') == 'Action.ShowCard':
             self._action['card'] = card
         return self
 
@@ -210,7 +221,8 @@ class ActionBuilder:
         Returns:
             The builder instance for method chaining.
         """
-        if self._action is not None and self._action.get('type') == 'Action.ToggleVisibility':
+        self._ensure_action_type_set()
+        if self._action.get('type') == 'Action.ToggleVisibility':
             if 'targetElements' not in self._action:
                 self._action['targetElements'] = []
             if is_visible is None:

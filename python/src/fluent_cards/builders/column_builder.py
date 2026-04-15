@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import Callable
-from ..enums import ContainerStyle, VerticalAlignment
+from ..enums import ContainerStyle, Spacing, VerticalAlignment
 
 
 class ColumnBuilder:
@@ -109,6 +109,93 @@ class ColumnBuilder:
         b = ActionBuilder()
         configure(b)
         self._column['selectAction'] = b.build()
+        return self
+
+    def with_is_visible(self, is_visible: bool) -> ColumnBuilder:
+        """Sets whether the column is visible.
+
+        Args:
+            is_visible: True if visible, False to hide.
+
+        Returns:
+            The builder instance for method chaining.
+        """
+        self._column['isVisible'] = is_visible
+        return self
+
+    def with_spacing(self, spacing: Spacing) -> ColumnBuilder:
+        """Sets the spacing between this column and the preceding column.
+
+        Args:
+            spacing: The spacing value.
+
+        Returns:
+            The builder instance for method chaining.
+        """
+        self._column['spacing'] = spacing.value
+        return self
+
+    def with_separator(self, separator: bool = True) -> ColumnBuilder:
+        """Sets whether a separator line is drawn at the left of the column.
+
+        Args:
+            separator: True to show separator.
+
+        Returns:
+            The builder instance for method chaining.
+        """
+        self._column['separator'] = separator
+        return self
+
+    def with_height(self, height: str) -> ColumnBuilder:
+        """Sets the height of the column.
+
+        Args:
+            height: The height value ('auto' or 'stretch').
+
+        Returns:
+            The builder instance for method chaining.
+        """
+        self._column['height'] = height
+        return self
+
+    def with_fallback(self, fallback) -> ColumnBuilder:
+        """Sets the fallback behavior when the column is unsupported.
+
+        Args:
+            fallback: The fallback value ('drop' or another element dict).
+
+        Returns:
+            The builder instance for method chaining.
+        """
+        self._column['fallback'] = fallback
+        return self
+
+    def with_requires(self, key: str, version: str) -> ColumnBuilder:
+        """Sets a feature requirement for the column.
+
+        Args:
+            key: The feature name.
+            version: The minimum version required.
+
+        Returns:
+            The builder instance for method chaining.
+        """
+        if 'requires' not in self._column:
+            self._column['requires'] = {}
+        self._column['requires'][key] = version
+        return self
+
+    def with_rtl(self, rtl: bool = True) -> ColumnBuilder:
+        """Sets whether content should be presented right to left.
+
+        Args:
+            rtl: True for right-to-left layout.
+
+        Returns:
+            The builder instance for method chaining.
+        """
+        self._column['rtl'] = rtl
         return self
 
     def add_text_block(self, configure: Callable) -> ColumnBuilder:

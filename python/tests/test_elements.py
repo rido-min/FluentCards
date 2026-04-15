@@ -3,6 +3,7 @@ from fluent_cards import (
     AdaptiveCardBuilder,
     ContainerBuilder,
     ColumnSetBuilder,
+    ColumnBuilder,
     FactSetBuilder,
     RichTextBlockBuilder,
     ActionSetBuilder,
@@ -12,6 +13,7 @@ from fluent_cards import (
     TableBuilder,
     to_json,
     ContainerStyle,
+    Spacing,
     VerticalAlignment,
     HorizontalAlignment,
     ImageSize,
@@ -91,6 +93,68 @@ class TestColumnSetBuilder:
         assert '"type": "Column"' in json_str
         assert '"text": "Left"' in json_str
         assert '"text": "Right"' in json_str
+
+
+class TestColumnBuilder:
+    def test_with_is_visible(self):
+        col = ColumnBuilder().with_is_visible(False).build()
+        assert col['isVisible'] is False
+
+    def test_with_spacing(self):
+        col = ColumnBuilder().with_spacing(Spacing.Large).build()
+        assert col['spacing'] == 'large'
+
+    def test_with_separator(self):
+        col = ColumnBuilder().with_separator().build()
+        assert col['separator'] is True
+
+    def test_with_separator_false(self):
+        col = ColumnBuilder().with_separator(False).build()
+        assert col['separator'] is False
+
+    def test_with_height(self):
+        col = ColumnBuilder().with_height('stretch').build()
+        assert col['height'] == 'stretch'
+
+    def test_with_fallback_drop(self):
+        col = ColumnBuilder().with_fallback('drop').build()
+        assert col['fallback'] == 'drop'
+
+    def test_with_fallback_element(self):
+        fallback = {'type': 'TextBlock', 'text': 'Fallback'}
+        col = ColumnBuilder().with_fallback(fallback).build()
+        assert col['fallback'] == fallback
+
+    def test_with_requires(self):
+        col = (ColumnBuilder()
+               .with_requires('adaptiveCards', '1.2')
+               .with_requires('myFeature', '1.0')
+               .build())
+        assert col['requires'] == {'adaptiveCards': '1.2', 'myFeature': '1.0'}
+
+    def test_with_rtl(self):
+        col = ColumnBuilder().with_rtl().build()
+        assert col['rtl'] is True
+
+    def test_new_methods_chain_with_existing(self):
+        col = (ColumnBuilder()
+               .with_id('col1')
+               .with_width('auto')
+               .with_spacing(Spacing.Medium)
+               .with_separator()
+               .with_is_visible(True)
+               .with_height('auto')
+               .with_rtl(False)
+               .add_text_block(lambda b: b.with_text('Hello'))
+               .build())
+        assert col['id'] == 'col1'
+        assert col['width'] == 'auto'
+        assert col['spacing'] == 'medium'
+        assert col['separator'] is True
+        assert col['isVisible'] is True
+        assert col['height'] == 'auto'
+        assert col['rtl'] is False
+        assert len(col['items']) == 1
 
 
 class TestFactSetBuilder:

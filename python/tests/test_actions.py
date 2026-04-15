@@ -89,6 +89,46 @@ class TestActionBuilder:
         with pytest.raises(ValueError, match='No action type specified'):
             ActionBuilder().build()
 
+    def test_with_id_raises_when_no_type_set(self):
+        with pytest.raises(ValueError, match='No action type specified'):
+            ActionBuilder().with_id('a1')
+
+    def test_with_title_raises_when_no_type_set(self):
+        with pytest.raises(ValueError, match='No action type specified'):
+            ActionBuilder().with_title('Submit')
+
+    def test_with_icon_url_raises_when_no_type_set(self):
+        with pytest.raises(ValueError, match='No action type specified'):
+            ActionBuilder().with_icon_url('https://example.com/icon.png')
+
+    def test_with_style_raises_when_no_type_set(self):
+        with pytest.raises(ValueError, match='No action type specified'):
+            ActionBuilder().with_style(ActionStyle.Positive)
+
+    def test_with_is_enabled_raises_when_no_type_set(self):
+        with pytest.raises(ValueError, match='No action type specified'):
+            ActionBuilder().with_is_enabled(False)
+
+    def test_with_tooltip_raises_when_no_type_set(self):
+        with pytest.raises(ValueError, match='No action type specified'):
+            ActionBuilder().with_tooltip('tip')
+
+    def test_with_data_raises_when_no_type_set(self):
+        with pytest.raises(ValueError, match='No action type specified'):
+            ActionBuilder().with_data({'key': 'value'})
+
+    def test_with_verb_raises_when_no_type_set(self):
+        with pytest.raises(ValueError, match='No action type specified'):
+            ActionBuilder().with_verb('doAction')
+
+    def test_with_card_raises_when_no_type_set(self):
+        with pytest.raises(ValueError, match='No action type specified'):
+            ActionBuilder().with_card({})
+
+    def test_add_target_element_raises_when_no_type_set(self):
+        with pytest.raises(ValueError, match='No action type specified'):
+            ActionBuilder().add_target_element('el1')
+
     def test_serializes_show_card_with_nested_actions(self):
         card = (AdaptiveCardBuilder.create()
                 .add_action(lambda b: b.show_card('Show').with_card(
