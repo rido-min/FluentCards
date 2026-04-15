@@ -4,7 +4,7 @@ from urllib.parse import urlparse
 from ..enums import Spacing
 
 
-def _looks_like_url(value: str) -> bool:
+def _is_absolute_url(value: str) -> bool:
     parsed = urlparse(value)
     return bool(parsed.scheme and parsed.netloc)
 
@@ -147,8 +147,9 @@ class MediaBuilder:
             if (
                 mime_type is not None
                 and _looks_like_mime_type(url_or_source)
-                and _looks_like_url(mime_type)
+                and _is_absolute_url(mime_type)
             ):
+                # Support legacy order: add_caption_source(mime_type, url, label).
                 url, mime_type = mime_type, url_or_source
 
             self._media['captionSources'].append({
