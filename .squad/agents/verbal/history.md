@@ -50,3 +50,10 @@ Expanded `node/packages/fluent-cards/tests/schema-conformance.test.ts` from 21 t
 - **Common element properties (8 tests):** separator, spacing, isVisible, fallback, height tested on TextBlock, Container, ColumnSet, Image, RichTextBlock, FactSet, ActionSet, Input.Text
 
 **No gaps found.** All builders, models, and enums in the TS port matched what was needed for tests. The TS port has full coverage for all categories requested.
+### 2026-04-15 — Go Schema Conformance Test Expansion
+
+- Expanded `go/fluentcards/schema_conformance_test.go` from 18 to **71 conformance tests** (53 new tests added).
+- Go conformance count now exceeds TS (67) and Python (70), approaching .NET reference (84).
+- New test categories added: Media, ImageSet, Column (standalone), TextRun decorations, BackgroundImage, all 5 action types (OpenUrl/Submit/Execute/ShowCard/ToggleVisibility), Refresh, Authentication, Metadata, CaptionSources, 19 enum conformance tests, common properties (fallback/requires/height/rtl) across 6 element types, card-level individual property tests, version/schema auto-mapping.
+- All 224 total Go tests pass (0 failures).
+- Remaining gap vs .NET: DataQuery/TokenExchangeResource detail tests, Column/ColumnSet deeper property permutations, input label position/width tests. These require .NET-only builder features not yet ported to Go.

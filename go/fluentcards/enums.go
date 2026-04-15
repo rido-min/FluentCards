@@ -31,7 +31,6 @@ const (
 	TextColorGood      TextColor = "good"
 	TextColorAttention TextColor = "attention"
 	TextColorWarning   TextColor = "warning"
-	TextColorWhite     TextColor = "white"
 )
 
 // FontType controls the font family used for text rendering.
@@ -169,8 +168,8 @@ const (
 type AssociatedInputs string
 
 const (
-	AssociatedInputsAuto AssociatedInputs = "auto"
-	AssociatedInputsNone AssociatedInputs = "none"
+	AssociatedInputsAuto AssociatedInputs = "Auto"
+	AssociatedInputsNone AssociatedInputs = "None"
 )
 
 // BackgroundImageFillMode controls how a background image fills its container.

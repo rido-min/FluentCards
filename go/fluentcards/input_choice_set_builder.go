@@ -130,6 +130,12 @@ func (b *InputChoiceSetBuilder) WithChoicesData(dataset string) *InputChoiceSetB
 	return b
 }
 
+// WithChoicesDataFull sets a dynamic data query with dataset, count, and skip parameters.
+func (b *InputChoiceSetBuilder) WithChoicesDataFull(dataset string, count int, skip int) *InputChoiceSetBuilder {
+	b.data["choices.data"] = map[string]any{"type": "Data.Query", "dataset": dataset, "count": count, "skip": skip}
+	return b
+}
+
 func (b *InputChoiceSetBuilder) Build() Card {
 	return b.data
 }
