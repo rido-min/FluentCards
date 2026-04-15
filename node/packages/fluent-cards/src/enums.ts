@@ -89,8 +89,8 @@ export enum ChoiceInputStyle {
 
 /** Controls which inputs are associated with a submit or execute action. */
 export enum AssociatedInputs {
-  Auto = 'Auto',
-  None = 'None',
+  Auto = 'auto',
+  None = 'none',
 }
 
 /** Specifies the fill mode for a background image. */

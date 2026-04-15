@@ -33,7 +33,8 @@ Expanded `node/packages/fluent-cards/tests/schema-conformance.test.ts` from 21 t
 
 - **Input elements (11 tests):** Input.Text (all props + omit), Input.Number (all props + omit), Input.Date, Input.Time, Input.Toggle (all props + omit), Input.ChoiceSet (all props + dynamic dataset via choices.data)
 - **ImageSet (1 test):** All properties including imageSize, spacing, separator, images
-- **Media (1 test):** All properties including sources, poster, altText
+- **Media (1 test):** All properties including sources, `captionSources`, poster, altText
+- **RichTextBlock/TextRun:** Includes `TextRun.fontType` coverage via builder and model assertions
 - **Action details (5 tests):** Action.OpenUrl with all base props (iconUrl, style, tooltip, isEnabled, mode), Action.Submit (data, associatedInputs), Action.Execute (verb, data, associatedInputs), Action.ShowCard (embedded card), Action.ToggleVisibility (targetElements)
 - **Enum value tests (19 tests):** All 19 enums verified for values AND count — TextSize(5), TextWeight(3), TextColor(7), FontType(2), TextBlockStyle(2), HorizontalAlignment(3), VerticalAlignment(3), ImageSize(5), ImageStyle(2), ContainerStyle(6), ActionStyle(3), ChoiceInputStyle(3), AssociatedInputs(2), Spacing(7), BackgroundImageFillMode(4), ActionMode(2), TextInputStyle(5), InputLabelPosition(2), InputStyle(2)
 - **Advanced features (2 tests):** Authentication (text, connectionName, tokenExchangeResource, buttons), Refresh (action, userIds, expires)

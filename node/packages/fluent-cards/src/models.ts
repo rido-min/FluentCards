@@ -165,7 +165,6 @@ export interface Media extends AdaptiveElementBase {
 
 /** A caption source for a {@link Media} element (Adaptive Cards 1.6+). */
 export interface CaptionSource {
-  type: 'CaptionSource';
   mimeType: string;
   url: string;
   label: string;

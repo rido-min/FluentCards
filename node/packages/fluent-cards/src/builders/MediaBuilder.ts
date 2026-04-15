@@ -26,10 +26,11 @@ export class MediaBuilder {
   /** Sets whether content should be laid out right-to-left. @param rtl True for RTL. @returns The builder instance for method chaining. */
   withRtl(rtl = true): this { this.media.rtl = rtl; return this; }
 
-  /** Adds a caption source for subtitles or captions (v1.6+). @param mimeType The MIME type of the caption file. @param url The URL of the caption file. @param label The display label for the caption track. @returns The builder instance for method chaining. */
-  addCaptionSource(mimeType: string, url: string, label: string): this {
+  /** Adds a caption source for subtitles or captions (v1.6+). @param url The URL of the caption file. @param mimeType The MIME type of the caption file. @param label The display label for the caption track. @returns The builder instance for method chaining. */
+  addCaptionSource(url: string, mimeType: string, label: string): this {
     if (!this.media.captionSources) { this.media.captionSources = []; }
-    this.media.captionSources.push({ type: 'CaptionSource', mimeType, url, label });
+    const captionSource: CaptionSource = { mimeType, url, label };
+    this.media.captionSources.push(captionSource);
     return this;
   }
 

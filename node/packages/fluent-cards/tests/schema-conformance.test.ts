@@ -270,6 +270,7 @@ describe('Schema conformance – RichTextBlock', () => {
               .withText('Bold text')
               .withWeight(TextWeight.Bolder)
               .withColor(TextColor.Accent)
+              .withFontType(FontType.Monospace)
               .isItalic()
               .isUnderline(),
           ),
@@ -282,11 +283,12 @@ describe('Schema conformance – RichTextBlock', () => {
     assert.equal(rtb.horizontalAlignment, 'center');
     assert.equal(rtb.inlines!.length, 2);
     assert.equal(rtb.inlines![0], 'Plain text ');
-    const run = rtb.inlines![1] as { type: string; text: string; weight: string; color: string; italic: boolean; underline: boolean };
+    const run = rtb.inlines![1] as { type: string; text: string; weight: string; color: string; fontType: string; italic: boolean; underline: boolean };
     assert.equal(run.type, 'TextRun');
     assert.equal(run.text, 'Bold text');
     assert.equal(run.weight, 'bolder');
     assert.equal(run.color, 'accent');
+    assert.equal(run.fontType, 'monospace');
     assert.equal(run.italic, true);
     assert.equal(run.underline, true);
   });
@@ -818,7 +820,8 @@ describe('Schema conformance – Media', () => {
           .withIsVisible(true)
           .withHeight('auto')
           .addSource('https://example.com/video.mp4', 'video/mp4')
-          .addSource('https://example.com/video.webm', 'video/webm'),
+          .addSource('https://example.com/video.webm', 'video/webm')
+          .addCaptionSource('https://example.com/video.vtt', 'text/vtt', 'English'),
       )
       .build();
 
@@ -834,6 +837,9 @@ describe('Schema conformance – Media', () => {
     assert.equal(media.sources!.length, 2);
     assert.deepEqual(media.sources![0], { url: 'https://example.com/video.mp4', mimeType: 'video/mp4' });
     assert.deepEqual(media.sources![1], { url: 'https://example.com/video.webm', mimeType: 'video/webm' });
+    assert.equal(media.captionSources!.length, 1);
+    assert.deepEqual(media.captionSources![0], { url: 'https://example.com/video.vtt', mimeType: 'text/vtt', label: 'English' });
+    assert.equal('type' in media.captionSources![0], false);
   });
 });
 
@@ -891,7 +897,7 @@ describe('Schema conformance – Action.Submit details', () => {
     assert.equal(action.title, 'Send');
     assert.equal(action.id, 'submit1');
     assert.deepEqual(action.data, { action: 'save', id: 42 });
-    assert.equal(action.associatedInputs, 'Auto');
+    assert.equal(action.associatedInputs, 'auto');
     assert.equal(action.iconUrl, 'https://example.com/send.png');
     assert.equal(action.style, 'destructive');
     assert.equal(action.isEnabled, false);
@@ -924,7 +930,7 @@ describe('Schema conformance – Action.Execute details', () => {
     assert.equal(action.id, 'exec1');
     assert.equal(action.verb, 'doStuff');
     assert.deepEqual(action.data, { key: 'value' });
-    assert.equal(action.associatedInputs, 'None');
+    assert.equal(action.associatedInputs, 'none');
     assert.equal(action.iconUrl, 'https://example.com/exec.png');
     assert.equal(action.style, 'positive');
     assert.equal(action.isEnabled, true);
@@ -1097,8 +1103,8 @@ describe('Schema conformance – Enums', () => {
 
   it('AssociatedInputs has all spec values', () => {
     const values: string[] = Object.values(AssociatedInputs);
-    assert.ok(values.includes('Auto'));
-    assert.ok(values.includes('None'));
+    assert.ok(values.includes('auto'));
+    assert.ok(values.includes('none'));
     assert.equal(values.length, 2);
   });
 
@@ -1227,11 +1233,13 @@ describe('Schema conformance – Common element properties', () => {
       .withSpacing(Spacing.Large)
       .withSeparator(true)
       .withIsVisible(false)
+      .withFallback('drop')
       .build();
 
     assert.equal(tb.spacing, 'large');
     assert.equal(tb.separator, true);
     assert.equal(tb.isVisible, false);
+    assert.equal(tb.fallback, 'drop');
   });
 
   it('Container supports separator, spacing, isVisible, fallback', () => {
