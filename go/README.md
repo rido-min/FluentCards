@@ -30,7 +30,8 @@ func main() {
                 WithWrap(true)
         }).
         AddAction(func(a *fluentcards.ActionBuilder) {
-            a.Submit("Click me").WithStyle(fluentcards.ActionStylePositive)
+            a.OpenURL("https://adaptivecards.io").
+                WithTitle("Learn More")
         }).
         Build()
 

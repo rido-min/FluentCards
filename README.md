@@ -35,6 +35,9 @@ var card = AdaptiveCardBuilder.Create()
         .WithSize(TextSize.Large)
         .WithWeight(TextWeight.Bolder)
         .WithWrap(true))
+    .AddAction(a => a
+        .OpenUrl("https://adaptivecards.io")
+        .WithTitle("Learn More"))
     .Build();
 
 Console.WriteLine(card.ToJson());
@@ -56,6 +59,9 @@ const card = AdaptiveCardBuilder.create()
     .withSize(TextSize.Large)
     .withWeight(TextWeight.Bolder)
     .withWrap(true))
+  .addAction(a => a
+    .openUrl('https://adaptivecards.io')
+    .withTitle('Learn More'))
   .build();
 
 console.log(toJson(card));
@@ -77,6 +83,9 @@ card = (AdaptiveCardBuilder.create()
         .with_size(TextSize.Large)
         .with_weight(TextWeight.Bolder)
         .with_wrap(True))
+    .add_action(lambda a: a
+        .open_url('https://adaptivecards.io')
+        .with_title('Learn More'))
     .build())
 
 print(to_json(card))
@@ -98,6 +107,10 @@ card := fluentcards.NewAdaptiveCardBuilder().
             WithSize(fluentcards.TextSizeLarge).
             WithWeight(fluentcards.TextWeightBolder).
             WithWrap(true)
+    }).
+    AddAction(func(a *fluentcards.ActionBuilder) {
+        a.OpenURL("https://adaptivecards.io").
+            WithTitle("Learn More")
     }).
     Build()
 

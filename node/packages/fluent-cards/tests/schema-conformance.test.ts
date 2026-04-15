@@ -377,12 +377,13 @@ describe('Schema conformance – Card-level properties', () => {
 
   it('sets backgroundImage', () => {
     const card = AdaptiveCardBuilder.create()
-      .withBackgroundImage({
-        url: 'https://example.com/bg.png',
-        fillMode: BackgroundImageFillMode.RepeatHorizontally,
-        horizontalAlignment: HorizontalAlignment.Left,
-        verticalAlignment: VerticalAlignment.Top,
-      })
+      .withBackgroundImage((bg) =>
+        bg
+          .withUrl('https://example.com/bg.png')
+          .withFillMode(BackgroundImageFillMode.RepeatHorizontally)
+          .withHorizontalAlignment(HorizontalAlignment.Left)
+          .withVerticalAlignment(VerticalAlignment.Top),
+      )
       .build();
 
     assert.ok(card.backgroundImage);

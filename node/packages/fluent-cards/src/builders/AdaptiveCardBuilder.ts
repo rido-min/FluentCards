@@ -19,6 +19,7 @@ import { MediaBuilder } from './MediaBuilder.js';
 import { ImageSetBuilder } from './ImageSetBuilder.js';
 import { TableBuilder } from './TableBuilder.js';
 import { ActionBuilder } from './ActionBuilder.js';
+import { BackgroundImageBuilder } from './BackgroundImageBuilder.js';
 import { RefreshBuilder } from './RefreshBuilder.js';
 import { AuthenticationBuilder } from './AuthenticationBuilder.js';
 import { InputTextBuilder } from './inputs/InputTextBuilder.js';
@@ -101,9 +102,11 @@ export class AdaptiveCardBuilder {
     return this;
   }
 
-  /** Sets the background image of the card. @param backgroundImage The background image configuration. @returns The builder instance for method chaining. */
-  withBackgroundImage(backgroundImage: BackgroundImage): this {
-    this.card.backgroundImage = backgroundImage;
+  /** Configures the background image of the card via a builder callback. @param configure A callback to configure the BackgroundImageBuilder. @returns The builder instance for method chaining. */
+  withBackgroundImage(configure: (b: BackgroundImageBuilder) => void): this {
+    const b = new BackgroundImageBuilder();
+    configure(b);
+    this.card.backgroundImage = b.build();
     return this;
   }
 

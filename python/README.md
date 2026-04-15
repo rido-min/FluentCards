@@ -27,6 +27,9 @@ card = (AdaptiveCardBuilder.create()
         .with_size(TextSize.Large)
         .with_weight(TextWeight.Bolder)
         .with_wrap(True))
+    .add_action(lambda a: a
+        .open_url('https://adaptivecards.io')
+        .with_title('Learn More'))
     .build())
 
 print(to_json(card))
@@ -45,6 +48,13 @@ Output:
       "size": "Large",
       "weight": "Bolder",
       "wrap": true
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.OpenUrl",
+      "url": "https://adaptivecards.io",
+      "title": "Learn More"
     }
   ]
 }
