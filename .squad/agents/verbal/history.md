@@ -34,5 +34,5 @@ Participated in comprehensive multi-port assessment led by Keaton with Fenster (
 - Added 35 new tests across 6 new test classes: `TestMediaSchemaConformance` (1), `TestImageSetSchemaConformance` (1), `TestColumnSchemaConformance` (1), `TestActionSchemaConformance` (5), `TestEnumSchemaConformance` (19), `TestAdvancedFeaturesSchemaConformance` (8).
 - All 19 enums tested with value membership + exact count assertions (catches phantom values).
 - Advanced features now covered: Refresh, Authentication, TokenExchangeResource, Metadata, BackgroundImage, DataQuery (choices.data), input label properties (labelPosition, labelWidth, inputStyle, inlineAction).
-- MediaBuilder has no `add_caption_source` method — CaptionSource builder test would require a library addition.
+- `MediaBuilder.add_caption_source()` is now available in Python, so the earlier CaptionSource builder limitation no longer applies.
 - Python has no runtime on this dev machine — syntax validated structurally but tests cannot be executed locally.

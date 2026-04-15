@@ -85,7 +85,7 @@ class TestToJson:
         assert '"style": "positive"' in json_str
         assert '"style": "destructive"' in json_str
 
-    def test_serializes_associated_inputs_as_camel_case(self):
+    def test_serializes_associated_inputs_as_schema_casing(self):
         card = (AdaptiveCardBuilder.create()
                 .add_action(lambda b: b.submit('Auto').with_associated_inputs(AssociatedInputs.Auto))
                 .add_action(lambda b: b.submit('None').with_associated_inputs(AssociatedInputs.None_))

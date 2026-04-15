@@ -220,6 +220,28 @@ class TestMediaBuilder:
         assert len(media['sources']) == 2
         assert media['sources'][0]['mimeType'] == 'video/mp4'
 
+    def test_adds_caption_source_with_url_first_signature(self):
+        media = (MediaBuilder()
+                 .add_source('https://example.com/video.mp4', 'video/mp4')
+                 .add_caption_source('https://example.com/video-en.vtt', 'text/vtt', 'English')
+                 .build())
+
+        assert len(media['captionSources']) == 1
+        assert media['captionSources'][0]['url'] == 'https://example.com/video-en.vtt'
+        assert media['captionSources'][0]['mimeType'] == 'text/vtt'
+        assert media['captionSources'][0]['label'] == 'English'
+
+    def test_adds_caption_source_from_dict(self):
+        caption = {
+            'type': 'CaptionSource',
+            'mimeType': 'text/vtt',
+            'url': 'https://example.com/video-es.vtt',
+            'label': 'Spanish',
+        }
+        media = MediaBuilder().add_source('https://example.com/video.mp4', 'video/mp4').add_caption_source(caption).build()
+
+        assert media['captionSources'][0] == caption
+
 
 class TestImageSetBuilder:
     def test_builds_image_set_with_images(self):

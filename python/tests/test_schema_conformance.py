@@ -37,6 +37,7 @@ from fluent_cards import (
     ActionMode,
     InputLabelPosition,
     InputStyle,
+    BlockElementHeight,
 )
 
 
@@ -601,6 +602,11 @@ class TestMediaSchemaConformance:
             .with_poster("https://example.com/poster.png")
             .with_alt_text("A video")
             .add_source("https://example.com/video.mp4", "video/mp4")
+            .add_caption_source(
+                "https://example.com/video-en.vtt",
+                "text/vtt",
+                "English"
+            )
             .with_spacing(Spacing.Large)
             .with_separator(True)
             .with_is_visible(True)
@@ -613,6 +619,11 @@ class TestMediaSchemaConformance:
         assert len(m["sources"]) == 1
         assert m["sources"][0]["mimeType"] == "video/mp4"
         assert m["sources"][0]["url"] == "https://example.com/video.mp4"
+        assert len(m["captionSources"]) == 1
+        assert m["captionSources"][0]["mimeType"] == "text/vtt"
+        assert m["captionSources"][0]["url"] == "https://example.com/video-en.vtt"
+        assert m["captionSources"][0]["label"] == "English"
+        assert m["captionSources"][0]["type"] == "CaptionSource"
         assert m["spacing"] == "large"
         assert m["separator"] is True
         assert m["isVisible"] is True
@@ -950,6 +961,12 @@ class TestEnumSchemaConformance:
         assert "default" in values
         assert "revealOnHover" in values
         assert len(InputStyle) == 2
+
+    def test_block_element_height_enum(self):
+        values = [m.value for m in BlockElementHeight]
+        assert "auto" in values
+        assert "stretch" in values
+        assert len(BlockElementHeight) == 2
 
 
 class TestAdvancedFeaturesSchemaConformance:

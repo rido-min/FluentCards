@@ -106,24 +106,45 @@ class MediaBuilder:
             self._media['sources'].append(url_or_source)
         return self
 
-    def add_caption_source(self, mime_type: str, url: str, label: str) -> MediaBuilder:
+    def add_caption_source(
+        self,
+        url_or_source: Union[str, dict],
+        mime_type: str = None,
+        label: str = None
+    ) -> MediaBuilder:
         """Adds a caption source to the media element.
 
         Args:
-            mime_type: The MIME type of the caption (e.g. 'text/vtt').
-            url: The URL of the caption file.
-            label: The label for the caption source.
+            url_or_source: The URL of the caption file, or a pre-built caption source
+                dictionary.
+            mime_type: The MIME type of the caption (e.g. 'text/vtt'), required when
+                url_or_source is a URL string.
+            label: The label for the caption source when url_or_source is a URL string.
 
         Returns:
             The builder instance for method chaining.
         """
         self._media.setdefault('captionSources', [])
-        self._media['captionSources'].append({
-            'type': 'CaptionSource',
-            'mimeType': mime_type,
-            'url': url,
-            'label': label,
-        })
+
+        if isinstance(url_or_source, str):
+            url = url_or_source
+
+            if (
+                mime_type is not None
+                and '/' in url_or_source
+                and '://' not in url_or_source
+                and '://' in mime_type
+            ):
+                url, mime_type = mime_type, url_or_source
+
+            self._media['captionSources'].append({
+                'type': 'CaptionSource',
+                'mimeType': mime_type,
+                'url': url,
+                'label': label,
+            })
+        else:
+            self._media['captionSources'].append(url_or_source)
         return self
 
     def build(self) -> dict:
