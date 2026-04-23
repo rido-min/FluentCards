@@ -64,6 +64,31 @@ func (b *ImageBuilder) WithSeparator(separator bool) *ImageBuilder {
 	return b
 }
 
+func (b *ImageBuilder) WithIsVisible(isVisible bool) *ImageBuilder {
+	b.data["isVisible"] = isVisible
+	return b
+}
+
+func (b *ImageBuilder) WithFallback(fallback any) *ImageBuilder {
+	b.data["fallback"] = fallback
+	return b
+}
+
+func (b *ImageBuilder) WithRequires(key, version string) *ImageBuilder {
+	reqs, ok := b.data["requires"].(map[string]any)
+	if !ok {
+		reqs = map[string]any{}
+	}
+	reqs[key] = version
+	b.data["requires"] = reqs
+	return b
+}
+
+func (b *ImageBuilder) WithRtl(rtl bool) *ImageBuilder {
+	b.data["rtl"] = rtl
+	return b
+}
+
 func (b *ImageBuilder) WithSelectAction(configure func(*ActionBuilder)) *ImageBuilder {
 	ab := newActionBuilder()
 	configure(ab)

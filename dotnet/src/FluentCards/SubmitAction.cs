@@ -1,6 +1,5 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using FluentCards.Serialization;
 
 namespace FluentCards;
 
@@ -19,4 +18,10 @@ public class SubmitAction : AdaptiveAction
     /// Controls which inputs are associated with the action.
     /// </summary>
     public AssociatedInputs? AssociatedInputs { get; set; }
+
+    /// <summary>
+    /// Microsoft Teams–specific submit action properties (feedback control, etc.).
+    /// </summary>
+    [JsonPropertyName("msteams")]
+    public TeamsSubmitActionProperties? Msteams { get; set; }
 }

@@ -1,5 +1,5 @@
 import type { TextRun } from '../models.js';
-import { TextColor, TextSize, TextWeight } from '../enums.js';
+import { FontType, TextColor, TextSize, TextWeight } from '../enums.js';
 import { ActionBuilder } from './ActionBuilder.js';
 
 /** Fluent builder for {@link TextRun} inline elements. */
@@ -14,8 +14,10 @@ export class TextRunBuilder {
   withWeight(weight: TextWeight): this { this.run.weight = weight; return this; }
   /** Sets the text color. @param color The text color. @returns The builder instance for method chaining. */
   withColor(color: TextColor): this { this.run.color = color; return this; }
+  /** Sets the font type. @param fontType The font type. @returns The builder instance for method chaining. */
+  withFontType(fontType: FontType): this { this.run.fontType = fontType; return this; }
   /** Sets whether the text is displayed with subtle styling. @param subtle True for subtle styling. @returns The builder instance for method chaining. */
-  isSubtle(subtle = true): this { this.run.isSubtle = subtle; return this; }
+  withIsSubtle(subtle = true): this { this.run.isSubtle = subtle; return this; }
   /** Sets whether the text is italicized. @param italic True to italicize. @returns The builder instance for method chaining. */
   isItalic(italic = true): this { this.run.italic = italic; return this; }
   /** Sets whether the text is struck through. @param strikethrough True to apply strikethrough. @returns The builder instance for method chaining. */

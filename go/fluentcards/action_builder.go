@@ -4,7 +4,11 @@ package fluentcards
 // Call one of OpenURL, Submit, ShowCard, ToggleVisibility, or Execute to set the action type,
 // then use With* methods to configure it.
 type ActionBuilder struct {
-	data map[string]any
+	data                 map[string]any
+	dataSet              bool
+	teamsDataSet         bool
+	teamsSubmitTypedSet  bool
+	teamsSubmitRawSet    bool
 }
 
 func newActionBuilder() *ActionBuilder {
@@ -53,86 +57,86 @@ func (b *ActionBuilder) Execute(title ...string) *ActionBuilder {
 	return b
 }
 
-func (b *ActionBuilder) WithID(id string) *ActionBuilder {
-	if b.data != nil {
-		b.data["id"] = id
+func (b *ActionBuilder) ensureActionTypeSet() {
+	if b.data == nil {
+		panic("ActionBuilder: no action type specified — call OpenURL, Submit, ShowCard, ToggleVisibility, or Execute before setting properties")
 	}
+}
+
+func (b *ActionBuilder) WithID(id string) *ActionBuilder {
+	b.ensureActionTypeSet()
+	b.data["id"] = id
 	return b
 }
 
 func (b *ActionBuilder) WithTitle(title string) *ActionBuilder {
-	if b.data != nil {
-		b.data["title"] = title
-	}
+	b.ensureActionTypeSet()
+	b.data["title"] = title
 	return b
 }
 
 func (b *ActionBuilder) WithIconURL(iconURL string) *ActionBuilder {
-	if b.data != nil {
-		b.data["iconUrl"] = iconURL
-	}
+	b.ensureActionTypeSet()
+	b.data["iconUrl"] = iconURL
 	return b
 }
 
 func (b *ActionBuilder) WithStyle(style ActionStyle) *ActionBuilder {
-	if b.data != nil {
-		b.data["style"] = string(style)
-	}
+	b.ensureActionTypeSet()
+	b.data["style"] = string(style)
 	return b
 }
 
 func (b *ActionBuilder) WithIsEnabled(isEnabled bool) *ActionBuilder {
-	if b.data != nil {
-		b.data["isEnabled"] = isEnabled
-	}
+	b.ensureActionTypeSet()
+	b.data["isEnabled"] = isEnabled
 	return b
 }
 
 func (b *ActionBuilder) WithTooltip(tooltip string) *ActionBuilder {
-	if b.data != nil {
-		b.data["tooltip"] = tooltip
-	}
+	b.ensureActionTypeSet()
+	b.data["tooltip"] = tooltip
 	return b
 }
 
 // WithData sets the data payload for Action.Submit or Action.Execute.
 func (b *ActionBuilder) WithData(data any) *ActionBuilder {
-	if b.data != nil {
-		t, _ := b.data["type"].(string)
-		if t == "Action.Submit" || t == "Action.Execute" {
-			b.data["data"] = data
-		}
+	b.ensureActionTypeSet()
+	if b.teamsDataSet {
+		panic("ActionBuilder: cannot use both WithData and WithTeamsData/WithTeamsTaskFetch on the same action")
+	}
+	t, _ := b.data["type"].(string)
+	if t == "Action.Submit" || t == "Action.Execute" {
+		b.data["data"] = data
+		b.dataSet = true
 	}
 	return b
 }
 
 // WithAssociatedInputs sets which inputs are submitted for Action.Submit or Action.Execute.
 func (b *ActionBuilder) WithAssociatedInputs(ai AssociatedInputs) *ActionBuilder {
-	if b.data != nil {
-		t, _ := b.data["type"].(string)
-		if t == "Action.Submit" || t == "Action.Execute" {
-			b.data["associatedInputs"] = string(ai)
-		}
+	b.ensureActionTypeSet()
+	t, _ := b.data["type"].(string)
+	if t == "Action.Submit" || t == "Action.Execute" {
+		b.data["associatedInputs"] = string(ai)
 	}
 	return b
 }
 
 // WithVerb sets the verb for Action.Execute.
 func (b *ActionBuilder) WithVerb(verb string) *ActionBuilder {
-	if b.data != nil {
-		if t, _ := b.data["type"].(string); t == "Action.Execute" {
-			b.data["verb"] = verb
-		}
+	b.ensureActionTypeSet()
+	if t, _ := b.data["type"].(string); t == "Action.Execute" {
+		b.data["verb"] = verb
 	}
 	return b
 }
 
 // WithCard sets the nested card for Action.ShowCard.
 func (b *ActionBuilder) WithCard(card Card) *ActionBuilder {
-	if b.data != nil {
-		if t, _ := b.data["type"].(string); t == "Action.ShowCard" {
-			b.data["card"] = card
-		}
+	b.ensureActionTypeSet()
+	if t, _ := b.data["type"].(string); t == "Action.ShowCard" {
+		b.data["card"] = card
 	}
 	return b
 }
@@ -140,9 +144,7 @@ func (b *ActionBuilder) WithCard(card Card) *ActionBuilder {
 // AddTargetElement adds a target element for Action.ToggleVisibility.
 // Pass isVisible as a *bool to pin visibility; pass nil to toggle.
 func (b *ActionBuilder) AddTargetElement(elementID string, isVisible *bool) *ActionBuilder {
-	if b.data == nil {
-		return b
-	}
+	b.ensureActionTypeSet()
 	if t, _ := b.data["type"].(string); t != "Action.ToggleVisibility" {
 		return b
 	}
@@ -158,6 +160,94 @@ func (b *ActionBuilder) AddTargetElement(elementID string, isVisible *bool) *Act
 			"isVisible": *isVisible,
 		})
 	}
+	return b
+}
+
+func (b *ActionBuilder) WithMode(mode ActionMode) *ActionBuilder {
+	b.ensureActionTypeSet()
+	b.data["mode"] = string(mode)
+	return b
+}
+
+func (b *ActionBuilder) WithRequires(key, version string) *ActionBuilder {
+	b.ensureActionTypeSet()
+	reqs, ok := b.data["requires"].(map[string]any)
+	if !ok {
+		reqs = map[string]any{}
+	}
+	reqs[key] = version
+	b.data["requires"] = reqs
+	return b
+}
+
+func (b *ActionBuilder) WithFallback(fallback any) *ActionBuilder {
+	b.ensureActionTypeSet()
+	b.data["fallback"] = fallback
+	return b
+}
+
+// ── Teams-specific methods (Submit-only) ──────────────────────────────────────
+
+func (b *ActionBuilder) ensureSubmitOnly(method string) {
+	b.ensureActionTypeSet()
+	if t, _ := b.data["type"].(string); t != "Action.Submit" {
+		panic("ActionBuilder: " + method + " is only available on Submit actions — call Submit() before using this method")
+	}
+}
+
+func (b *ActionBuilder) ensureNoDataConflict() {
+	if b.dataSet {
+		panic("ActionBuilder: cannot use both WithData and WithTeamsData/WithTeamsTaskFetch on the same action")
+	}
+}
+
+// WithTeamsTaskFetch sets the action data to {"msteams": {"type": "task/fetch"}} (Submit-only).
+func (b *ActionBuilder) WithTeamsTaskFetch() *ActionBuilder {
+	b.ensureSubmitOnly("WithTeamsTaskFetch")
+	b.ensureNoDataConflict()
+	db := newTeamsDataBuilder()
+	db.WithTaskFetch()
+	b.data["data"] = db.Build()
+	b.teamsDataSet = true
+	return b
+}
+
+// WithTeamsData configures a Teams-specific data payload (Submit-only).
+func (b *ActionBuilder) WithTeamsData(configure func(*TeamsDataBuilder)) *ActionBuilder {
+	b.ensureSubmitOnly("WithTeamsData")
+	b.ensureNoDataConflict()
+	db := newTeamsDataBuilder()
+	configure(db)
+	b.data["data"] = db.Build()
+	b.teamsDataSet = true
+	return b
+}
+
+// WithTeamsSubmitFeedback configures Teams submit feedback properties (Submit-only).
+func (b *ActionBuilder) WithTeamsSubmitFeedback(configure func(*TeamsSubmitPropertiesBuilder)) *ActionBuilder {
+	b.ensureSubmitOnly("WithTeamsSubmitFeedback")
+	if b.teamsSubmitRawSet {
+		panic("ActionBuilder: cannot use both WithTeamsSubmitFeedback and WithTeamsSubmitRaw on the same action")
+	}
+	sb := newTeamsSubmitPropertiesBuilder()
+	configure(sb)
+	b.data["msteams"] = sb.Build()
+	b.teamsSubmitTypedSet = true
+	return b
+}
+
+// WithTeamsSubmitRaw sets the Teams action-level msteams property from a raw map (Submit-only).
+func (b *ActionBuilder) WithTeamsSubmitRaw(value map[string]any) *ActionBuilder {
+	b.ensureSubmitOnly("WithTeamsSubmitRaw")
+	if b.teamsSubmitTypedSet {
+		panic("ActionBuilder: cannot use both WithTeamsSubmitFeedback and WithTeamsSubmitRaw on the same action")
+	}
+	m := make(map[string]any, len(value))
+	for k, v := range value {
+		m[k] = v
+	}
+	b.data["msteams"] = m
+	b.teamsSubmitRawSet = true
 	return b
 }
 

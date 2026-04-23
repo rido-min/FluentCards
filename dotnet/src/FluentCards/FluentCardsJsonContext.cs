@@ -63,6 +63,13 @@ namespace FluentCards;
 [JsonSerializable(typeof(Spacing))]
 [JsonSerializable(typeof(List<object>))]
 [JsonSerializable(typeof(JsonElement))]
+[JsonSerializable(typeof(ValidationIssue))]
+[JsonSerializable(typeof(TeamsCardProperties))]
+[JsonSerializable(typeof(TeamsCardWidth))]
+[JsonSerializable(typeof(Mention))]
+[JsonSerializable(typeof(MentionedEntity))]
+[JsonSerializable(typeof(TeamsSubmitActionProperties))]
+[JsonSerializable(typeof(TeamsSubmitActionFeedback))]
 public partial class FluentCardsJsonContext : JsonSerializerContext
 {
 }

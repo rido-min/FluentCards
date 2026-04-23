@@ -42,7 +42,14 @@ export type {
   AuthenticationConfiguration,
   TokenExchangeResource,
   AuthCardButton,
+  CaptionSource,
   CardMetadata,
+  TeamsCardProperties,
+  TeamsCardWidth,
+  Mention,
+  MentionedEntity,
+  TeamsSubmitActionProperties,
+  TeamsSubmitActionFeedback,
 } from './models.js';
 
 // ─── Enums ────────────────────────────────────────────────────────────────────
@@ -87,6 +94,9 @@ export { ActionBuilder } from './builders/ActionBuilder.js';
 export { BackgroundImageBuilder } from './builders/BackgroundImageBuilder.js';
 export { RefreshBuilder } from './builders/RefreshBuilder.js';
 export { AuthenticationBuilder } from './builders/AuthenticationBuilder.js';
+export { TeamsCardPropertiesBuilder } from './builders/TeamsCardPropertiesBuilder.js';
+export { TeamsDataBuilder } from './builders/TeamsDataBuilder.js';
+export { TeamsSubmitPropertiesBuilder } from './builders/TeamsSubmitPropertiesBuilder.js';
 export { InputTextBuilder } from './builders/inputs/InputTextBuilder.js';
 export { InputNumberBuilder } from './builders/inputs/InputNumberBuilder.js';
 export { InputDateBuilder } from './builders/inputs/InputDateBuilder.js';
@@ -95,7 +105,7 @@ export { InputToggleBuilder } from './builders/inputs/InputToggleBuilder.js';
 export { InputChoiceSetBuilder } from './builders/inputs/InputChoiceSetBuilder.js';
 
 // ─── Serialization ────────────────────────────────────────────────────────────
-export { toJson, fromJson } from './serialization.js';
+export { toJson, toObject, fromJson } from './serialization.js';
 
 // ─── Validation ───────────────────────────────────────────────────────────────
 export {

@@ -164,6 +164,13 @@ class TextBlockStyle(str, Enum):
     Heading = "heading"
 
 
+class BlockElementHeight(str, Enum):
+    """Controls the height behavior of a block element."""
+
+    Auto = "auto"
+    Stretch = "stretch"
+
+
 class ValidationSeverity(str, Enum):
     """Indicates the severity level of a validation issue."""
 

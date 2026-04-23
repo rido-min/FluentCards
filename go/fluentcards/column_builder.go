@@ -53,6 +53,53 @@ func (b *ColumnBuilder) WithSelectAction(configure func(*ActionBuilder)) *Column
 	return b
 }
 
+// WithIsVisible sets whether the column is visible.
+func (b *ColumnBuilder) WithIsVisible(isVisible bool) *ColumnBuilder {
+	b.data["isVisible"] = isVisible
+	return b
+}
+
+// WithSpacing sets the spacing between this column and the preceding column.
+func (b *ColumnBuilder) WithSpacing(spacing Spacing) *ColumnBuilder {
+	b.data["spacing"] = string(spacing)
+	return b
+}
+
+// WithSeparator sets whether a separator line is drawn at the left of the column.
+func (b *ColumnBuilder) WithSeparator(separator bool) *ColumnBuilder {
+	b.data["separator"] = separator
+	return b
+}
+
+// WithHeight sets the height of the column ("auto" or "stretch").
+func (b *ColumnBuilder) WithHeight(height string) *ColumnBuilder {
+	b.data["height"] = height
+	return b
+}
+
+// WithFallback sets the fallback behavior when the column is unsupported.
+func (b *ColumnBuilder) WithFallback(fallback any) *ColumnBuilder {
+	b.data["fallback"] = fallback
+	return b
+}
+
+// WithRequires sets a feature requirement for the column.
+func (b *ColumnBuilder) WithRequires(key, version string) *ColumnBuilder {
+	reqs, ok := b.data["requires"].(map[string]any)
+	if !ok {
+		reqs = map[string]any{}
+	}
+	reqs[key] = version
+	b.data["requires"] = reqs
+	return b
+}
+
+// WithRtl sets whether content should be presented right to left.
+func (b *ColumnBuilder) WithRtl(rtl bool) *ColumnBuilder {
+	b.data["rtl"] = rtl
+	return b
+}
+
 func (b *ColumnBuilder) AddTextBlock(configure func(*TextBlockBuilder)) *ColumnBuilder {
 	tb := newTextBlockBuilder()
 	configure(tb)

@@ -19,6 +19,7 @@ import { MediaBuilder } from './MediaBuilder.js';
 import { ImageSetBuilder } from './ImageSetBuilder.js';
 import { TableBuilder } from './TableBuilder.js';
 import { ActionBuilder } from './ActionBuilder.js';
+import { BackgroundImageBuilder } from './BackgroundImageBuilder.js';
 import { RefreshBuilder } from './RefreshBuilder.js';
 import { AuthenticationBuilder } from './AuthenticationBuilder.js';
 import { InputTextBuilder } from './inputs/InputTextBuilder.js';
@@ -27,6 +28,7 @@ import { InputDateBuilder } from './inputs/InputDateBuilder.js';
 import { InputTimeBuilder } from './inputs/InputTimeBuilder.js';
 import { InputToggleBuilder } from './inputs/InputToggleBuilder.js';
 import { InputChoiceSetBuilder } from './inputs/InputChoiceSetBuilder.js';
+import { TeamsCardPropertiesBuilder } from './TeamsCardPropertiesBuilder.js';
 
 /** Fluent builder for creating {@link AdaptiveCard} instances. */
 export class AdaptiveCardBuilder {
@@ -45,6 +47,8 @@ export class AdaptiveCardBuilder {
     version: '1.5',
     '$schema': AdaptiveCardBuilder.SCHEMA_URLS['1.5'],
   };
+  private teamsCardTypedSet = false;
+  private teamsCardRawSet = false;
 
   /** Creates a new AdaptiveCardBuilder instance. @returns A new AdaptiveCardBuilder. */
   static create(): AdaptiveCardBuilder {
@@ -101,9 +105,11 @@ export class AdaptiveCardBuilder {
     return this;
   }
 
-  /** Sets the background image of the card. @param backgroundImage The background image configuration. @returns The builder instance for method chaining. */
-  withBackgroundImage(backgroundImage: BackgroundImage): this {
-    this.card.backgroundImage = backgroundImage;
+  /** Configures the background image of the card via a builder callback. @param configure A callback to configure the BackgroundImageBuilder. @returns The builder instance for method chaining. */
+  withBackgroundImage(configure: (b: BackgroundImageBuilder) => void): this {
+    const b = new BackgroundImageBuilder();
+    configure(b);
+    this.card.backgroundImage = b.build();
     return this;
   }
 
@@ -282,6 +288,30 @@ export class AdaptiveCardBuilder {
     const b = new AuthenticationBuilder();
     configure(b);
     this.card.authentication = b.build();
+    return this;
+  }
+
+  // ─── Teams-specific ─────────────────────────────────────────────────────
+
+  /** Configures Microsoft Teams–specific card properties (width, mentions, etc.). @param configure A callback to configure the TeamsCardPropertiesBuilder. @returns The builder instance for method chaining. @throws Error if withTeamsCardRaw was already called. */
+  withTeamsCard(configure: (b: TeamsCardPropertiesBuilder) => void): this {
+    if (this.teamsCardRawSet) {
+      throw new Error('Cannot use both withTeamsCard and withTeamsCardRaw on the same card. Use one or the other.');
+    }
+    const b = new TeamsCardPropertiesBuilder();
+    configure(b);
+    this.card.msteams = b.build();
+    this.teamsCardTypedSet = true;
+    return this;
+  }
+
+  /** Sets the Teams msteams card property from a raw object (escape hatch). @param value The raw TeamsCardProperties object. @returns The builder instance for method chaining. @throws Error if withTeamsCard was already called. */
+  withTeamsCardRaw(value: Record<string, unknown>): this {
+    if (this.teamsCardTypedSet) {
+      throw new Error('Cannot use both withTeamsCard and withTeamsCardRaw on the same card. Use one or the other.');
+    }
+    this.card.msteams = { ...value };
+    this.teamsCardRawSet = true;
     return this;
   }
 

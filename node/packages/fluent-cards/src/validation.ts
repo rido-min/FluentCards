@@ -1,4 +1,4 @@
-import type { AdaptiveCard, AdaptiveElement, AdaptiveAction } from './models.js';
+import type { AdaptiveCard, AdaptiveElement, AdaptiveAction, TextBlock, RichTextBlock, Container, ColumnSet } from './models.js';
 import { ValidationSeverity } from './enums.js';
 
 export { ValidationSeverity };
@@ -41,6 +41,7 @@ export function validate(card: AdaptiveCard): ValidationIssue[] {
   if (card.version && KNOWN_VERSIONS.has(card.version)) {
     validateVersionMismatch(card, card.version, issues);
   }
+  validateTeamsMentions(card, issues);
   return issues;
 }
 
@@ -416,4 +417,58 @@ function checkActionVersionsInList(actions: AdaptiveAction[], cardVersion: strin
       if (action.card.actions) checkActionVersionsInList(action.card.actions, cardVersion, issues, `${p}.card.actions`);
     }
   });
+}
+
+function validateTeamsMentions(card: AdaptiveCard, issues: ValidationIssue[]): void {
+  if (!card.msteams?.entities?.length) return;
+
+  const texts: string[] = [];
+  if (card.body) collectTextContent(card.body, texts);
+  const allText = texts.join(' ');
+
+  card.msteams.entities.forEach((mention, i) => {
+    if (!allText.includes(mention.text)) {
+      issue(issues, ValidationSeverity.Warning, `msteams.entities[${i}]`, 'ORPHANED_MENTION_ENTITY',
+        `The mention entity '${mention.text}' has no matching text in any TextBlock body. Add '${mention.text}' to a TextBlock for the mention to render correctly.`);
+    }
+  });
+
+  for (const text of texts) {
+    let searchStart = 0;
+    while (true) {
+      const atStart = text.indexOf('<at>', searchStart);
+      if (atStart < 0) break;
+      const atEnd = text.indexOf('</at>', atStart);
+      if (atEnd < 0) break;
+      const token = text.substring(atStart, atEnd + '</at>'.length);
+      const hasEntity = card.msteams.entities.some(m => m.text === token);
+      if (!hasEntity) {
+        issue(issues, ValidationSeverity.Warning, 'body', 'ORPHANED_AT_TOKEN',
+          `The text contains '${token}' but no matching mention entity was found in msteams.entities.`);
+      }
+      searchStart = atEnd + '</at>'.length;
+    }
+  }
+}
+
+function collectTextContent(elements: AdaptiveElement[], texts: string[]): void {
+  for (const el of elements) {
+    if (el.type === 'TextBlock' && (el as TextBlock).text) {
+      texts.push((el as TextBlock).text);
+    } else if (el.type === 'RichTextBlock' && (el as RichTextBlock).inlines) {
+      for (const inline of (el as RichTextBlock).inlines!) {
+        if (typeof inline === 'string') {
+          texts.push(inline);
+        } else if (typeof inline === 'object' && inline.type === 'TextRun' && inline.text) {
+          texts.push(inline.text);
+        }
+      }
+    } else if (el.type === 'Container' && (el as Container).items) {
+      collectTextContent((el as Container).items!, texts);
+    } else if (el.type === 'ColumnSet' && (el as ColumnSet).columns) {
+      for (const col of (el as ColumnSet).columns!) {
+        if (col.items) collectTextContent(col.items, texts);
+      }
+    }
+  }
 }

@@ -49,6 +49,31 @@ func (b *ContainerBuilder) WithIsVisible(isVisible bool) *ContainerBuilder {
 	return b
 }
 
+func (b *ContainerBuilder) WithHeight(height string) *ContainerBuilder {
+	b.data["height"] = height
+	return b
+}
+
+func (b *ContainerBuilder) WithFallback(fallback any) *ContainerBuilder {
+	b.data["fallback"] = fallback
+	return b
+}
+
+func (b *ContainerBuilder) WithRequires(key, version string) *ContainerBuilder {
+	reqs, ok := b.data["requires"].(map[string]any)
+	if !ok {
+		reqs = map[string]any{}
+	}
+	reqs[key] = version
+	b.data["requires"] = reqs
+	return b
+}
+
+func (b *ContainerBuilder) WithRtl(rtl bool) *ContainerBuilder {
+	b.data["rtl"] = rtl
+	return b
+}
+
 func (b *ContainerBuilder) WithBackgroundImage(configure func(*BackgroundImageBuilder)) *ContainerBuilder {
 	bib := newBackgroundImageBuilder()
 	configure(bib)

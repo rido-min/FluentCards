@@ -189,6 +189,78 @@ public class InputChoiceSetBuilder
     }
 
     /// <summary>
+    /// Sets the spacing between this element and the preceding element.
+    /// </summary>
+    /// <param name="spacing">The spacing value.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public InputChoiceSetBuilder WithSpacing(Spacing spacing)
+    {
+        _input.Spacing = spacing;
+        return this;
+    }
+    /// <summary>
+    /// Sets whether a separator line is drawn at the top of the element.
+    /// </summary>
+    /// <param name="separator">True to show separator.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public InputChoiceSetBuilder WithSeparator(bool separator = true)
+    {
+        _input.Separator = separator;
+        return this;
+    }
+    /// <summary>
+    /// Sets whether the element is visible.
+    /// </summary>
+    /// <param name="isVisible">True if visible, false if hidden.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public InputChoiceSetBuilder WithIsVisible(bool isVisible)
+    {
+        _input.IsVisible = isVisible;
+        return this;
+    }
+    /// <summary>
+    /// Sets the height of the element.
+    /// </summary>
+    /// <param name="height">The height ("auto" or "stretch").</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public InputChoiceSetBuilder WithHeight(string height)
+    {
+        _input.Height = height;
+        return this;
+    }
+    /// <summary>
+    /// Sets the fallback behavior for the element.
+    /// </summary>
+    /// <param name="fallback">The fallback value ("drop" or another element).</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public InputChoiceSetBuilder WithFallback(object fallback)
+    {
+        _input.Fallback = fallback;
+        return this;
+    }
+    /// <summary>
+    /// Sets the feature requirements for the element.
+    /// </summary>
+    /// <param name="key">The feature key.</param>
+    /// <param name="version">The minimum version required.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public InputChoiceSetBuilder WithRequires(string key, string version)
+    {
+        _input.Requires ??= new Dictionary<string, string>();
+        _input.Requires[key] = version;
+        return this;
+    }
+    /// <summary>
+    /// Sets whether content should be presented right to left.
+    /// </summary>
+    /// <param name="rtl">True for right-to-left.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public InputChoiceSetBuilder WithRtl(bool rtl = true)
+    {
+        _input.Rtl = rtl;
+        return this;
+    }
+    /// <summary>
     /// Builds and returns the configured InputChoiceSet.
     /// </summary>
     /// <returns>The configured InputChoiceSet instance.</returns>

@@ -96,7 +96,7 @@ export interface ColumnSet extends AdaptiveElementBase {
 export interface Column {
   type: 'Column';
   items?: AdaptiveElement[];
-  width?: string;
+  width?: string | number;
   id?: string;
   style?: ContainerStyle;
   verticalContentAlignment?: VerticalAlignment;
@@ -104,6 +104,13 @@ export interface Column {
   minHeight?: string;
   backgroundImage?: BackgroundImage;
   selectAction?: AdaptiveAction;
+  isVisible?: boolean;
+  spacing?: Spacing;
+  separator?: boolean;
+  height?: string;
+  fallback?: 'drop' | AdaptiveElement;
+  requires?: Record<string, string>;
+  rtl?: boolean;
 }
 
 /** A set of name/value pairs displayed in a table layout. */
@@ -132,6 +139,7 @@ export interface TextRun {
   size?: TextSize;
   weight?: TextWeight;
   color?: TextColor;
+  fontType?: FontType;
   isSubtle?: boolean;
   italic?: boolean;
   strikethrough?: boolean;
@@ -150,8 +158,16 @@ export interface ActionSet extends AdaptiveElementBase {
 export interface Media extends AdaptiveElementBase {
   type: 'Media';
   sources?: MediaSource[];
+  captionSources?: CaptionSource[];
   poster?: string;
   altText?: string;
+}
+
+/** A caption source for a {@link Media} element (Adaptive Cards 1.6+). */
+export interface CaptionSource {
+  mimeType: string;
+  url: string;
+  label: string;
 }
 
 /** A single media source (URL + MIME type) within a {@link Media} element. */
@@ -203,7 +219,7 @@ export interface TableCell {
 
 /** Defines the width and alignment for a single column in a {@link Table}. */
 export interface TableColumnDefinition {
-  width?: string;
+  width?: string | number;
   horizontalCellContentAlignment?: HorizontalAlignment;
   verticalCellContentAlignment?: VerticalAlignment;
 }
@@ -217,6 +233,7 @@ export interface InputElementBase extends AdaptiveElementBase {
   isRequired?: boolean;
   errorMessage?: string;
   labelPosition?: InputLabelPosition;
+  labelWidth?: string;
   inputStyle?: InputStyle;
 }
 
@@ -325,6 +342,9 @@ export interface AdaptiveActionBase {
   mode?: ActionMode;
   isEnabled?: boolean;
   tooltip?: string;
+  requires?: Record<string, string>;
+  /** "drop" or a fallback action */
+  fallback?: 'drop' | AdaptiveAction;
 }
 
 /** An action that opens a URL in a browser. */
@@ -338,6 +358,8 @@ export interface SubmitAction extends AdaptiveActionBase {
   type: 'Action.Submit';
   data?: unknown;
   associatedInputs?: AssociatedInputs;
+  /** Microsoft Teams–specific submit action properties (feedback control, etc.). */
+  msteams?: TeamsSubmitActionProperties;
 }
 
 /** An action that reveals an embedded card when clicked. */
@@ -439,4 +461,40 @@ export interface AdaptiveCard {
   refresh?: RefreshConfiguration;
   authentication?: AuthenticationConfiguration;
   metadata?: CardMetadata;
+  /** Microsoft Teams–specific card properties (width, mentions, etc.). */
+  msteams?: TeamsCardProperties;
+}
+
+// ─── Teams extension models ─────────────────────────────────────────────────
+
+/** Teams-specific card-level properties, serialized as the `msteams` object on AdaptiveCard. */
+export interface TeamsCardProperties {
+  width?: TeamsCardWidth;
+  entities?: Mention[];
+}
+
+/** Card width options for Teams-specific rendering. */
+export type TeamsCardWidth = 'Full';
+
+/** An @mention entity in a Teams Adaptive Card. */
+export interface Mention {
+  type: 'mention';
+  text: string;
+  mentioned: MentionedEntity;
+}
+
+/** A mentioned entity (user) in a Teams Adaptive Card. */
+export interface MentionedEntity {
+  id: string;
+  name: string;
+}
+
+/** Teams-specific action-level properties for Submit actions. */
+export interface TeamsSubmitActionProperties {
+  feedback?: TeamsSubmitActionFeedback;
+}
+
+/** Feedback settings for a Teams submit action. */
+export interface TeamsSubmitActionFeedback {
+  hide?: boolean;
 }

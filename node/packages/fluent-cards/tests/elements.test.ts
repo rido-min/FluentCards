@@ -4,6 +4,7 @@ import {
   AdaptiveCardBuilder,
   ContainerBuilder,
   ColumnSetBuilder,
+  ColumnBuilder,
   FactSetBuilder,
   RichTextBlockBuilder,
   ActionSetBuilder,
@@ -12,6 +13,7 @@ import {
   TableBuilder,
   toJson,
   ContainerStyle,
+  Spacing,
   VerticalAlignment,
   HorizontalAlignment,
   ImageSize,
@@ -241,5 +243,61 @@ describe('ActionSetBuilder', () => {
     assert.equal(as.id, 'as1');
     assert.equal(as.actions!.length, 1);
     assert.equal(as.actions![0].type, 'Action.OpenUrl');
+  });
+});
+
+describe('ColumnBuilder – new properties', () => {
+  it('sets isVisible', () => {
+    const col = new ColumnBuilder().withIsVisible(false).build();
+    assert.equal(col.isVisible, false);
+  });
+
+  it('sets spacing', () => {
+    const col = new ColumnBuilder().withSpacing(Spacing.Large).build();
+    assert.equal(col.spacing, Spacing.Large);
+  });
+
+  it('sets separator with default true', () => {
+    const col = new ColumnBuilder().withSeparator().build();
+    assert.equal(col.separator, true);
+  });
+
+  it('sets separator to false', () => {
+    const col = new ColumnBuilder().withSeparator(false).build();
+    assert.equal(col.separator, false);
+  });
+
+  it('sets height', () => {
+    const col = new ColumnBuilder().withHeight('stretch').build();
+    assert.equal(col.height, 'stretch');
+  });
+
+  it('sets fallback to drop', () => {
+    const col = new ColumnBuilder().withFallback('drop').build();
+    assert.equal(col.fallback, 'drop');
+  });
+
+  it('sets fallback to an element', () => {
+    const element = { type: 'TextBlock' as const, text: 'Fallback' };
+    const col = new ColumnBuilder().withFallback(element).build();
+    assert.deepEqual(col.fallback, element);
+  });
+
+  it('sets requires with multiple calls', () => {
+    const col = new ColumnBuilder()
+      .withRequires('adaptiveCards', '1.2')
+      .withRequires('myFeature', '1.0')
+      .build();
+    assert.deepEqual(col.requires, { adaptiveCards: '1.2', myFeature: '1.0' });
+  });
+
+  it('sets rtl with default true', () => {
+    const col = new ColumnBuilder().withRtl().build();
+    assert.equal(col.rtl, true);
+  });
+
+  it('sets rtl to false', () => {
+    const col = new ColumnBuilder().withRtl(false).build();
+    assert.equal(col.rtl, false);
   });
 });

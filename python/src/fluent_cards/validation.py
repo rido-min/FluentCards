@@ -119,6 +119,61 @@ def _validate_card(card, issues, ids):
 
     _validate_select_action(card.get('selectAction'), issues, 'selectAction')
 
+    # Teams mention validation
+    msteams = card.get('msteams')
+    if isinstance(msteams, dict):
+        entities = msteams.get('entities') or []
+        mention_names = {}
+        for i, entity in enumerate(entities):
+            if isinstance(entity, dict) and entity.get('type') == 'mention':
+                text = entity.get('text', '')
+                if text.startswith('<at>') and text.endswith('</at>'):
+                    name = text[4:-5]
+                    mention_names[name] = i
+
+        if mention_names:
+            body_text = _collect_body_text(card.get('body') or [])
+            for name, idx in mention_names.items():
+                token = f'<at>{name}</at>'
+                if token not in body_text:
+                    _issue(issues, ValidationSeverity.Warning, f'msteams.entities[{idx}]',
+                           'ORPHANED_MENTION_ENTITY',
+                           f"Mention entity for '{name}' has no matching <at>{name}</at> text in the card body.")
+            # Check for orphaned <at> tokens
+            _check_orphaned_at_tokens(body_text, set(mention_names.keys()), issues)
+
+
+def _collect_body_text(elements: list) -> str:
+    """Collects all text from TextBlocks, RichTextBlock TextRuns, Containers, ColumnSets."""
+    parts: list[str] = []
+    for el in elements:
+        t = el.get('type') if isinstance(el, dict) else None
+        if t == 'TextBlock':
+            parts.append(el.get('text', ''))
+        elif t == 'RichTextBlock':
+            for inline in el.get('inlines') or []:
+                if isinstance(inline, dict) and inline.get('type') == 'TextRun':
+                    parts.append(inline.get('text', ''))
+                elif isinstance(inline, str):
+                    parts.append(inline)
+        elif t == 'Container':
+            parts.append(_collect_body_text(el.get('items') or []))
+        elif t == 'ColumnSet':
+            for col in el.get('columns') or []:
+                parts.append(_collect_body_text(col.get('items') or []))
+    return ' '.join(parts)
+
+
+def _check_orphaned_at_tokens(body_text: str, mention_names: set[str], issues: list) -> None:
+    """Checks for <at>X</at> tokens in body text that have no matching mention entity."""
+    import re
+    for match in re.finditer(r'<at>(.*?)</at>', body_text):
+        name = match.group(1)
+        if name not in mention_names:
+            _issue(issues, ValidationSeverity.Warning, 'body',
+                   'ORPHANED_AT_TOKEN',
+                   f"Text contains <at>{name}</at> but there is no matching mention entity.")
+
 
 def _validate_elements(elements, issues, path, ids):
     for i, element in enumerate(elements):

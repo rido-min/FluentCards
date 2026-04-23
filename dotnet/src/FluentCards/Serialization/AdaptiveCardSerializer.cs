@@ -1,14 +1,23 @@
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 
-namespace FluentCards.Serialization;
+namespace FluentCards;
 
 /// <summary>
 /// Static helper class for AOT-compatible serialization of AdaptiveCard instances.
 /// </summary>
 public static class AdaptiveCardSerializer
 {
+    private static readonly JsonSerializerOptions CompactOptions = new()
+    {
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        WriteIndented = false,
+        TypeInfoResolver = FluentCardsJsonContext.Default
+    };
+
     /// <summary>
     /// Serializes an AdaptiveCard to JSON string using source-generated context.
     /// </summary>
@@ -22,16 +31,30 @@ public static class AdaptiveCardSerializer
             return JsonSerializer.Serialize(card, FluentCardsJsonContext.Default.AdaptiveCard);
         }
 
-        var options = new JsonSerializerOptions
-        {
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            WriteIndented = false,
-            TypeInfoResolver = FluentCardsJsonContext.Default
-        };
-
-        return JsonSerializer.Serialize(card, options.GetTypeInfo(typeof(AdaptiveCard)) as JsonTypeInfo<AdaptiveCard>
+        return JsonSerializer.Serialize(card, CompactOptions.GetTypeInfo(typeof(AdaptiveCard)) as JsonTypeInfo<AdaptiveCard>
             ?? throw new InvalidOperationException("Failed to resolve AdaptiveCard type info."));
+    }
+
+    /// <summary>
+    /// Serializes an AdaptiveCard to a <see cref="JsonElement"/> without an intermediate string.
+    /// Useful when embedding a card into a larger JSON payload to avoid double serialization.
+    /// </summary>
+    /// <param name="card">The AdaptiveCard to serialize.</param>
+    /// <returns>A <see cref="JsonElement"/> representing the card.</returns>
+    public static JsonElement SerializeToElement(AdaptiveCard card)
+    {
+        return JsonSerializer.SerializeToElement(card, FluentCardsJsonContext.Default.AdaptiveCard);
+    }
+
+    /// <summary>
+    /// Serializes an AdaptiveCard to a <see cref="JsonNode"/> (mutable DOM).
+    /// Useful when consumers need to modify the card JSON after building.
+    /// </summary>
+    /// <param name="card">The AdaptiveCard to serialize.</param>
+    /// <returns>A <see cref="JsonNode"/> representing the card, or null if serialization produces a null node.</returns>
+    public static JsonNode? SerializeToNode(AdaptiveCard card)
+    {
+        return JsonSerializer.SerializeToNode(card, FluentCardsJsonContext.Default.AdaptiveCard);
     }
     
     /// <summary>

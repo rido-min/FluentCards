@@ -22,10 +22,13 @@ from .enums import (
     InputLabelPosition,
     InputStyle,
     TextBlockStyle,
+    BlockElementHeight,
     ValidationSeverity,
 )
 
-from .serialization import to_json, from_json
+from .models import CaptionSource
+
+from .serialization import to_dict, to_json, from_json
 
 from .validation import (
     ValidationIssue,
@@ -52,6 +55,9 @@ from .builders import (
     RefreshBuilder,
     AuthenticationBuilder,
     BackgroundImageBuilder,
+    TeamsCardPropertiesBuilder,
+    TeamsDataBuilder,
+    TeamsSubmitPropertiesBuilder,
     InputTextBuilder,
     InputNumberBuilder,
     InputDateBuilder,
@@ -83,8 +89,12 @@ __all__ = [
     'InputLabelPosition',
     'InputStyle',
     'TextBlockStyle',
+    'BlockElementHeight',
     'ValidationSeverity',
+    # Models
+    'CaptionSource',
     # Serialization
+    'to_dict',
     'to_json',
     'from_json',
     # Validation
@@ -110,6 +120,9 @@ __all__ = [
     'RefreshBuilder',
     'AuthenticationBuilder',
     'BackgroundImageBuilder',
+    'TeamsCardPropertiesBuilder',
+    'TeamsDataBuilder',
+    'TeamsSubmitPropertiesBuilder',
     'InputTextBuilder',
     'InputNumberBuilder',
     'InputDateBuilder',

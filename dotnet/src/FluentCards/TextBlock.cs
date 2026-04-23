@@ -62,4 +62,9 @@ public class TextBlock : AdaptiveElement
     /// </summary>
     [JsonConverter(typeof(CamelCaseEnumConverter<HorizontalAlignment>))]
     public HorizontalAlignment? HorizontalAlignment { get; set; }
+
+    /// <summary>
+    /// Action to invoke when the text block is selected.
+    /// </summary>
+    public AdaptiveAction? SelectAction { get; set; }
 }

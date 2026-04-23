@@ -59,7 +59,57 @@ func (b *InputChoiceSetBuilder) WithSpacing(spacing Spacing) *InputChoiceSetBuil
 	return b
 }
 
-// AddChoice adds a choice with the given title and value strings.
+func (b *InputChoiceSetBuilder) WithIsVisible(isVisible bool) *InputChoiceSetBuilder {
+	b.data["isVisible"] = isVisible
+	return b
+}
+
+func (b *InputChoiceSetBuilder) WithSeparator(separator bool) *InputChoiceSetBuilder {
+	b.data["separator"] = separator
+	return b
+}
+
+func (b *InputChoiceSetBuilder) WithHeight(height string) *InputChoiceSetBuilder {
+	b.data["height"] = height
+	return b
+}
+
+func (b *InputChoiceSetBuilder) WithFallback(fallback any) *InputChoiceSetBuilder {
+	b.data["fallback"] = fallback
+	return b
+}
+
+func (b *InputChoiceSetBuilder) WithRequires(key, version string) *InputChoiceSetBuilder {
+	reqs, ok := b.data["requires"].(map[string]any)
+	if !ok {
+		reqs = map[string]any{}
+	}
+	reqs[key] = version
+	b.data["requires"] = reqs
+	return b
+}
+
+func (b *InputChoiceSetBuilder) WithRtl(rtl bool) *InputChoiceSetBuilder {
+	b.data["rtl"] = rtl
+	return b
+}
+
+func (b *InputChoiceSetBuilder) WithLabelPosition(position InputLabelPosition) *InputChoiceSetBuilder {
+	b.data["labelPosition"] = string(position)
+	return b
+}
+
+func (b *InputChoiceSetBuilder) WithLabelWidth(width string) *InputChoiceSetBuilder {
+	b.data["labelWidth"] = width
+	return b
+}
+
+func (b *InputChoiceSetBuilder) WithInputStyle(style InputStyle) *InputChoiceSetBuilder {
+	b.data["inputStyle"] = string(style)
+	return b
+}
+
+// AddChoiceadds a choice with the given title and value strings.
 func (b *InputChoiceSetBuilder) AddChoice(title, value string) *InputChoiceSetBuilder {
 	choices := b.data["choices"].([]any)
 	b.data["choices"] = append(choices, map[string]any{"title": title, "value": value})
@@ -77,6 +127,12 @@ func (b *InputChoiceSetBuilder) AddChoiceMap(choice map[string]any) *InputChoice
 // dataset is the dataset identifier, e.g. "graph.microsoft.com/users".
 func (b *InputChoiceSetBuilder) WithChoicesData(dataset string) *InputChoiceSetBuilder {
 	b.data["choices.data"] = map[string]any{"type": "Data.Query", "dataset": dataset}
+	return b
+}
+
+// WithChoicesDataFull sets a dynamic data query with dataset, count, and skip parameters.
+func (b *InputChoiceSetBuilder) WithChoicesDataFull(dataset string, count int, skip int) *InputChoiceSetBuilder {
+	b.data["choices.data"] = map[string]any{"type": "Data.Query", "dataset": dataset, "count": count, "skip": skip}
 	return b
 }
 

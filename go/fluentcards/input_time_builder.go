@@ -56,6 +56,56 @@ func (b *InputTimeBuilder) WithSpacing(spacing Spacing) *InputTimeBuilder {
 	return b
 }
 
-func (b *InputTimeBuilder) Build() Card {
+func (b *InputTimeBuilder) WithIsVisible(isVisible bool) *InputTimeBuilder {
+	b.data["isVisible"] = isVisible
+	return b
+}
+
+func (b *InputTimeBuilder) WithSeparator(separator bool) *InputTimeBuilder {
+	b.data["separator"] = separator
+	return b
+}
+
+func (b *InputTimeBuilder) WithHeight(height string) *InputTimeBuilder {
+	b.data["height"] = height
+	return b
+}
+
+func (b *InputTimeBuilder) WithFallback(fallback any) *InputTimeBuilder {
+	b.data["fallback"] = fallback
+	return b
+}
+
+func (b *InputTimeBuilder) WithRequires(key, version string) *InputTimeBuilder {
+	reqs, ok := b.data["requires"].(map[string]any)
+	if !ok {
+		reqs = map[string]any{}
+	}
+	reqs[key] = version
+	b.data["requires"] = reqs
+	return b
+}
+
+func (b *InputTimeBuilder) WithRtl(rtl bool) *InputTimeBuilder {
+	b.data["rtl"] = rtl
+	return b
+}
+
+func (b *InputTimeBuilder) WithLabelPosition(position InputLabelPosition) *InputTimeBuilder {
+	b.data["labelPosition"] = string(position)
+	return b
+}
+
+func (b *InputTimeBuilder) WithLabelWidth(width string) *InputTimeBuilder {
+	b.data["labelWidth"] = width
+	return b
+}
+
+func (b *InputTimeBuilder) WithInputStyle(style InputStyle) *InputTimeBuilder {
+	b.data["inputStyle"] = string(style)
+	return b
+}
+
+func (b *InputTimeBuilder) Build()Card {
 	return b.data
 }

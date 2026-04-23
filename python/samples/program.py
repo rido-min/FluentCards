@@ -1,5 +1,6 @@
 from fluent_cards import (
     AdaptiveCardBuilder,
+    to_dict,
     to_json,
     from_json,
     validate,
@@ -24,6 +25,7 @@ from rich_content_sample import (
     create_comprehensive_card,
 )
 from people_picker_sample import create_people_picker_card
+from action_submit_execute_sample import create_action_submit_execute_card
 from validation_sample import run_validation_samples
 
 print('=== FluentCards Demo ===\n')
@@ -52,6 +54,14 @@ card = (
 # Serialize to JSON
 json_str = to_json(card)
 print(json_str)
+
+# Demonstrate to_dict — returns a clean dict ready for API embedding
+print('\n=== to_dict Demo ===')
+card_dict = to_dict(card)
+print(f'Type: {type(card_dict).__name__}')
+print(f'Body elements: {len(card_dict.get("body", []))}')
+print(f'First text: {card_dict["body"][0]["text"]}')
+print('✓ Ready for embedding in API responses (no double-serialization)')
 
 # Demonstrate roundtrip serialization
 print('\n=== Roundtrip Test ===')
@@ -103,6 +113,7 @@ print_sample('Table Card', create_table_card())
 print_sample('Media Card', create_media_card())
 print_sample('Comprehensive Card', create_comprehensive_card())
 print_sample('People Picker Card', create_people_picker_card())
+print_sample('Action Submit/Execute Card', create_action_submit_execute_card())
 
 # Validation samples
 run_validation_samples()

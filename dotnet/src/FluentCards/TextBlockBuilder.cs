@@ -129,6 +129,98 @@ public class TextBlockBuilder
     }
 
     /// <summary>
+    /// Configures the action to invoke when the text block is selected.
+    /// </summary>
+    /// <param name="configure">Action to configure the select action.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public TextBlockBuilder WithSelectAction(Action<ActionBuilder> configure)
+    {
+        var builder = new ActionBuilder();
+        configure(builder);
+        _textBlock.SelectAction = builder.Build();
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the spacing between this element and the preceding element.
+    /// </summary>
+    /// <param name="spacing">The spacing value.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public TextBlockBuilder WithSpacing(Spacing spacing)
+    {
+        _textBlock.Spacing = spacing;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets whether a separator line is drawn at the top of the element.
+    /// </summary>
+    /// <param name="separator">True to show separator.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public TextBlockBuilder WithSeparator(bool separator = true)
+    {
+        _textBlock.Separator = separator;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets whether the element is visible.
+    /// </summary>
+    /// <param name="isVisible">True if visible, false if hidden.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public TextBlockBuilder WithIsVisible(bool isVisible)
+    {
+        _textBlock.IsVisible = isVisible;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the height of the element.
+    /// </summary>
+    /// <param name="height">The height ("auto" or "stretch").</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public TextBlockBuilder WithHeight(string height)
+    {
+        _textBlock.Height = height;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the fallback behavior for the element.
+    /// </summary>
+    /// <param name="fallback">The fallback value ("drop" or another element).</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public TextBlockBuilder WithFallback(object fallback)
+    {
+        _textBlock.Fallback = fallback;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the feature requirements for the element.
+    /// </summary>
+    /// <param name="key">The feature key.</param>
+    /// <param name="version">The minimum version required.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public TextBlockBuilder WithRequires(string key, string version)
+    {
+        _textBlock.Requires ??= new Dictionary<string, string>();
+        _textBlock.Requires[key] = version;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets whether content should be presented right to left.
+    /// </summary>
+    /// <param name="rtl">True for right-to-left.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public TextBlockBuilder WithRtl(bool rtl = true)
+    {
+        _textBlock.Rtl = rtl;
+        return this;
+    }
+
+    /// <summary>
     /// Builds and returns the configured TextBlock.
     /// </summary>
     /// <returns>The configured TextBlock instance.</returns>

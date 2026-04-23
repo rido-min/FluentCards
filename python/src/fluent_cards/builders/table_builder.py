@@ -92,6 +92,38 @@ class TableBuilder:
         self._table['spacing'] = spacing.value
         return self
 
+    def with_is_visible(self, is_visible: bool) -> TableBuilder:
+        """Sets whether the element is visible."""
+        self._table['isVisible'] = is_visible
+        return self
+
+    def with_separator(self, separator: bool = True) -> TableBuilder:
+        """Sets whether a separator line is drawn above the element."""
+        self._table['separator'] = separator
+        return self
+
+    def with_height(self, height: str) -> TableBuilder:
+        """Sets the height of the element."""
+        self._table['height'] = height
+        return self
+
+    def with_fallback(self, fallback) -> TableBuilder:
+        """Sets the fallback content if the element is unsupported."""
+        self._table['fallback'] = fallback
+        return self
+
+    def with_requires(self, key: str, version: str) -> TableBuilder:
+        """Sets a feature requirement for the element."""
+        if 'requires' not in self._table:
+            self._table['requires'] = {}
+        self._table['requires'][key] = version
+        return self
+
+    def with_rtl(self, rtl: bool = True) -> TableBuilder:
+        """Sets right-to-left text direction."""
+        self._table['rtl'] = rtl
+        return self
+
     def add_column(self, column: dict) -> TableBuilder:
         """Adds a column definition to the table.
 

@@ -54,6 +54,12 @@ func (b *TextRunBuilder) WithHighlight(highlight bool) *TextRunBuilder {
 	return b
 }
 
+// WithFontType sets the font family for the text run.
+func (b *TextRunBuilder) WithFontType(fontType FontType) *TextRunBuilder {
+	b.data["fontType"] = string(fontType)
+	return b
+}
+
 func (b *TextRunBuilder) WithSelectAction(configure func(*ActionBuilder)) *TextRunBuilder {
 	ab := newActionBuilder()
 	configure(ab)

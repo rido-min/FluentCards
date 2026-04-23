@@ -1,5 +1,27 @@
 from __future__ import annotations
-from typing import Callable, Optional
+from typing import Callable, Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .action_builder import ActionBuilder
+    from .action_set_builder import ActionSetBuilder
+    from .background_image_builder import BackgroundImageBuilder
+    from .column_set_builder import ColumnSetBuilder
+    from .container_builder import ContainerBuilder
+    from .fact_set_builder import FactSetBuilder
+    from .image_builder import ImageBuilder
+    from .image_set_builder import ImageSetBuilder
+    from .media_builder import MediaBuilder
+    from .refresh_builder import RefreshBuilder
+    from .rich_text_block_builder import RichTextBlockBuilder
+    from .table_builder import TableBuilder
+    from .text_block_builder import TextBlockBuilder
+    from .authentication_builder import AuthenticationBuilder
+    from .inputs.input_text_builder import InputTextBuilder
+    from .inputs.input_number_builder import InputNumberBuilder
+    from .inputs.input_date_builder import InputDateBuilder
+    from .inputs.input_time_builder import InputTimeBuilder
+    from .inputs.input_toggle_builder import InputToggleBuilder
+    from .inputs.input_choice_set_builder import InputChoiceSetBuilder
 from ..enums import VerticalAlignment
 
 
@@ -22,6 +44,8 @@ class AdaptiveCardBuilder:
             'version': '1.5',
             '$schema': self.SCHEMA_URLS['1.5'],
         }
+        self._teams_card_typed_set: bool = False
+        self._teams_card_raw_set: bool = False
 
     @classmethod
     def create(cls) -> AdaptiveCardBuilder:
@@ -131,16 +155,19 @@ class AdaptiveCardBuilder:
         self._card['verticalContentAlignment'] = alignment.value
         return self
 
-    def with_background_image(self, background_image: dict) -> AdaptiveCardBuilder:
-        """Sets the background image for the card.
+    def with_background_image(self, configure: Callable[[BackgroundImageBuilder], None]) -> AdaptiveCardBuilder:
+        """Configures the background image for the card.
 
         Args:
-            background_image: A pre-built background image dictionary.
+            configure: A callable that receives a BackgroundImageBuilder to configure the image.
 
         Returns:
             The builder instance for method chaining.
         """
-        self._card['backgroundImage'] = background_image
+        from .background_image_builder import BackgroundImageBuilder
+        b = BackgroundImageBuilder()
+        configure(b)
+        self._card['backgroundImage'] = b.build()
         return self
 
     def with_select_action(self, action: dict) -> AdaptiveCardBuilder:
@@ -169,7 +196,7 @@ class AdaptiveCardBuilder:
 
     # ─── Body elements ────────────────────────────────────────────────────────
 
-    def add_text_block(self, configure: Callable) -> AdaptiveCardBuilder:
+    def add_text_block(self, configure: Callable[[TextBlockBuilder], None]) -> AdaptiveCardBuilder:
         """Adds a TextBlock element to the card body.
 
         Args:
@@ -184,7 +211,7 @@ class AdaptiveCardBuilder:
         self._push_body(b.build())
         return self
 
-    def add_image(self, configure: Callable) -> AdaptiveCardBuilder:
+    def add_image(self, configure: Callable[[ImageBuilder], None]) -> AdaptiveCardBuilder:
         """Adds an Image element to the card body.
 
         Args:
@@ -199,7 +226,7 @@ class AdaptiveCardBuilder:
         self._push_body(b.build())
         return self
 
-    def add_container(self, configure: Callable) -> AdaptiveCardBuilder:
+    def add_container(self, configure: Callable[[ContainerBuilder], None]) -> AdaptiveCardBuilder:
         """Adds a Container element to the card body.
 
         Args:
@@ -214,7 +241,7 @@ class AdaptiveCardBuilder:
         self._push_body(b.build())
         return self
 
-    def add_column_set(self, configure: Callable) -> AdaptiveCardBuilder:
+    def add_column_set(self, configure: Callable[[ColumnSetBuilder], None]) -> AdaptiveCardBuilder:
         """Adds a ColumnSet element to the card body.
 
         Args:
@@ -229,7 +256,7 @@ class AdaptiveCardBuilder:
         self._push_body(b.build())
         return self
 
-    def add_fact_set(self, configure: Callable) -> AdaptiveCardBuilder:
+    def add_fact_set(self, configure: Callable[[FactSetBuilder], None]) -> AdaptiveCardBuilder:
         """Adds a FactSet element to the card body.
 
         Args:
@@ -244,7 +271,7 @@ class AdaptiveCardBuilder:
         self._push_body(b.build())
         return self
 
-    def add_rich_text_block(self, configure: Callable) -> AdaptiveCardBuilder:
+    def add_rich_text_block(self, configure: Callable[[RichTextBlockBuilder], None]) -> AdaptiveCardBuilder:
         """Adds a RichTextBlock element to the card body.
 
         Args:
@@ -259,7 +286,7 @@ class AdaptiveCardBuilder:
         self._push_body(b.build())
         return self
 
-    def add_action_set(self, configure: Callable) -> AdaptiveCardBuilder:
+    def add_action_set(self, configure: Callable[[ActionSetBuilder], None]) -> AdaptiveCardBuilder:
         """Adds an ActionSet element to the card body.
 
         Args:
@@ -274,7 +301,7 @@ class AdaptiveCardBuilder:
         self._push_body(b.build())
         return self
 
-    def add_media(self, configure: Callable) -> AdaptiveCardBuilder:
+    def add_media(self, configure: Callable[[MediaBuilder], None]) -> AdaptiveCardBuilder:
         """Adds a Media element to the card body.
 
         Args:
@@ -289,7 +316,7 @@ class AdaptiveCardBuilder:
         self._push_body(b.build())
         return self
 
-    def add_image_set(self, configure: Callable) -> AdaptiveCardBuilder:
+    def add_image_set(self, configure: Callable[[ImageSetBuilder], None]) -> AdaptiveCardBuilder:
         """Adds an ImageSet element to the card body.
 
         Args:
@@ -304,7 +331,7 @@ class AdaptiveCardBuilder:
         self._push_body(b.build())
         return self
 
-    def add_table(self, configure: Callable) -> AdaptiveCardBuilder:
+    def add_table(self, configure: Callable[[TableBuilder], None]) -> AdaptiveCardBuilder:
         """Adds a Table element to the card body.
 
         Args:
@@ -321,7 +348,7 @@ class AdaptiveCardBuilder:
 
     # ─── Input elements ───────────────────────────────────────────────────────
 
-    def add_input_text(self, configure: Callable) -> AdaptiveCardBuilder:
+    def add_input_text(self, configure: Callable[[InputTextBuilder], None]) -> AdaptiveCardBuilder:
         """Adds an Input.Text element to the card body.
 
         Args:
@@ -336,7 +363,7 @@ class AdaptiveCardBuilder:
         self._push_body(b.build())
         return self
 
-    def add_input_number(self, configure: Callable) -> AdaptiveCardBuilder:
+    def add_input_number(self, configure: Callable[[InputNumberBuilder], None]) -> AdaptiveCardBuilder:
         """Adds an Input.Number element to the card body.
 
         Args:
@@ -351,7 +378,7 @@ class AdaptiveCardBuilder:
         self._push_body(b.build())
         return self
 
-    def add_input_date(self, configure: Callable) -> AdaptiveCardBuilder:
+    def add_input_date(self, configure: Callable[[InputDateBuilder], None]) -> AdaptiveCardBuilder:
         """Adds an Input.Date element to the card body.
 
         Args:
@@ -366,7 +393,7 @@ class AdaptiveCardBuilder:
         self._push_body(b.build())
         return self
 
-    def add_input_time(self, configure: Callable) -> AdaptiveCardBuilder:
+    def add_input_time(self, configure: Callable[[InputTimeBuilder], None]) -> AdaptiveCardBuilder:
         """Adds an Input.Time element to the card body.
 
         Args:
@@ -381,7 +408,7 @@ class AdaptiveCardBuilder:
         self._push_body(b.build())
         return self
 
-    def add_input_toggle(self, configure: Callable) -> AdaptiveCardBuilder:
+    def add_input_toggle(self, configure: Callable[[InputToggleBuilder], None]) -> AdaptiveCardBuilder:
         """Adds an Input.Toggle element to the card body.
 
         Args:
@@ -396,7 +423,7 @@ class AdaptiveCardBuilder:
         self._push_body(b.build())
         return self
 
-    def add_input_choice_set(self, configure: Callable) -> AdaptiveCardBuilder:
+    def add_input_choice_set(self, configure: Callable[[InputChoiceSetBuilder], None]) -> AdaptiveCardBuilder:
         """Adds an Input.ChoiceSet element to the card body.
 
         Args:
@@ -425,7 +452,7 @@ class AdaptiveCardBuilder:
 
     # ─── Actions ─────────────────────────────────────────────────────────────
 
-    def add_action(self, configure: Callable) -> AdaptiveCardBuilder:
+    def add_action(self, configure: Callable[[ActionBuilder], None]) -> AdaptiveCardBuilder:
         """Adds an action to the card's actions list.
 
         Args:
@@ -444,7 +471,7 @@ class AdaptiveCardBuilder:
 
     # ─── Advanced configuration ───────────────────────────────────────────────
 
-    def with_refresh(self, configure: Callable) -> AdaptiveCardBuilder:
+    def with_refresh(self, configure: Callable[[RefreshBuilder], None]) -> AdaptiveCardBuilder:
         """Sets the refresh configuration for the card.
 
         Args:
@@ -459,7 +486,7 @@ class AdaptiveCardBuilder:
         self._card['refresh'] = b.build()
         return self
 
-    def with_authentication(self, configure: Callable) -> AdaptiveCardBuilder:
+    def with_authentication(self, configure: Callable[[AuthenticationBuilder], None]) -> AdaptiveCardBuilder:
         """Sets the authentication configuration for the card.
 
         Args:
@@ -472,6 +499,51 @@ class AdaptiveCardBuilder:
         b = AuthenticationBuilder()
         configure(b)
         self._card['authentication'] = b.build()
+        return self
+
+    def with_teams_card(self, configure) -> AdaptiveCardBuilder:
+        """Configures Microsoft Teams card-level properties (width, mentions).
+
+        Args:
+            configure: A callable that receives a TeamsCardPropertiesBuilder.
+
+        Returns:
+            The builder instance for method chaining.
+
+        Raises:
+            ValueError: If with_teams_card_raw was already called.
+        """
+        from .teams_card_properties_builder import TeamsCardPropertiesBuilder
+        if self._teams_card_raw_set:
+            raise ValueError(
+                'Cannot use both with_teams_card and with_teams_card_raw '
+                'on the same card. Use one or the other.'
+            )
+        b = TeamsCardPropertiesBuilder()
+        configure(b)
+        self._card['msteams'] = b.build()
+        self._teams_card_typed_set = True
+        return self
+
+    def with_teams_card_raw(self, value: dict) -> AdaptiveCardBuilder:
+        """Sets the Teams msteams card property from a raw dict (escape hatch).
+
+        Args:
+            value: The raw msteams properties dictionary.
+
+        Returns:
+            The builder instance for method chaining.
+
+        Raises:
+            ValueError: If with_teams_card was already called.
+        """
+        if self._teams_card_typed_set:
+            raise ValueError(
+                'Cannot use both with_teams_card and with_teams_card_raw '
+                'on the same card. Use one or the other.'
+            )
+        self._card['msteams'] = dict(value)
+        self._teams_card_raw_set = True
         return self
 
     def build(self) -> dict:

@@ -121,7 +121,7 @@ describe('InputChoiceSetBuilder', () => {
   it('builds an InputChoiceSet with choices', () => {
     const input = new InputChoiceSetBuilder()
       .withId('hobbies')
-      .isMultiSelect()
+      .withIsMultiSelect()
       .withStyle(ChoiceInputStyle.Expanded)
       .addChoice('Reading', 'reading')
       .addChoice('Gaming', 'gaming')

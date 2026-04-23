@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace FluentCards.Serialization;
+namespace FluentCards;
 
 /// <summary>
 /// Custom JSON converter for the data property in SubmitAction/ExecuteAction that can be any JSON object.

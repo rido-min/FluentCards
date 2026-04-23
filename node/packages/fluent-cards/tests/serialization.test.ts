@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
   AdaptiveCardBuilder,
   toJson,
+  toObject,
   fromJson,
   TextSize,
   TextWeight,
@@ -214,5 +215,74 @@ describe('fromJson', () => {
     const action = parsed.actions![0] as OpenUrlAction;
     assert.equal(action.url, 'https://example.com');
     assert.equal(action.title, 'Visit');
+  });
+});
+
+describe('toObject', () => {
+  it('returns a plain object with type and version', () => {
+    const card = AdaptiveCardBuilder.create().build();
+    const obj = toObject(card);
+    assert.equal(obj.type, 'AdaptiveCard');
+    assert.equal(obj.version, '1.5');
+  });
+
+  it('strips undefined properties', () => {
+    const card = AdaptiveCardBuilder.create()
+      .addTextBlock((b) => b.withText('Hello'))
+      .build();
+    const obj = toObject(card);
+    const tb = obj.body![0] as TextBlock;
+    assert.equal(tb.text, 'Hello');
+    // Optional fields that were not set should not be present at all
+    assert.equal('size' in tb, false);
+    assert.equal('weight' in tb, false);
+    assert.equal('color' in tb, false);
+    assert.equal('wrap' in tb, false);
+  });
+
+  it('produces the same result as JSON.parse(toJson(card))', () => {
+    const card = AdaptiveCardBuilder.create()
+      .addTextBlock((b) =>
+        b.withText('Test').withSize(TextSize.Large).withWeight(TextWeight.Bolder).withWrap(true),
+      )
+      .addAction((b) => b.openUrl('https://example.com').withTitle('Go'))
+      .build();
+    const viaJson = JSON.parse(toJson(card));
+    const viaObject = toObject(card);
+    assert.deepStrictEqual(viaObject, viaJson);
+  });
+
+  it('does not mutate the original card', () => {
+    const card = AdaptiveCardBuilder.create()
+      .addTextBlock((b) => b.withText('Original'))
+      .build();
+    const obj = toObject(card);
+    // Mutate the result — original should be unaffected
+    (obj as any).version = '99.0';
+    assert.equal(card.version, '1.5');
+  });
+
+  it('preserves arrays (body, actions)', () => {
+    const card = AdaptiveCardBuilder.create()
+      .addTextBlock((b) => b.withText('A'))
+      .addTextBlock((b) => b.withText('B'))
+      .addAction((b) => b.openUrl('https://a.com'))
+      .addAction((b) => b.submit('OK'))
+      .build();
+    const obj = toObject(card);
+    assert.equal(obj.body!.length, 2);
+    assert.equal(obj.actions!.length, 2);
+  });
+
+  it('preserves nested object properties', () => {
+    const card = AdaptiveCardBuilder.create()
+      .addTextBlock((b) =>
+        b.withText('Nested').withSize(TextSize.Medium).withColor(TextColor.Accent),
+      )
+      .build();
+    const obj = toObject(card);
+    const tb = obj.body![0] as TextBlock;
+    assert.equal(tb.size, TextSize.Medium);
+    assert.equal(tb.color, TextColor.Accent);
   });
 });

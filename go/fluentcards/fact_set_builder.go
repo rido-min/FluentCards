@@ -19,7 +19,42 @@ func (b *FactSetBuilder) WithSpacing(spacing Spacing) *FactSetBuilder {
 	return b
 }
 
-// AddFact adds a fact with the given title and value strings.
+func (b *FactSetBuilder) WithIsVisible(isVisible bool) *FactSetBuilder {
+	b.data["isVisible"] = isVisible
+	return b
+}
+
+func (b *FactSetBuilder) WithSeparator(separator bool) *FactSetBuilder {
+	b.data["separator"] = separator
+	return b
+}
+
+func (b *FactSetBuilder) WithHeight(height string) *FactSetBuilder {
+	b.data["height"] = height
+	return b
+}
+
+func (b *FactSetBuilder) WithFallback(fallback any) *FactSetBuilder {
+	b.data["fallback"] = fallback
+	return b
+}
+
+func (b *FactSetBuilder) WithRequires(key, version string) *FactSetBuilder {
+	reqs, ok := b.data["requires"].(map[string]any)
+	if !ok {
+		reqs = map[string]any{}
+	}
+	reqs[key] = version
+	b.data["requires"] = reqs
+	return b
+}
+
+func (b *FactSetBuilder) WithRtl(rtl bool) *FactSetBuilder {
+	b.data["rtl"] = rtl
+	return b
+}
+
+// AddFactadds a fact with the given title and value strings.
 func (b *FactSetBuilder) AddFact(title, value string) *FactSetBuilder {
 	facts := b.data["facts"].([]any)
 	b.data["facts"] = append(facts, map[string]any{"title": title, "value": value})

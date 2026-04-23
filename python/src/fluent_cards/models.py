@@ -5,7 +5,7 @@ These TypedDicts serve as documentation only. At runtime, plain Python dicts
 are used throughout the library (mirrors TypeScript's structural typing).
 """
 from __future__ import annotations
-from typing import TypedDict, Optional, Union, List, Any
+from typing import TypedDict, Any
 
 
 class Fact(TypedDict, total=False):
@@ -27,6 +27,15 @@ class MediaSource(TypedDict, total=False):
 
     url: str
     mimeType: str
+
+
+class CaptionSource(TypedDict, total=False):
+    """Represents a caption source for a Media element."""
+
+    type: str  # 'CaptionSource'
+    mimeType: str
+    url: str
+    label: str
 
 
 class BackgroundImage(TypedDict, total=False):
@@ -61,14 +70,14 @@ class AuthenticationConfiguration(TypedDict, total=False):
     text: str
     connectionName: str
     tokenExchangeResource: TokenExchangeResource
-    buttons: List[AuthCardButton]
+    buttons: list[AuthCardButton]
 
 
 class RefreshConfiguration(TypedDict, total=False):
     """Defines the refresh configuration for an Adaptive Card."""
 
     action: Any
-    userIds: List[str]
+    userIds: list[str]
     expires: str
 
 
@@ -90,7 +99,7 @@ class TableCell(TypedDict, total=False):
     """Represents a single cell within a TableRow."""
 
     type: str  # 'TableCell'
-    items: List[Any]
+    items: list[Any]
     selectAction: Any
     style: str
     bleed: bool
@@ -104,7 +113,7 @@ class TableRow(TypedDict, total=False):
     """Represents a row of cells within a Table element."""
 
     type: str  # 'TableRow'
-    cells: List[TableCell]
+    cells: list[TableCell]
     style: str
 
 
@@ -113,8 +122,8 @@ class AdaptiveCard(TypedDict, total=False):
 
     type: str  # 'AdaptiveCard'
     version: str
-    body: List[Any]
-    actions: List[Any]
+    body: list[Any]
+    actions: list[Any]
     selectAction: Any
     fallbackText: str
     backgroundImage: Any

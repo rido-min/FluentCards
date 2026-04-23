@@ -20,6 +20,9 @@ var card = AdaptiveCardBuilder.Create()
         .WithSize(TextSize.Large)
         .WithWeight(TextWeight.Bolder)
         .WithWrap(true))
+    .AddAction(a => a
+        .OpenUrl("https://adaptivecards.io")
+        .WithTitle("Learn More"))
     .Build();
 
 Console.WriteLine(card.ToJson());
@@ -36,6 +39,12 @@ dotnet/
 └── scripts/                  # Screenshot and setup utilities
 ```
 
+## API Overview
+
+All elements use the builder pattern: `Create()` → `WithX()` / `AddX(configure)` → `Build()`.
+
+Available builders: `AdaptiveCardBuilder`, `TextBlockBuilder`, `ImageBuilder`, `ContainerBuilder`, `ColumnSetBuilder`, `ColumnBuilder`, `FactSetBuilder`, `RichTextBlockBuilder`, `TextRunBuilder`, `ActionSetBuilder`, `MediaBuilder`, `ImageSetBuilder`, `TableBuilder`, `ActionBuilder`, `BackgroundImageBuilder`, `RefreshBuilder`, `AuthenticationBuilder`, and input builders (`InputTextBuilder`, `InputNumberBuilder`, `InputDateBuilder`, `InputTimeBuilder`, `InputToggleBuilder`, `InputChoiceSetBuilder`).
+
 ## Build & Test
 
 ```bash
@@ -44,4 +53,4 @@ dotnet build --configuration Release
 dotnet test --configuration Release --no-build
 ```
 
-See [Schema Validation](../docs/schema-validation.md) and [Teams Cards](../docs/teams-cards.md) for more details.
+See the [root README](https://github.com/rido-min/FluentCards#readme) for all language ports, and [Schema Validation](../docs/schema-validation.md) and [Teams Cards](../docs/teams-cards.md) for more details.

@@ -8,7 +8,7 @@ export function createPeoplePickerCard() {
       i
         .withId('people-picker')
         .withLabel('Select users in the whole organization')
-        .isMultiSelect()
+        .withIsMultiSelect()
         .withValue('user1,user2')
         .withChoicesData('graph.microsoft.com/users'),
     )

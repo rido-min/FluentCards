@@ -1,7 +1,6 @@
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Jobs;
 using FluentCards;
-using FluentCards.Serialization;
 using System.Text.Json;
 
 namespace FluentCards.Benchmarks;

@@ -109,6 +109,12 @@ public class AdaptiveCard
     public BackgroundImage? BackgroundImage { get; set; }
 
     /// <summary>
+    /// Microsoft Teams–specific card properties (width, mentions, etc.).
+    /// </summary>
+    [JsonPropertyName("msteams")]
+    public TeamsCardProperties? Msteams { get; set; }
+
+    /// <summary>
     /// Applies a known <see cref="AdaptiveCardVersion"/>, setting both <see cref="Version"/> and <see cref="Schema"/>.
     /// </summary>
     /// <param name="version">The version to apply.</param>

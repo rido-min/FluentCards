@@ -1,5 +1,4 @@
 using System.Text.Json.Serialization;
-using FluentCards.Serialization;
 
 namespace FluentCards;
 

@@ -78,6 +78,78 @@ public class MediaBuilder
     }
 
     /// <summary>
+    /// Sets the spacing between this element and the preceding element.
+    /// </summary>
+    /// <param name="spacing">The spacing value.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public MediaBuilder WithSpacing(Spacing spacing)
+    {
+        _media.Spacing = spacing;
+        return this;
+    }
+    /// <summary>
+    /// Sets whether a separator line is drawn at the top of the element.
+    /// </summary>
+    /// <param name="separator">True to show separator.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public MediaBuilder WithSeparator(bool separator = true)
+    {
+        _media.Separator = separator;
+        return this;
+    }
+    /// <summary>
+    /// Sets whether the element is visible.
+    /// </summary>
+    /// <param name="isVisible">True if visible, false if hidden.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public MediaBuilder WithIsVisible(bool isVisible)
+    {
+        _media.IsVisible = isVisible;
+        return this;
+    }
+    /// <summary>
+    /// Sets the height of the element.
+    /// </summary>
+    /// <param name="height">The height ("auto" or "stretch").</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public MediaBuilder WithHeight(string height)
+    {
+        _media.Height = height;
+        return this;
+    }
+    /// <summary>
+    /// Sets the fallback behavior for the element.
+    /// </summary>
+    /// <param name="fallback">The fallback value ("drop" or another element).</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public MediaBuilder WithFallback(object fallback)
+    {
+        _media.Fallback = fallback;
+        return this;
+    }
+    /// <summary>
+    /// Sets the feature requirements for the element.
+    /// </summary>
+    /// <param name="key">The feature key.</param>
+    /// <param name="version">The minimum version required.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public MediaBuilder WithRequires(string key, string version)
+    {
+        _media.Requires ??= new Dictionary<string, string>();
+        _media.Requires[key] = version;
+        return this;
+    }
+    /// <summary>
+    /// Sets whether content should be presented right to left.
+    /// </summary>
+    /// <param name="rtl">True for right-to-left.</param>
+    /// <returns>The builder instance for method chaining.</returns>
+    public MediaBuilder WithRtl(bool rtl = true)
+    {
+        _media.Rtl = rtl;
+        return this;
+    }
+    /// <summary>
     /// Builds and returns the configured Media.
     /// </summary>
     /// <returns>The configured Media instance.</returns>

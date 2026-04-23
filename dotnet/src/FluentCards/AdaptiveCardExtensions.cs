@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace FluentCards;
 
@@ -15,6 +16,28 @@ public static class AdaptiveCardExtensions
     public static string ToJson(this AdaptiveCard card)
     {
         return JsonSerializer.Serialize(card, FluentCardsJsonContext.Default.AdaptiveCard);
+    }
+
+    /// <summary>
+    /// Serializes an AdaptiveCard to a <see cref="JsonElement"/> without an intermediate string.
+    /// Useful when embedding a card into a larger JSON payload to avoid double serialization.
+    /// </summary>
+    /// <param name="card">The AdaptiveCard to serialize.</param>
+    /// <returns>A <see cref="JsonElement"/> representing the card.</returns>
+    public static JsonElement ToJsonElement(this AdaptiveCard card)
+    {
+        return AdaptiveCardSerializer.SerializeToElement(card);
+    }
+
+    /// <summary>
+    /// Serializes an AdaptiveCard to a <see cref="JsonNode"/> (mutable DOM).
+    /// Useful when consumers need to modify the card JSON after building.
+    /// </summary>
+    /// <param name="card">The AdaptiveCard to serialize.</param>
+    /// <returns>A <see cref="JsonNode"/> representing the card, or null if serialization produces a null node.</returns>
+    public static JsonNode? ToJsonNode(this AdaptiveCard card)
+    {
+        return AdaptiveCardSerializer.SerializeToNode(card);
     }
 
     /// <summary>

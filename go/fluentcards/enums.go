@@ -31,7 +31,6 @@ const (
 	TextColorGood      TextColor = "good"
 	TextColorAttention TextColor = "attention"
 	TextColorWarning   TextColor = "warning"
-	TextColorWhite     TextColor = "white"
 )
 
 // FontType controls the font family used for text rendering.

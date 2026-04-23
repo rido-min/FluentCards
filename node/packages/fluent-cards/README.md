@@ -20,6 +20,9 @@ const card = AdaptiveCardBuilder.create()
     .withSize(TextSize.Large)
     .withWeight(TextWeight.Bolder)
     .withWrap(true))
+  .addAction(a => a
+    .openUrl('https://adaptivecards.io')
+    .withTitle('Learn More'))
   .build();
 
 console.log(toJson(card));
@@ -45,6 +48,12 @@ node/
 │   └── package.json
 └── package.json           # npm workspace root
 ```
+
+## API Overview
+
+All elements use the builder pattern: `create()` → `withX()` / `addX(configure)` → `build()`.
+
+Available builders: `AdaptiveCardBuilder`, `TextBlockBuilder`, `ImageBuilder`, `ContainerBuilder`, `ColumnSetBuilder`, `ColumnBuilder`, `FactSetBuilder`, `RichTextBlockBuilder`, `TextRunBuilder`, `ActionSetBuilder`, `MediaBuilder`, `ImageSetBuilder`, `TableBuilder`, `ActionBuilder`, `BackgroundImageBuilder`, `RefreshBuilder`, `AuthenticationBuilder`, and input builders (`InputTextBuilder`, `InputNumberBuilder`, `InputDateBuilder`, `InputTimeBuilder`, `InputToggleBuilder`, `InputChoiceSetBuilder`).
 
 ## Build & Test
 

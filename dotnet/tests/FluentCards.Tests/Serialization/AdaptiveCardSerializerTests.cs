@@ -1,5 +1,4 @@
 using System.Text;
-using FluentCards.Serialization;
 using Xunit;
 
 namespace FluentCards.Tests.Serialization;

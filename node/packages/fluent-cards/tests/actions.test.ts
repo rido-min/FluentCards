@@ -103,6 +103,38 @@ describe('ActionBuilder', () => {
     assert.throws(() => new ActionBuilder().build(), /No action type specified/);
   });
 
+  it('throws when calling withId before setting action type', () => {
+    assert.throws(() => new ActionBuilder().withId('a1'), /No action type has been specified/);
+  });
+
+  it('throws when calling withTitle before setting action type', () => {
+    assert.throws(() => new ActionBuilder().withTitle('T'), /No action type has been specified/);
+  });
+
+  it('throws when calling withIconUrl before setting action type', () => {
+    assert.throws(() => new ActionBuilder().withIconUrl('https://x.com/icon.png'), /No action type has been specified/);
+  });
+
+  it('throws when calling withStyle before setting action type', () => {
+    assert.throws(() => new ActionBuilder().withStyle(ActionStyle.Positive), /No action type has been specified/);
+  });
+
+  it('throws when calling withIsEnabled before setting action type', () => {
+    assert.throws(() => new ActionBuilder().withIsEnabled(false), /No action type has been specified/);
+  });
+
+  it('throws when calling withTooltip before setting action type', () => {
+    assert.throws(() => new ActionBuilder().withTooltip('tip'), /No action type has been specified/);
+  });
+
+  it('throws when calling withData before setting action type', () => {
+    assert.throws(() => new ActionBuilder().withData({ x: 1 }), /No action type has been specified/);
+  });
+
+  it('throws when calling addTargetElement before setting action type', () => {
+    assert.throws(() => new ActionBuilder().addTargetElement('el1'), /No action type has been specified/);
+  });
+
   it('serializes ShowCard with nested actions', () => {
     const card = AdaptiveCardBuilder.create()
       .addAction((b) =>
