@@ -89,6 +89,37 @@ Skipped pending architecture decision (`go:needs-research` label). Decision fram
 
 ---
 
+### 2026-04-27: Lower Python Minimum Version to 3.8+
+**Status:** Implemented  
+**Author:** Hockney (Python Dev)  
+**Issue:** #77  
+**PR:** #78
+
+#### Decision
+
+Lowered `requires-python` from `>=3.10` to `>=3.8` with zero library code changes.
+
+#### Rationale
+
+Full audit confirmed the Python codebase was already 3.8-compatible:
+- All PEP 604 union syntax (`X | Y`) and built-in generic syntax (`dict[str, Any]`) guarded by `from __future__ import annotations`
+- Enums use `str, Enum` base (not `StrEnum` which requires 3.11)
+- No `match/case`, `TypeAlias`, `tomllib`, or 3.9+ stdlib APIs
+
+This unblocks `botas` consumers who need fluent-cards on Python 3.8/3.9.
+
+#### Test Results
+
+- All 363 tests pass ✅
+- Zero library code changes required
+
+#### Team Impact
+
+- **CI**: Expanded test matrix from `[3.10, 3.12]` to `[3.8, 3.9, 3.10, 3.11, 3.12, 3.13]` per Keaton
+- **Future code**: Contributors should maintain `from __future__ import annotations` in all files and avoid 3.9+ stdlib APIs to preserve compatibility
+
+---
+
 ## Governance
 
 - All meaningful changes require team consensus

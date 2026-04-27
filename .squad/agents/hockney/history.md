@@ -54,3 +54,19 @@ Key pattern learned: `with_requires` consistently uses `(key: str, version: str)
 ### 2026-04-15 — Native Object Serialization (#75) — Cross-Team Coordination
 
 Collaborated with McManus (.NET), Fenster (TypeScript), and Verbal (Tester) on Issue #75 implementation. Python `to_dict()` function complete with 8 new tests (371 total, was 363). All three core ports now provide equivalent native object methods with identical cleanup semantics: .NET `ToJsonElement()`/`ToJsonNode()`, TypeScript `toObject()`, Python `to_dict()`. Cross-port equivalence tests written by Verbal validate that all implementations produce identical output to `JSON.parse(toJson())` / `json.loads(to_json())`. Go port deferred pending architecture decision.
+
+### 2025-07-23 — Lower Python Minimum Version to 3.8+ (#77)
+
+- **Audit result**: The Python codebase was already 3.8-compatible. Zero code changes needed to the library or tests.
+- **Key compatibility facts**: All files using PEP 604 `X | Y` syntax or `dict[str, Any]` built-in generics already had `from __future__ import annotations`. All enums use `str, Enum` (not `StrEnum`). No `match/case`, `TypeAlias`, `tomllib`, or 3.9+ stdlib APIs.
+- **Change**: `pyproject.toml` `requires-python` lowered from `>=3.10` to `>=3.8`. Added 3.8, 3.9, 3.13 classifiers.
+- **Pattern learned**: The early adoption of `from __future__ import annotations` across the codebase paid off — it made the entire library forward-compatible with older Python versions without any runtime changes.
+- **PR**: #78, all 363 tests pass.
+
+### 2026-04-27 — Python 3.8+ Support Complete
+
+- Coordinated release of Python 3.8+ minimum version support with Keaton's CI matrix expansion.
+- Keaton expanded test coverage in `.github/workflows/ci.yml` from `[3.10, 3.12]` to `[3.8, 3.9, 3.10, 3.11, 3.12, 3.13]`.
+- Documentation updated: `pyproject.toml` and team decision log reflect new policy.
+- Team impact: Unblocks downstream users like `botas` who require Python 3.8/3.9 compatibility.
+- Future maintenance: Contributors must preserve `from __future__ import annotations` and avoid 3.9+ stdlib APIs.

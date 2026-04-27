@@ -52,3 +52,12 @@ Key findings:
 - 17 of 18 enums match schema exactly
 - Existing test file has 21 tests; ~60 more needed for .NET parity (~84 tests)
 - Full audit report: `.squad/decisions/inbox/keaton-ts-schema-audit.md`
+
+### 2026-04-27 — Python 3.8+ Support Complete
+
+- Coordinated with Hockney on Python minimum version support initiative.
+- Expanded CI test matrix in `.github/workflows/ci.yml` from `[3.10, 3.12]` to `[3.8, 3.9, 3.10, 3.11, 3.12, 3.13]`.
+- Hockney completed audit confirming zero code changes needed; `pyproject.toml` constraint updated.
+- Documentation: Decision merged into `.squad/decisions.md`, orchestration logs completed.
+- Team impact: Unblocks downstream consumers requiring Python 3.8/3.9.
+- Future guardrail: Documented that contributors must maintain `from __future__ import annotations` and avoid 3.9+ stdlib APIs.
