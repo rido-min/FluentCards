@@ -135,6 +135,107 @@ describe('ActionBuilder', () => {
     assert.throws(() => new ActionBuilder().addTargetElement('el1'), /No action type has been specified/);
   });
 
+  // ─── Issue #66: withData() throws on incompatible action types ─────────
+
+  it('withData() throws on OpenUrl action', () => {
+    assert.throws(
+      () => new ActionBuilder().openUrl('https://example.com').withData({ x: 1 }),
+      /withData\(\) is only available on Submit or Execute actions/,
+    );
+  });
+
+  it('withData() throws on ShowCard action', () => {
+    assert.throws(
+      () => new ActionBuilder().showCard('Show').withData({ x: 1 }),
+      /withData\(\) is only available on Submit or Execute actions/,
+    );
+  });
+
+  it('withData() throws on ToggleVisibility action', () => {
+    assert.throws(
+      () => new ActionBuilder().toggleVisibility('Toggle').withData({ x: 1 }),
+      /withData\(\) is only available on Submit or Execute actions/,
+    );
+  });
+
+  it('withData() works on Submit action', () => {
+    const action = new ActionBuilder().submit().withData({ key: 'val' }).build() as SubmitAction;
+    assert.deepEqual(action.data, { key: 'val' });
+  });
+
+  it('withData() works on Execute action', () => {
+    const action = new ActionBuilder().execute().withData({ key: 'val' }).build() as ExecuteAction;
+    assert.deepEqual(action.data, { key: 'val' });
+  });
+
+  // ─── Issue #66: withVerb() throws on incompatible action types ────────
+
+  it('withVerb() throws on OpenUrl action', () => {
+    assert.throws(
+      () => new ActionBuilder().openUrl('https://example.com').withVerb('doIt'),
+      /withVerb\(\) is only available on Execute actions/,
+    );
+  });
+
+  it('withVerb() throws on Submit action', () => {
+    assert.throws(
+      () => new ActionBuilder().submit().withVerb('doIt'),
+      /withVerb\(\) is only available on Execute actions/,
+    );
+  });
+
+  it('withVerb() throws on ShowCard action', () => {
+    assert.throws(
+      () => new ActionBuilder().showCard().withVerb('doIt'),
+      /withVerb\(\) is only available on Execute actions/,
+    );
+  });
+
+  it('withVerb() throws on ToggleVisibility action', () => {
+    assert.throws(
+      () => new ActionBuilder().toggleVisibility().withVerb('doIt'),
+      /withVerb\(\) is only available on Execute actions/,
+    );
+  });
+
+  it('withVerb() works on Execute action', () => {
+    const action = new ActionBuilder().execute().withVerb('doIt').build() as ExecuteAction;
+    assert.equal(action.verb, 'doIt');
+  });
+
+  // ─── Issue #66: withAssociatedInputs() throws on incompatible types ───
+
+  it('withAssociatedInputs() throws on OpenUrl action', () => {
+    assert.throws(
+      () => new ActionBuilder().openUrl('https://example.com').withAssociatedInputs(AssociatedInputs.Auto),
+      /withAssociatedInputs\(\) is only available on Submit or Execute actions/,
+    );
+  });
+
+  it('withAssociatedInputs() throws on ShowCard action', () => {
+    assert.throws(
+      () => new ActionBuilder().showCard().withAssociatedInputs(AssociatedInputs.Auto),
+      /withAssociatedInputs\(\) is only available on Submit or Execute actions/,
+    );
+  });
+
+  it('withAssociatedInputs() throws on ToggleVisibility action', () => {
+    assert.throws(
+      () => new ActionBuilder().toggleVisibility().withAssociatedInputs(AssociatedInputs.Auto),
+      /withAssociatedInputs\(\) is only available on Submit or Execute actions/,
+    );
+  });
+
+  it('withAssociatedInputs() works on Submit action', () => {
+    const action = new ActionBuilder().submit().withAssociatedInputs(AssociatedInputs.None).build() as SubmitAction;
+    assert.equal(action.associatedInputs, AssociatedInputs.None);
+  });
+
+  it('withAssociatedInputs() works on Execute action', () => {
+    const action = new ActionBuilder().execute().withAssociatedInputs(AssociatedInputs.Auto).build() as ExecuteAction;
+    assert.equal(action.associatedInputs, AssociatedInputs.Auto);
+  });
+
   it('serializes ShowCard with nested actions', () => {
     const card = AdaptiveCardBuilder.create()
       .addAction((b) =>

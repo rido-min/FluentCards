@@ -169,18 +169,18 @@ class ActionBuilder:
             The builder instance for method chaining.
 
         Raises:
-            ValueError: If with_teams_data or with_teams_task_fetch was already called.
+            ValueError: If not a Submit or Execute action, or if with_teams_data
+                was already called.
         """
-        self._ensure_action_type_set()
+        self._ensure_submit_or_execute('with_data')
         if self._teams_data_set:
             raise ValueError(
                 'Cannot use both with_data and with_teams_data on the same action. '
                 'Use with_teams_data to combine msteams properties with custom data, '
                 'or with_data for raw data.'
             )
-        if self._action.get('type') in ('Action.Submit', 'Action.Execute'):
-            self._action['data'] = data
-            self._data_set = True
+        self._action['data'] = data
+        self._data_set = True
         return self
 
     def with_associated_inputs(self, associated_inputs: AssociatedInputs) -> ActionBuilder:
@@ -191,10 +191,12 @@ class ActionBuilder:
 
         Returns:
             The builder instance for method chaining.
+
+        Raises:
+            ValueError: If not a Submit or Execute action.
         """
-        self._ensure_action_type_set()
-        if self._action.get('type') in ('Action.Submit', 'Action.Execute'):
-            self._action['associatedInputs'] = associated_inputs.value
+        self._ensure_submit_or_execute('with_associated_inputs')
+        self._action['associatedInputs'] = associated_inputs.value
         return self
 
     def with_verb(self, verb: str) -> ActionBuilder:
@@ -205,10 +207,12 @@ class ActionBuilder:
 
         Returns:
             The builder instance for method chaining.
+
+        Raises:
+            ValueError: If not an Execute action.
         """
-        self._ensure_action_type_set()
-        if self._action.get('type') == 'Action.Execute':
-            self._action['verb'] = verb
+        self._ensure_execute_only('with_verb')
+        self._action['verb'] = verb
         return self
 
     def with_card(self, card: dict) -> ActionBuilder:
@@ -266,6 +270,22 @@ class ActionBuilder:
         return self
 
     # ── Teams-specific methods (Submit-only) ────────────────────────────────
+
+    def _ensure_submit_or_execute(self, method_name: str) -> None:
+        self._ensure_action_type_set()
+        if self._action.get('type') not in ('Action.Submit', 'Action.Execute'):
+            raise ValueError(
+                f'{method_name}() is only available on Submit or Execute actions. '
+                'Call submit() or execute() before using this method.'
+            )
+
+    def _ensure_execute_only(self, method_name: str) -> None:
+        self._ensure_action_type_set()
+        if self._action.get('type') != 'Action.Execute':
+            raise ValueError(
+                f'{method_name}() is only available on Execute actions. '
+                'Call execute() before using this method.'
+            )
 
     def _ensure_submit_only(self, method_name: str) -> None:
         self._ensure_action_type_set()

@@ -127,36 +127,33 @@ export class ActionBuilder {
 
   // ─── SubmitAction / ExecuteAction specifics ───────────────────────────────
 
-  /** Sets the data payload (for Submit or Execute actions). @param data The data to submit. @returns The builder instance for method chaining. @throws Error if WithTeamsData or WithTeamsTaskFetch was already called. */
+  /** Sets the data payload (for Submit or Execute actions). @param data The data to submit. @returns The builder instance for method chaining. @throws Error if not a Submit or Execute action, or if WithTeamsData or WithTeamsTaskFetch was already called. */
   withData(data: unknown): this {
     this.ensureActionTypeSet();
+    this.ensureSubmitOrExecute('withData');
     if (this.teamsDataSet) {
       throw new Error('Cannot use both withData and withTeamsData on the same action. Use withTeamsData to combine msteams properties with custom data, or withData for raw data.');
     }
-    if (this.action!.type === 'Action.Submit' || this.action!.type === 'Action.Execute') {
-      (this.action as SubmitAction | ExecuteAction).data = data;
-      this.dataSet = true;
-    }
+    (this.action as SubmitAction | ExecuteAction).data = data;
+    this.dataSet = true;
     return this;
   }
 
-  /** Sets which inputs are included when the action is submitted (for Submit or Execute actions). @param associatedInputs The associated inputs option. @returns The builder instance for method chaining. */
+  /** Sets which inputs are included when the action is submitted (for Submit or Execute actions). @param associatedInputs The associated inputs option. @returns The builder instance for method chaining. @throws Error if not a Submit or Execute action. */
   withAssociatedInputs(associatedInputs: AssociatedInputs): this {
     this.ensureActionTypeSet();
-    if (this.action!.type === 'Action.Submit' || this.action!.type === 'Action.Execute') {
-      (this.action as SubmitAction | ExecuteAction).associatedInputs = associatedInputs;
-    }
+    this.ensureSubmitOrExecute('withAssociatedInputs');
+    (this.action as SubmitAction | ExecuteAction).associatedInputs = associatedInputs;
     return this;
   }
 
   // ─── ExecuteAction specific ───────────────────────────────────────────────
 
-  /** Sets the verb for an Execute action. @param verb The command verb. @returns The builder instance for method chaining. */
+  /** Sets the verb for an Execute action. @param verb The command verb. @returns The builder instance for method chaining. @throws Error if not an Execute action. */
   withVerb(verb: string): this {
     this.ensureActionTypeSet();
-    if (this.action!.type === 'Action.Execute') {
-      (this.action as ExecuteAction).verb = verb;
-    }
+    this.ensureExecuteOnly('withVerb');
+    (this.action as ExecuteAction).verb = verb;
     return this;
   }
 
@@ -234,6 +231,18 @@ export class ActionBuilder {
     (this.action as SubmitAction).msteams = { ...value };
     this.teamsSubmitRawSet = true;
     return this;
+  }
+
+  private ensureSubmitOrExecute(methodName: string): void {
+    if (this.action!.type !== 'Action.Submit' && this.action!.type !== 'Action.Execute') {
+      throw new Error(`${methodName}() is only available on Submit or Execute actions. Call submit() or execute() before using this method.`);
+    }
+  }
+
+  private ensureExecuteOnly(methodName: string): void {
+    if (this.action!.type !== 'Action.Execute') {
+      throw new Error(`${methodName}() is only available on Execute actions. Call execute() before using this method.`);
+    }
   }
 
   private ensureSubmitOnly(methodName: string): void {

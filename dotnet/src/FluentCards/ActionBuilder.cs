@@ -159,14 +159,19 @@ public class ActionBuilder
     }
 
     /// <summary>
-    /// Sets the data payload for Submit and Execute actions.
+    /// Sets the data payload for Submit and Execute actions from a <see cref="JsonElement"/>.
+    /// Use this overload when you already have parsed JSON (e.g., from a deserialized response or <see cref="JsonDocument"/>).
+    /// For inline JSON strings, use <see cref="WithData(string)"/>.
+    /// For typed objects, use <see cref="WithData{T}(T)"/>.
     /// </summary>
-    /// <param name="data">The data payload as a JSON element.</param>
+    /// <param name="data">The data payload as a JSON element. The element is cloned to avoid lifetime issues.</param>
     /// <returns>The builder instance for method chaining.</returns>
-    /// <exception cref="InvalidOperationException">Thrown when <see cref="WithTeamsData"/> or <see cref="WithTeamsTaskFetch"/> was already called.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the action is not Submit or Execute,
+    /// or when <see cref="WithTeamsData"/> or <see cref="WithTeamsTaskFetch"/> was already called.</exception>
     public ActionBuilder WithData(JsonElement data)
     {
         EnsureActionTypeSet();
+        EnsureSubmitOrExecute(nameof(WithData));
         if (_teamsDataSet)
         {
             throw new InvalidOperationException(
@@ -186,22 +191,24 @@ public class ActionBuilder
     }
 
     /// <summary>
-    /// Sets the data payload for Submit and Execute actions from a JSON string.
+    /// Sets the data payload for Submit and Execute actions from a raw JSON string.
+    /// The string is parsed and stored as a <see cref="JsonElement"/>.
+    /// Use this overload for inline JSON literals. For pre-parsed JSON, use <see cref="WithData(JsonElement)"/>.
+    /// For typed objects, use <see cref="WithData{T}(T)"/>.
     /// </summary>
-    /// <param name="jsonData">The JSON payload string.</param>
+    /// <param name="jsonData">A valid JSON string representing the data payload.</param>
     /// <returns>The builder instance for method chaining.</returns>
-    /// <exception cref="InvalidOperationException">Thrown when <see cref="WithTeamsData"/> or <see cref="WithTeamsTaskFetch"/> was already called.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the action is not Submit or Execute,
+    /// or when <see cref="WithTeamsData"/> or <see cref="WithTeamsTaskFetch"/> was already called.</exception>
+    /// <exception cref="JsonException">Thrown when <paramref name="jsonData"/> is not valid JSON.</exception>
     public ActionBuilder WithData(string jsonData)
     {
         EnsureActionTypeSet();
+        EnsureSubmitOrExecute(nameof(WithData));
         if (_teamsDataSet)
         {
             throw new InvalidOperationException(
                 "Cannot use both WithData and WithTeamsData on the same action. Use WithTeamsData to combine msteams properties with custom data, or WithData for raw JSON.");
-        }
-        if (_action is not SubmitAction && _action is not ExecuteAction)
-        {
-            return this;
         }
 
         using var document = JsonDocument.Parse(jsonData);
@@ -209,25 +216,26 @@ public class ActionBuilder
     }
 
     /// <summary>
-    /// Sets the data payload for Submit and Execute actions by serializing an object to a <see cref="JsonElement"/>.
+    /// Sets the data payload for Submit and Execute actions by serializing a typed object to a <see cref="JsonElement"/>.
     /// Uses the source-generated <see cref="FluentCardsJsonContext"/> for AOT-compatible serialization.
+    /// Use this overload when you have a strongly-typed data object. For raw JSON strings, use <see cref="WithData(string)"/>.
+    /// For pre-parsed JSON, use <see cref="WithData(JsonElement)"/>.
     /// </summary>
-    /// <typeparam name="T">The type of the data object. Must be registered in <see cref="FluentCardsJsonContext"/>.</typeparam>
+    /// <typeparam name="T">The type of the data object. Must be registered in <see cref="FluentCardsJsonContext"/>
+    /// via <c>[JsonSerializable(typeof(T))]</c>.</typeparam>
     /// <param name="data">The data object to serialize.</param>
     /// <returns>The builder instance for method chaining.</returns>
-    /// <exception cref="InvalidOperationException">Thrown when <see cref="WithTeamsData"/> or <see cref="WithTeamsTaskFetch"/> was already called,
+    /// <exception cref="InvalidOperationException">Thrown when the action is not Submit or Execute,
+    /// or when <see cref="WithTeamsData"/> or <see cref="WithTeamsTaskFetch"/> was already called,
     /// or when the type is not registered in the source-generated context.</exception>
     public ActionBuilder WithData<T>(T data)
     {
         EnsureActionTypeSet();
+        EnsureSubmitOrExecute(nameof(WithData));
         if (_teamsDataSet)
         {
             throw new InvalidOperationException(
                 "Cannot use both WithData and WithTeamsData on the same action. Use WithTeamsData to combine msteams properties with custom data, or WithData for raw JSON.");
-        }
-        if (_action is not SubmitAction && _action is not ExecuteAction)
-        {
-            return this;
         }
 
         var typeInfo = FluentCardsJsonContext.Default.GetTypeInfo(typeof(T))
@@ -244,9 +252,11 @@ public class ActionBuilder
     /// </summary>
     /// <param name="associatedInputs">The associated inputs setting.</param>
     /// <returns>The builder instance for method chaining.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when the action is not Submit or Execute.</exception>
     public ActionBuilder WithAssociatedInputs(AssociatedInputs associatedInputs)
     {
         EnsureActionTypeSet();
+        EnsureSubmitOrExecute(nameof(WithAssociatedInputs));
         if (_action is SubmitAction submitAction)
         {
             submitAction.AssociatedInputs = associatedInputs;
@@ -263,13 +273,12 @@ public class ActionBuilder
     /// </summary>
     /// <param name="verb">The action verb.</param>
     /// <returns>The builder instance for method chaining.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when the action is not an Execute action.</exception>
     public ActionBuilder WithVerb(string verb)
     {
         EnsureActionTypeSet();
-        if (_action is ExecuteAction executeAction)
-        {
-            executeAction.Verb = verb;
-        }
+        EnsureExecuteOnly(nameof(WithVerb));
+        ((ExecuteAction)_action).Verb = verb;
         return this;
     }
 
@@ -431,6 +440,24 @@ public class ActionBuilder
         {
             throw new InvalidOperationException(
                 $"{methodName} is only available on Submit actions. Call Submit() before using this method.");
+        }
+    }
+
+    private void EnsureSubmitOrExecute(string methodName)
+    {
+        if (_action is not SubmitAction && _action is not ExecuteAction)
+        {
+            throw new InvalidOperationException(
+                $"{methodName}() is only available on Submit or Execute actions. Call Submit() or Execute() before using this method.");
+        }
+    }
+
+    private void EnsureExecuteOnly(string methodName)
+    {
+        if (_action is not ExecuteAction)
+        {
+            throw new InvalidOperationException(
+                $"{methodName}() is only available on Execute actions. Call Execute() before using this method.");
         }
     }
 

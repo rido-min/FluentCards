@@ -129,6 +129,72 @@ class TestActionBuilder:
         with pytest.raises(ValueError, match='No action type specified'):
             ActionBuilder().add_target_element('el1')
 
+    # ── Issue #66: with_data() raises on incompatible types ───────────────
+
+    def test_with_data_raises_on_open_url(self):
+        with pytest.raises(ValueError, match='with_data\\(\\) is only available on Submit or Execute'):
+            ActionBuilder().open_url('https://example.com').with_data({'k': 'v'})
+
+    def test_with_data_raises_on_show_card(self):
+        with pytest.raises(ValueError, match='with_data\\(\\) is only available on Submit or Execute'):
+            ActionBuilder().show_card().with_data({'k': 'v'})
+
+    def test_with_data_raises_on_toggle_visibility(self):
+        with pytest.raises(ValueError, match='with_data\\(\\) is only available on Submit or Execute'):
+            ActionBuilder().toggle_visibility().with_data({'k': 'v'})
+
+    def test_with_data_works_on_submit(self):
+        action = ActionBuilder().submit().with_data({'k': 'v'}).build()
+        assert action['data'] == {'k': 'v'}
+
+    def test_with_data_works_on_execute(self):
+        action = ActionBuilder().execute().with_data({'k': 'v'}).build()
+        assert action['data'] == {'k': 'v'}
+
+    # ── Issue #66: with_verb() raises on incompatible types ────────────────
+
+    def test_with_verb_raises_on_open_url(self):
+        with pytest.raises(ValueError, match='with_verb\\(\\) is only available on Execute'):
+            ActionBuilder().open_url('https://example.com').with_verb('doIt')
+
+    def test_with_verb_raises_on_submit(self):
+        with pytest.raises(ValueError, match='with_verb\\(\\) is only available on Execute'):
+            ActionBuilder().submit().with_verb('doIt')
+
+    def test_with_verb_raises_on_show_card(self):
+        with pytest.raises(ValueError, match='with_verb\\(\\) is only available on Execute'):
+            ActionBuilder().show_card().with_verb('doIt')
+
+    def test_with_verb_raises_on_toggle_visibility(self):
+        with pytest.raises(ValueError, match='with_verb\\(\\) is only available on Execute'):
+            ActionBuilder().toggle_visibility().with_verb('doIt')
+
+    def test_with_verb_works_on_execute(self):
+        action = ActionBuilder().execute().with_verb('doIt').build()
+        assert action['verb'] == 'doIt'
+
+    # ── Issue #66: with_associated_inputs() raises on incompatible types ───
+
+    def test_with_associated_inputs_raises_on_open_url(self):
+        with pytest.raises(ValueError, match='with_associated_inputs\\(\\) is only available on Submit or Execute'):
+            ActionBuilder().open_url('https://example.com').with_associated_inputs(AssociatedInputs.None_)
+
+    def test_with_associated_inputs_raises_on_show_card(self):
+        with pytest.raises(ValueError, match='with_associated_inputs\\(\\) is only available on Submit or Execute'):
+            ActionBuilder().show_card().with_associated_inputs(AssociatedInputs.None_)
+
+    def test_with_associated_inputs_raises_on_toggle_visibility(self):
+        with pytest.raises(ValueError, match='with_associated_inputs\\(\\) is only available on Submit or Execute'):
+            ActionBuilder().toggle_visibility().with_associated_inputs(AssociatedInputs.None_)
+
+    def test_with_associated_inputs_works_on_submit(self):
+        action = ActionBuilder().submit().with_associated_inputs(AssociatedInputs.None_).build()
+        assert action['associatedInputs'] == AssociatedInputs.None_.value
+
+    def test_with_associated_inputs_works_on_execute(self):
+        action = ActionBuilder().execute().with_associated_inputs(AssociatedInputs.Auto).build()
+        assert action['associatedInputs'] == AssociatedInputs.Auto.value
+
     def test_serializes_show_card_with_nested_actions(self):
         card = (AdaptiveCardBuilder.create()
                 .add_action(lambda b: b.show_card('Show').with_card(
