@@ -81,7 +81,7 @@ deno run program.ts
 
 ## Deno Tests
 
-The Deno test suite validates the JSR-published library in Deno runtime. Tests are located in `tests-deno/` and use Deno's built-in test runner.
+The Deno test suite validates the library in Deno runtime. Tests are located in `tests-deno/` and use Deno's built-in test runner.
 
 **Run Deno tests:**
 ```bash
@@ -89,7 +89,20 @@ cd node/packages/fluent-cards
 deno test tests-deno/ --sloppy-imports
 ```
 
-**Note:** `--sloppy-imports` is required because the library source uses `.js` extensions in imports (for Node.js compatibility), but Deno resolves them to `.ts` at runtime.
+`--sloppy-imports` is required because the library source uses `.js` extensions in imports (for Node.js CommonJS compatibility), but Deno resolves them to `.ts` files at runtime.
+
+## JSR Publishing
+
+For JSR publication, the source must use explicit `.ts` extensions (sloppy imports are not allowed by `deno publish`). A small build step rewrites `.js` → `.ts` extensions in `src/` and writes the result to `jsr-src/` (gitignored). `jsr.json` then exports `./jsr-src/index.ts`.
+
+**Validate JSR publication locally:**
+```bash
+cd node/packages/fluent-cards
+node scripts/build-jsr.mjs       # writes jsr-src/
+deno publish --dry-run           # validates the package
+```
+
+CI runs the build step automatically before `deno check` and `deno publish`.
 
 ## Project Layout
 

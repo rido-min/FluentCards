@@ -74,10 +74,38 @@ export interface ExpenseReportCardInput {
 // ─── Factory methods ─────────────────────────────────────────────────────────
 
 /**
+ * Public API surface for {@link TeamsAdaptiveCards}. Declared explicitly so
+ * the JSR slow-types check can resolve the exported type without inference.
+ */
+export interface TeamsAdaptiveCardsApi {
+  /**
+   * Creates an approval request card with Approve and Decline actions.
+   * Reflects the Teams approval sample pattern where a requester asks for sign-off on an item.
+   */
+  createApprovalCard(input: ApprovalCardInput): AdaptiveCard;
+  /**
+   * Creates a project status update card showing project info, status, and progress.
+   */
+  createStatusUpdateCard(input: StatusUpdateCardInput): AdaptiveCard;
+  /**
+   * Creates a task assignment / update card with task details and a primary action.
+   */
+  createTaskUpdateCard(input: TaskUpdateCardInput): AdaptiveCard;
+  /**
+   * Creates a meeting reminder card with date/time, attendees, and a join link.
+   */
+  createMeetingReminderCard(input: MeetingReminderCardInput): AdaptiveCard;
+  /**
+   * Creates an expense report card with employee info, totals, and a details link.
+   */
+  createExpenseReportCard(input: ExpenseReportCardInput): AdaptiveCard;
+}
+
+/**
  * Provides helper methods for creating Microsoft Teams-style Adaptive Cards,
  * reflecting common patterns from the Teams Adaptive Card Samples collection.
  */
-export const TeamsAdaptiveCards = {
+export const TeamsAdaptiveCards: TeamsAdaptiveCardsApi = {
   /**
    * Creates an approval request card with Approve and Decline actions.
    * Reflects the Teams approval sample pattern where a requester asks for sign-off on an item.

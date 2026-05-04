@@ -73,3 +73,26 @@ Expanded `node/packages/fluent-cards/tests/schema-conformance.test.ts` from 21 t
 - **Python API difference caught**: `ActionBuilder.submit('Title')` not `as_submit().with_title('Title')` — Python uses a combined method. Always verify builder API per port.
 - Removed conflicting `NativeObjectSerializationTests.cs` from `Serialization/` subfolder (created by another agent) to avoid duplicate/competing test files.
 - **Edge case**: Python `to_dict()` uses `_clean()` which converts enums AND strips None, while `to_json()` uses `_strip_none()` only (enums handled by json.dumps). This means `to_dict()` and `json.loads(to_json())` should produce identical output — confirmed by equivalence test.
+
+### 2026-05-04 — Issue #80: Deno Test Suite Implementation
+
+- Created 39 tests across 3 files (`builder.test.ts`, `serialization.test.ts`, `validation.test.ts`) in `node/packages/fluent-cards/tests-deno/` to validate JSR-published library in Deno runtime.
+- **Deno test runner patterns learned:**
+  - `Deno.test('name', () => {...})` or `Deno.test({ name: '...', fn: () => {...} })` — both work
+  - Assertions from `jsr:@std/assert@^1` — `assertEquals`, `assertExists`, `assertThrows`
+  - `assertEquals` is deep by default (like Node's `assert.deepStrictEqual`)
+  - `assertThrows(fn, ErrorClass, 'message substring')` checks error type and message includes substring
+  - **Import strategy:** Tests use local relative imports (`../src/index.ts`) because JSR package not yet published. Production can use `jsr:@adaptivecards/fluent` after publish.
+- **Critical runtime flag:** `--sloppy-imports` required because library source uses `.js` extensions in imports (for Node.js/CommonJS compatibility), but Deno resolves them to `.ts` files at runtime. Without this flag, Deno throws "Module not found" errors.
+- **Type strictness differences from Node:**
+  - `fromJson` returns `AdaptiveCard | null` (not non-null) — tests must use `assertExists(parsed)` before accessing properties
+  - `AdaptiveCardValidationError.errors` (not `.issues`) — property name differs from validation function return
+  - `RichTextBlock.inlines` is `(string | TextRun)[]` — must type-narrow with `typeof inline === 'object'` before accessing `.type`
+- **Builder vs raw object for validation tests:** Node tests often use builders (which auto-generate IDs), but I initially used raw objects and hit missing ID errors. Switched to builder pattern for consistency.
+- **Error message capitalization:** `validateAndThrow` message is "Adaptive Card validation failed" (capital C), not "Adaptive card" — tests must match exact case.
+- **CI integration:** Added step after "Deno typecheck" and before "JSR dry-run publish" — ensures tests run on every PR. Step only runs on `ubuntu-latest` (matches Deno setup).
+- **Test coverage:** 13 builder tests (AdaptiveCard, TextBlock, Image, Container, ColumnSet, FactSet, RichTextBlock, ActionSet, InputText, complex chaining), 13 serialization tests (toJson/toObject/fromJson, round-trips, enum camelCase, undefined stripping), 13 validation tests (validate() returns issues, validateAndThrow() throws, 8 different error codes, path correctness). Total 39 tests exceeds 20 minimum.
+- **Node test suite still passes:** 298 Node tests pass after adding Deno tests — zero regressions.
+- Commit SHA: `4179700478eeed640efc6525d478283c5e06c60f`
+- Branch: `squad/80-deno-support` (pushed)
+
