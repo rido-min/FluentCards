@@ -106,4 +106,23 @@ Implemented dual-publication support for npm and JSR (Deno registry) on branch `
 - Deno test suite — Verbal will add ~20 core tests in follow-up commit (AdaptiveCardBuilder, builders, toJson/fromJson, validate, round-trip)
 - PR creation — Coordinator opens after Verbal's tests merge
 
-**Hand-off to Verbal:** See `.squad/decisions/inbox/fenster-issue-80-impl-handoff.md` for test requirements.
+### 2026-05-04 — Issue #80: JSR Dual-Publication Implementation (Completed)
+
+Successfully implemented Deno support via dual publication to npm and JSR from single TypeScript codebase. Key learning: **JSR strict module resolution rejects `.js` extensions** — must use build-jsr.mjs script to transform extensions before JSR operations. This is critical for any future JSR adoption.
+
+**Architecture:**
+- `jsr.json` exports point to `jsr-src/index.ts` (build-generated, gitignored)
+- `scripts/build-jsr.mjs` transforms npm source (`.js` exts) → JSR source (`.ts` exts)
+- npm CommonJS build remains unchanged (no `"type": "module"` added)
+- Deno samples in `node/samples/deno/` (snake_case)
+- 39 core tests in `tests-deno/` (Verbal delivered)
+- CI integration with version stamping, JSR publish on tags
+
+**Commits:** 678262b, 1bc6f11, c16b259 (Fenster) + 4179700 (Verbal) + c69878e (Coordinator patch)
+
+**Key constraint:** `--sloppy-imports` required for local deno tests (source uses .js exts); resolved by build-jsr.mjs before JSR publication.
+
+**Critical insight not in original plan:** JSR's strict analysis cannot be bypassed with `--no-check`. The build-jsr pattern is essential, not optional.
+
+**Status:** Ready for PR merge. Awaiting `DENO_DEPLOY_TOKEN` secret and team approval. Build-jsr pattern documented in `.squad/skills/jsr-dual-publication/SKILL.md` for reuse.
+

@@ -75,3 +75,11 @@ Key findings:
 - **Ecosystem precedent:** Modern TS libraries (Zod, Effect, tRPC) ship to both npm + JSR from single codebase; this is established pattern.
 - **Status:** Planning completed 2026-05-04. Merged into decisions.md as active decision. Awaiting user input on 3 open questions before Fenster + Verbal execution begins.
 - Architecture plan: `.squad/decisions/inbox/keaton-issue-80-deno-plan.md` (merged to decisions.md on 2026-05-04)
+
+### 2026-05-04 — Issue #80: Post-Implementation Learnings (Critical Gotcha Not in Plan)
+
+Fenster's implementation revealed **JSR strict module resolution is non-negotiable** — JSR does NOT accept `.js` extensions in import paths, and `--no-check` does NOT bypass this validation. The original plan did not account for this constraint. 
+
+**Lesson for future architecture proposals:** When planning dual-publication to both CommonJS (npm) and ESM (JSR) targets, account for the extension mismatch. The solution (build-jsr.mjs transforms extensions) works well but adds a build step that must run before any JSR operations.
+
+**For future Deno/JSR projects:** This `.js` → `.ts` extension transformation via build script is now the established pattern and should be documented in reusable skill for team reference.

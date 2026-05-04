@@ -96,3 +96,12 @@ Expanded `node/packages/fluent-cards/tests/schema-conformance.test.ts` from 21 t
 - Commit SHA: `4179700478eeed640efc6525d478283c5e06c60f`
 - Branch: `squad/80-deno-support` (pushed)
 
+### 2026-05-04 — Issue #80: JSR Strict Module Resolution Blocker (Coordinator Discovery)
+
+Post-test discovery by Coordinator: **JSR's static analysis cannot be bypassed and strictly rejects `.js` file extensions in import paths.** Initial implementation was publication-blocking. Solution: `scripts/build-jsr.mjs` script transforms npm source (with `.js` exts) to JSR source (with `.ts` exts) in a `jsr-src/` directory (gitignored). This script must run before any `deno check` or `deno publish` operation.
+
+**Key learning for test team:** The `--sloppy-imports` flag used in deno tests is a workaround for local development only — it does NOT solve the JSR publication problem. JSR always validates module resolution strictly. The build-jsr pattern is the proper solution and handles both the test sloppy-imports issue and the JSR publication issue.
+
+**Status:** Coordinator applied fix (commit c69878e) and validated locally: npm 298/298 tests pass, deno test 39/39 pass, deno publish --dry-run succeeds. Ready for PR.
+
+

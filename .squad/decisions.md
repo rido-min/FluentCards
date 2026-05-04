@@ -2,10 +2,12 @@
 
 ## Active Decisions
 
-### 2026-05-04: Issue #80 — Deno Support Architecture Plan
-**Status:** Proposed  
-**Author:** Keaton (Lead / Architect)  
-**Date:** 2025-01-23  
+### 2026-05-04: Issue #80 — Deno Support (Dual Publication to npm + JSR)
+**Status:** ✅ Implemented  
+**Author:** Keaton (Lead / Architect), Fenster (TS Dev), Verbal (Tester)  
+**PR:** [#81](https://github.com/rido-min/FluentCards/pull/81)  
+**Branch:** `squad/80-deno-support`  
+**Completion Date:** 2026-05-04  
 **Issue:** [#80](https://github.com/rido-min/FluentCards/issues/80) — "Support Deno for TypeScript, including the package published to JSR.io and samples"
 
 #### Executive Summary
@@ -48,11 +50,74 @@ Extend `node/packages/fluent-cards/` to publish to both npm and JSR.
 
 **Assignee:** Fenster (TypeScript Dev) + Verbal (Tester)
 
-#### Open Questions (User Input Required)
+#### User Decisions (Confirmed)
 
-1. **JSR Scope Name:** Confirm `@rido-min/fluent-cards` vs `@fluent-cards/core`?
-2. **Deno Test Coverage:** Full 280-test parity vs minimal 20+ core tests?
-3. **Publish Cadence:** Sync npm + JSR in CI vs manual JSR publish?
+1. **✅ JSR Scope:** `@adaptivecards/fluent` (confirmed by user)
+2. **✅ Test Coverage:** ~20 core tests → Delivered 39 tests (exceeded target)
+3. **✅ Publish Cadence:** Sync npm + JSR via CI on tagged releases
+
+#### Implementation Summary
+
+**Agents & Commits:**
+- **Fenster (TS Dev):** feat(deno) — 678262b, 1bc6f11, c16b259
+  - Created `node/packages/fluent-cards/jsr.json` with JSR scope `@adaptivecards/fluent`
+  - Added 7 canonical Deno samples in `node/samples/deno/` (snake_case)
+  - Updated `.github/workflows/ci.yml` with Deno setup, typecheck, dry-run, publish steps
+  - Updated root README, AGENTS.md, node/README.md with Deno documentation
+  
+- **Verbal (Tester):** test(deno) — 4179700
+  - Implemented 39 core Deno tests in `node/packages/fluent-cards/tests-deno/`
+  - Covers: builder fluent chaining, serialization (toJson/toObject/fromJson), validation, sample integration
+  - Uses Deno's native test runner (`Deno.test` + `jsr:@std/assert`)
+  - All tests pass ✅
+  
+- **Coordinator (Lightweight Patch):** fix(deno) — c69878e
+  - Discovered JSR strict module resolution blocker: rejects `.js` extensions
+  - Created `scripts/build-jsr.mjs` to transform npm source (`.js` extensions) → JSR source (`.ts` extensions)
+  - Updated `jsr.json` exports to point to `jsr-src/index.ts` (gitignored)
+  - Added TeamsAdaptiveCardsApi interface export to models.ts
+  - Updated `.gitignore` and committed `deno.lock`
+  - All validation passed: npm 298/298, deno 39/39, deno publish --dry-run ✅
+
+**Files Created (15):**
+- `jsr.json`, `LICENSE`, `deno/basic_card_sample.ts` through `validation_sample.ts`, `deno/program.ts`
+- `scripts/build-jsr.mjs` (critical for JSR build)
+- `tests-deno/` (39 tests)
+- `deno.lock`
+
+**Files Modified (6):**
+- `.github/workflows/ci.yml` (Deno steps)
+- `README.md` (TypeScript/Deno row in Language Ports)
+- `AGENTS.md` (Deno support pattern documentation)
+- `node/packages/fluent-cards/README.md` (Deno installation)
+- `node/packages/fluent-cards/src/models.ts` (TeamsAdaptiveCardsApi export)
+- `.gitignore` (added jsr-src/)
+
+#### Key Insights (Learnings for Future)
+
+1. **JSR Strict Module Resolution (Critical Gotcha):** JSR does NOT accept `.js` extensions in import paths. The `--sloppy-imports` flag only disables strict checking in Deno runtime tests, not in JSR's static analysis. Solution: use `scripts/build-jsr.mjs` to rewrite extensions before JSR operations.
+
+2. **Avoid "type": "module" Trap:** Do NOT add `"type": "module"` to `package.json` just to enable JSR — it breaks npm's CommonJS consumers. Instead, have JSR read TypeScript source directly (via `exports` in `jsr.json`). Single source of truth design.
+
+3. **Version Stamping Pattern:** `jsr.json` version must be synced with `package.json` during release. Handled in CI, not manually.
+
+4. **--no-check Doesn't Bypass Module Resolution:** `deno publish --no-check` still validates imports. JSR's strict analysis cannot be skipped.
+
+#### Validation Results
+
+| Check | Status | Notes |
+|-------|--------|-------|
+| npm install | ✅ 298 packages | Zero vulnerabilities |
+| npm test | ✅ 298 tests | All pass |
+| npm typecheck | ✅ | Zero errors |
+| deno test | ✅ 39 tests | All pass with `--sloppy-imports` |
+| deno publish --dry-run | ✅ | Metadata valid, publication-ready |
+
+#### Deferred (Awaiting)
+
+1. **DENO_DEPLOY_TOKEN secret** — Rido to add via GitHub repo Settings → Secrets and variables → Actions
+2. **PR review & merge** — Awaiting team approval
+3. **Release cadence** — CI will auto-sync versions and publish on tagged releases
 
 #### Schema Impact
 
@@ -71,16 +136,12 @@ Extend `node/packages/fluent-cards/` to publish to both npm and JSR.
 
 ---
 
-### 2026-05-04: Issue #80 — Deno Compatibility Audit (TypeScript Port)
-**Status:** Complete  
+### 2026-04-27: Issue #80 — Deno Compatibility Audit (TypeScript Port) [Merged into #80 Implementation]
+**Status:** Complete (subsumed by Issue #80 implementation)  
 **Auditor:** Fenster (TypeScript Dev)  
 **Date:** 2026-04-27  
 **Scope:** `node/packages/fluent-cards/` production library  
-**Confidence:** Very High
-
-#### Deno Readiness Score: 🟢 GREEN
-
-**Verdict:** Production code is **100% Deno-ready** — zero Node-specific APIs detected.
+**Note:** This preliminary audit confirmed 100% Deno-readiness and informed the dual-publication architecture. See Issue #80 implementation above for completion status.
 
 #### Key Findings
 
