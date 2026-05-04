@@ -124,6 +124,11 @@ jobs:
         working-directory: node/packages/fluent-cards
         run: deno check src/index.ts
 
+      - name: Deno test
+        if: matrix.os == 'ubuntu-latest'
+        working-directory: node/packages/fluent-cards
+        run: deno test tests-deno/ --sloppy-imports
+
       - name: JSR dry-run publish
         if: matrix.os == 'ubuntu-latest'
         working-directory: node/packages/fluent-cards

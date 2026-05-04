@@ -134,6 +134,13 @@ The TypeScript port supports **dual publication** to both npm and JSR (Deno regi
 - `jsr.json` and optional `tsconfig.jsr.json` provide JSR-specific configuration
 - Samples for Deno live in `node/samples/deno/` (snake_case files)
 
+**Testing:**
+- Deno test suite: `node/packages/fluent-cards/tests-deno/` (39 core tests)
+- Uses Deno's native test runner (`Deno.test`) with `jsr:@std/assert`
+- Run tests: `cd node/packages/fluent-cards && deno test tests-deno/ --sloppy-imports`
+- Tests validate builder fluent chaining, serialization (toJson/toObject/fromJson), and validation
+- `--sloppy-imports` flag required because library uses `.js` extensions (for Node) but Deno resolves to `.ts`
+
 **Publishing:**
 - CI publishes to both npm and JSR on tagged releases
 - Version stamping: `jsr.json` version field is synced with `package.json` during release

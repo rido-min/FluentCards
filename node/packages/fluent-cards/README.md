@@ -79,6 +79,18 @@ cd node/samples/deno
 deno run program.ts
 ```
 
+## Deno Tests
+
+The Deno test suite validates the JSR-published library in Deno runtime. Tests are located in `tests-deno/` and use Deno's built-in test runner.
+
+**Run Deno tests:**
+```bash
+cd node/packages/fluent-cards
+deno test tests-deno/ --sloppy-imports
+```
+
+**Note:** `--sloppy-imports` is required because the library source uses `.js` extensions in imports (for Node.js compatibility), but Deno resolves them to `.ts` at runtime.
+
 ## Project Layout
 
 ```
