@@ -113,6 +113,22 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      - name: Setup Deno
+        if: matrix.os == 'ubuntu-latest'
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Deno typecheck
+        if: matrix.os == 'ubuntu-latest'
+        working-directory: node/packages/fluent-cards
+        run: deno check src/index.ts
+
+      - name: JSR dry-run publish
+        if: matrix.os == 'ubuntu-latest'
+        working-directory: node/packages/fluent-cards
+        run: deno publish --dry-run
+
       - name: Stamp version
         if: matrix.os == 'ubuntu-latest'
         working-directory: node/packages/fluent-cards
@@ -134,6 +150,21 @@ jobs:
         with:
           name: npm-package
           path: node/packages/fluent-cards/*.tgz
+
+      - name: Stamp JSR version
+        if: matrix.os == 'ubuntu-latest' && startsWith(github.ref, 'refs/tags/')
+        working-directory: node/packages/fluent-cards
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "Stamping JSR version: $VERSION"
+          node -e "const fs=require('fs'); const jsr=JSON.parse(fs.readFileSync('jsr.json','utf8')); jsr.version='$VERSION'; fs.writeFileSync('jsr.json', JSON.stringify(jsr,null,2)+'\n');"
+
+      - name: Publish to JSR
+        if: matrix.os == 'ubuntu-latest' && startsWith(github.ref, 'refs/tags/')
+        working-directory: node/packages/fluent-cards
+        env:
+          DENO_DEPLOY_TOKEN: ${{ secrets.DENO_DEPLOY_TOKEN }}
+        run: deno publish --allow-dirty
 
   python:
     name: Python ${{ matrix.python-version }} (${{ matrix.os }})

@@ -2,13 +2,27 @@
 
 A TypeScript library for building [Adaptive Cards](https://adaptivecards.io/) using a fluent builder pattern with strong typing and built-in validation.
 
+**Supported runtimes:**
+- Node.js 20+ (npm package: `fluent-cards`)
+- Deno 2+ (JSR package: `jsr:@adaptivecards/fluent`)
+
 ## Installation
+
+### Node.js (npm)
 
 ```bash
 npm install fluent-cards
 ```
 
+### Deno (JSR)
+
+```bash
+deno add jsr:@adaptivecards/fluent
+```
+
 ## Quick Start
+
+### Node.js
 
 ```typescript
 import { AdaptiveCardBuilder, TextSize, TextWeight, toJson } from 'fluent-cards';
@@ -26,6 +40,43 @@ const card = AdaptiveCardBuilder.create()
   .build();
 
 console.log(toJson(card));
+```
+
+### Deno
+
+```typescript
+import { AdaptiveCardBuilder, TextSize, TextWeight, toJson } from 'jsr:@adaptivecards/fluent';
+
+const card = AdaptiveCardBuilder.create()
+  .withVersion('1.5')
+  .addTextBlock(tb => tb
+    .withText('Hello, FluentCards!')
+    .withSize(TextSize.Large)
+    .withWeight(TextWeight.Bolder)
+    .withWrap(true))
+  .addAction(a => a
+    .openUrl('https://adaptivecards.io')
+    .withTitle('Learn More'))
+  .build();
+
+console.log(toJson(card));
+```
+
+## Samples
+
+- **Node.js samples:** [`node/samples/`](../../samples/)
+- **Deno samples:** [`node/samples/deno/`](../../samples/deno/)
+
+Run Node samples:
+```bash
+cd node/samples
+node --require tsx/cjs program.ts
+```
+
+Run Deno samples:
+```bash
+cd node/samples/deno
+deno run program.ts
 ```
 
 ## Project Layout

@@ -60,7 +60,8 @@ Naming conventions by language:
 | Language | Convention | Example |
 |----------|------------|---------|
 | C# | PascalCase `.cs` | `BasicCardSample.cs` |
-| TypeScript | camelCase `.ts` | `basicCardSample.ts` |
+| TypeScript (Node) | camelCase `.ts` | `basicCardSample.ts` |
+| TypeScript (Deno) | snake_case `.ts` | `basic_card_sample.ts` |
 | Python | snake_case `.py` | `basic_card_sample.py` |
 | Go | snake_case `.go` | `basic_card_sample.go` |
 
@@ -121,6 +122,38 @@ npm install && npm test && npm run typecheck
 - Update or add tests for any behavior change.
 - Do not modify CI, dependency versions, or security settings unless asked.
 - Never print, log, or commit secrets.
+
+### Deno Support (JSR Publication)
+
+The TypeScript port supports **dual publication** to both npm and JSR (Deno registry). This is a publication target expansion, not a separate language port.
+
+**Architecture:**
+- Library source (`src/`) is 100% Deno-compatible (zero Node.js APIs, pure TypeScript)
+- JSR consumes `src/*.ts` directly via `jsr.json`'s `exports` field — does NOT use compiled output
+- npm build remains CommonJS (`package.json` and `tsconfig.json` unchanged)
+- `jsr.json` and optional `tsconfig.jsr.json` provide JSR-specific configuration
+- Samples for Deno live in `node/samples/deno/` (snake_case files)
+
+**Publishing:**
+- CI publishes to both npm and JSR on tagged releases
+- Version stamping: `jsr.json` version field is synced with `package.json` during release
+- JSR publish requires repo secret `DENO_DEPLOY_TOKEN`
+
+**Important constraints:**
+- Do NOT add `"type": "module"` to `package.json` — would break npm CommonJS build
+- Do NOT change `tsconfig.json`'s `module` field — npm consumers depend on CommonJS output
+- JSR-specific config goes in `jsr.json` only
+
+**Running Deno samples:**
+```bash
+cd node/samples/deno
+deno run program.ts  # runs all samples
+deno run basic_card_sample.ts  # run individual sample
+```
+
+**Import strategy in Deno samples:**
+- Production: `import { ... } from 'jsr:@adaptivecards/fluent';`
+- Local dev: `import { ... } from '../../packages/fluent-cards/src/index.ts';` (commented out by default)
 
 ---
 
