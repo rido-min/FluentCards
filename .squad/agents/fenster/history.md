@@ -58,3 +58,17 @@ Fixed all 8 gaps from Keaton's TS schema audit plus the enum casing fix:
 ### 2026-04-15 — Native Object Serialization (#75) — Cross-Team Coordination
 
 Collaborated with McManus (.NET), Hockney (Python), and Verbal (Tester) on Issue #75. TypeScript implementation complete with 6 new tests in `native-object.test.ts`. All three core ports (dotnet, node, python) now provide native object methods: .NET `ToJsonElement()`/`ToJsonNode()`, TypeScript `toObject()`, Python `to_dict()`. Test parity maintained — all ports cover identical semantic scenarios (round-trip, equivalence, complex card, minimal card, enum strings, field stripping). Verbal's cross-port test framework ensures all implementations produce bit-identical results to `JSON.parse(toJson())`. Go skipped pending architecture review (`go:needs-research`).
+
+### 2026-04-27 — Deno Compatibility Audit (Issue #80)
+
+Conducted comprehensive Deno/JSR readiness audit of TypeScript port for Keaton. Key findings:
+
+**Green light:** Production code is 100% Deno-ready — zero Node built-ins, zero runtime deps, pure ESM source, all 132 relative imports already have explicit `.js` extensions (discovered library was already compliant — no migration needed for import paths).
+
+**Two blockers:**
+1. `tsconfig.json` emits CommonJS (`"module": "CommonJS"`) — must switch to `"module": "ES2022"` or `"ESNext"` for JSR publication
+2. `package.json` missing `"type": "module"` declaration — trivial 1-line add
+
+**Tests:** 12 test files use `node:test` + `node:assert/strict` — would need Deno test adapter or dual test suite for `deno test` compatibility. Does not block JSR publication (tests aren't published). Production library has no Node dependencies.
+
+**Migration effort:** Low — 2-4 hours for Phase 1 (JSR-ready). Library architecture is already Deno-compatible by design (zero deps, explicit extensions, ESM-only source). Full report in `.squad/decisions/inbox/fenster-issue-80-deno-audit.md` for Keaton's review. Audit merged to decisions.md on 2026-05-04 as active decision.

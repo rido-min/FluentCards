@@ -11,6 +11,10 @@
 
 <!-- Append new learnings below. Each entry is something lasting about the project. -->
 
+### 2026-05-04 — Issue #80: Deno Test Suite (Planning)
+
+Keaton and Fenster completed architecture planning + readiness audit for Deno support. **Incoming task:** Task 3 of 8-task work breakdown requires implementing Deno test suite (20+ core tests minimum) for JSR publication. Fenster will handle library config and samples; Verbal to implement `tests-deno/` with builder, serialization, and validation tests. Target: `deno test` compatibility to validate JSR package works in Deno runtime. Does not block JSR publication (tests not shipped) but recommended for production confidence. Test files will import from JSR (or relative path for local dev), use Deno's native test runner (`Deno.test` + `assertEquals` from `std/assert`), avoid Node.js built-ins. Estimated 4-6 hours Phase 2 effort. Open design question: Full 280-test parity vs minimal 20+ core?
+
 ### 2026-04-15 — Initial Test Suite Review
 
 - **.NET is the reference port** with 583 tests across 46 files. TypeScript has 102, Python 104, Go 63. The gap is ~5.6×.

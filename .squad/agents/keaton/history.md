@@ -61,3 +61,17 @@ Key findings:
 - Documentation: Decision merged into `.squad/decisions.md`, orchestration logs completed.
 - Team impact: Unblocks downstream consumers requiring Python 3.8/3.9.
 - Future guardrail: Documented that contributors must maintain `from __future__ import annotations` and avoid 3.9+ stdlib APIs.
+
+### 2025-01-23 — Issue #80 Architecture Plan: Deno Support via Dual Publication
+
+- Produced comprehensive architecture plan for adding Deno support to TypeScript port.
+- **Key decision:** Dual publication to npm + JSR from single `node/` codebase — not a new top-level port.
+- **Rationale:** Deno is a runtime target, not a new language per AGENTS.md "Adding a New Language Port" rules. TypeScript source is 100% Deno-compatible (zero Node.js APIs detected via grep audit). Dual publication minimizes maintenance burden, avoids sample drift, and aligns with JSR single-source-of-truth philosophy.
+- **Technical approach:** Add `jsr.json`, ESM build config (`tsconfig.jsr.json`), Deno samples in `node/samples/deno/` (snake_case, JSR imports), optional `deno test` suite, CI integration with version stamping.
+- **Sample parity strategy:** Deno entry points in `node/samples/deno/` call shared sample logic from `node/samples/` — no duplication of 7 canonical samples. AGENTS.md parity rules apply: changes to Node samples must update Deno entry points.
+- **Work breakdown:** 8 tasks for Fenster (TS Dev) and Verbal (Tester) covering config, samples, tests, CI, docs, secrets, manual publish test, validation.
+- **Open questions:** JSR scope name confirmation (`@rido-min/fluent-cards` vs `@fluent-cards/core`), Deno test scope (20+ core tests vs full 280 parity), publish cadence (sync with npm vs manual).
+- **Schema impact:** Zero — publication target change does not affect Adaptive Cards 1.6.0 conformance.
+- **Ecosystem precedent:** Modern TS libraries (Zod, Effect, tRPC) ship to both npm + JSR from single codebase; this is established pattern.
+- **Status:** Planning completed 2026-05-04. Merged into decisions.md as active decision. Awaiting user input on 3 open questions before Fenster + Verbal execution begins.
+- Architecture plan: `.squad/decisions/inbox/keaton-issue-80-deno-plan.md` (merged to decisions.md on 2026-05-04)

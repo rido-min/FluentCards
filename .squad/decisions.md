@@ -2,6 +2,140 @@
 
 ## Active Decisions
 
+### 2026-05-04: Issue #80 — Deno Support Architecture Plan
+**Status:** Proposed  
+**Author:** Keaton (Lead / Architect)  
+**Date:** 2025-01-23  
+**Issue:** [#80](https://github.com/rido-min/FluentCards/issues/80) — "Support Deno for TypeScript, including the package published to JSR.io and samples"
+
+#### Executive Summary
+
+**Recommendation:** Extend the existing `node/` port to support **dual publication** — publish to both npm and JSR from a single TypeScript codebase. This approach minimizes maintenance burden, avoids sample drift, and aligns with AGENTS.md guidelines while meeting JSR's single-source-of-truth expectations.
+
+**Key Decision:** This is a **publication target expansion**, not a new language port. No top-level `deno/` folder is required.
+
+#### Strategy: Option A — Dual Publication (RECOMMENDED)
+
+Extend `node/packages/fluent-cards/` to publish to both npm and JSR.
+
+**Rationale:**
+- **Zero code duplication** — same TypeScript source for both runtimes
+- **AGENTS.md compliant** — Deno is a publication target, not a new language
+- **JSR design principle** — JSR expects single source of truth, not mirrors
+- **Existing codebase is 100% Deno-compatible** — pure TypeScript, zero Node.js APIs detected
+- **Ecosystem precedent** — Zod, Effect, tRPC all ship npm + JSR from single codebase
+
+**Architecture:**
+- Add `node/packages/fluent-cards/jsr.json` with JSR-specific metadata
+- Add `node/packages/fluent-cards/tsconfig.jsr.json` (ESM, `module: "ES2022"`)
+- CI publishes to JSR alongside npm with synchronized versions (nerdbank-gitversioning)
+- Deno samples in `node/samples/deno/` (snake_case, JSR imports); call shared sample logic
+
+**Rejected alternatives:**
+- **Option B (Separate mirror):** Maintenance nightmare, sample drift risk, JSR anti-pattern
+- **Option C (Top-level port):** Architectural overkill for runtime target, not language
+
+#### Work Breakdown (8 Tasks)
+
+**Task 1:** Add JSR config (`jsr.json`, `tsconfig.jsr.json`)  
+**Task 2:** Create Deno samples in `node/samples/deno/` (7 snake_case entry points)  
+**Task 3:** Add Deno test suite (20+ core tests via `deno test`)  
+**Task 4:** CI integration (`deno publish` step, version stamping, `DENO_DEPLOY_TOKEN` secret)  
+**Task 5:** Documentation (root README, AGENTS.md, node/README.md)  
+**Task 6:** Secrets/permissions (JSR account, deploy token)  
+**Task 7:** Manual publish test workflow  
+**Task 8:** Validation (test suites, samples, JSR package size)  
+
+**Assignee:** Fenster (TypeScript Dev) + Verbal (Tester)
+
+#### Open Questions (User Input Required)
+
+1. **JSR Scope Name:** Confirm `@rido-min/fluent-cards` vs `@fluent-cards/core`?
+2. **Deno Test Coverage:** Full 280-test parity vs minimal 20+ core tests?
+3. **Publish Cadence:** Sync npm + JSR in CI vs manual JSR publish?
+
+#### Schema Impact
+
+**Zero.** Publication target change does not affect Adaptive Cards 1.6.0 conformance. All 16 element types, 5 actions, 6 inputs, 17 enums remain unchanged.
+
+#### Success Criteria
+
+1. ✅ `jsr:@rido-min/fluent-cards` package live on JSR.io
+2. ✅ Deno users can `deno add jsr:@rido-min/fluent-cards` and build cards
+3. ✅ All 7 samples run in Deno (`deno run node/samples/deno/program.ts`)
+4. ✅ Deno test suite passes (20+ tests minimum)
+5. ✅ CI publishes to both npm and JSR on tagged releases
+6. ✅ Documentation updated
+7. ✅ Zero code duplication — npm and JSR share `src/`
+8. ✅ No schema regressions
+
+---
+
+### 2026-05-04: Issue #80 — Deno Compatibility Audit (TypeScript Port)
+**Status:** Complete  
+**Auditor:** Fenster (TypeScript Dev)  
+**Date:** 2026-04-27  
+**Scope:** `node/packages/fluent-cards/` production library  
+**Confidence:** Very High
+
+#### Deno Readiness Score: 🟢 GREEN
+
+**Verdict:** Production code is **100% Deno-ready** — zero Node-specific APIs detected.
+
+#### Key Findings
+
+**✅ PASS: Node Built-ins**
+- Production code (`src/`): 0 Node-specific imports
+- Uses only: `JSON`, `Map`, `Set`, standard classes
+- Test files expected to use `node:test`, `node:assert/strict` (does not block JSR)
+
+**✅ PASS: CommonJS**
+- Zero `require()` or `module.exports`
+- Pure ESM (`import`/`export`) throughout
+
+**✅ PASS: Import Extensions**
+- All 132 relative imports across 32 files already have explicit `.js` extensions
+- No migration needed — library already compliant
+
+**⚠️ NEEDS REVIEW: package.json**
+- Missing `"type": "module"` (1-line add)
+- Dual `exports` can be simplified for JSR
+
+**🔴 BLOCKER: tsconfig.json**
+- `"module": "CommonJS"` must change to `"ES2022"` or `"ESNext"`
+- This is the primary blocker for JSR publication
+
+**✅ PASS: Dependencies**
+- Zero runtime dependencies (perfect for JSR)
+
+#### Migration Effort
+
+**Phase 1 (JSR-Ready):** 2-4 hours
+- Change tsconfig.json: `"module": "CommonJS"` → `"ES2022"`
+- Add `"type": "module"` to package.json
+- Add `jsr.json` config
+
+**Phase 2 (Samples + Tests):** 4-6 hours
+- Create `node/samples/deno/` with 7 entry points
+- Optional: Deno test harness
+
+#### Risk Assessment
+
+**Low risk:**
+- ✅ Zero runtime dependencies
+- ✅ Pure ESM source code
+- ✅ Explicit `.js` extensions present
+- ✅ No Node.js APIs in production
+
+**Medium risk:**
+- ⚠️ `tsconfig.json` module change may affect build output (mitigated by tests)
+
+#### Recommendation
+
+**Proceed with Phase 1.** Library architecture is already Deno-compatible by design. Migration is straightforward with minimal risk.
+
+---
+
 ### 2026-04-15: Schema Conformance Audit — .NET Port vs Adaptive Cards 1.6.0
 **Status:** Complete  
 **Auditor:** Keaton (Lead Architect)  
