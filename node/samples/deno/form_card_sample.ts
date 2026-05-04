@@ -9,13 +9,6 @@ import {
   TextInputStyle,
   ActionStyle,
 } from 'jsr:@adaptivecards/fluent';
-// import {
-//   AdaptiveCardBuilder,
-//   TextSize,
-//   TextWeight,
-//   TextInputStyle,
-//   ActionStyle,
-// } from '../../packages/fluent-cards/src/index.ts';
 
 /** Creates a contact form card. */
 export function createContactForm() {

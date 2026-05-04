@@ -11,15 +11,6 @@ import {
   ActionStyle,
   ContainerStyle,
 } from 'jsr:@adaptivecards/fluent';
-// import {
-//   AdaptiveCardBuilder,
-//   TextSize,
-//   TextWeight,
-//   TextColor,
-//   ImageSize,
-//   ActionStyle,
-//   ContainerStyle,
-// } from '../../packages/fluent-cards/src/index.ts';
 
 /** Creates a card with a two-column layout. */
 export function createTwoColumnCard() {

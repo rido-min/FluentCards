@@ -3,7 +3,6 @@
 // To run: deno run action_submit_execute_sample.ts
 
 import { AdaptiveCardBuilder, TextSize, TextWeight } from 'jsr:@adaptivecards/fluent';
-// import { AdaptiveCardBuilder, TextSize, TextWeight } from '../../packages/fluent-cards/src/index.ts';
 
 /** Creates a card with Action.Execute and Action.Submit actions and custom verbs/data. */
 export function createActionSubmitExecuteCard() {

@@ -2,11 +2,6 @@
 // Deno test suite for serialization: toJson, toObject, fromJson, round-trips
 // ─────────────────────────────────────────────────────────────────────────────
 //
-// IMPORT STRATEGY:
-// Tests import from local relative path because the JSR package (@adaptivecards/fluent)
-// is not yet published. After first JSR publish, contributors can switch to:
-// import { ... } from 'jsr:@adaptivecards/fluent';
-//
 // Run tests: deno test tests-deno/
 // Run this file: deno test tests-deno/serialization.test.ts
 

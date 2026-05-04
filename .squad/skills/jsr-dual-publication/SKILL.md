@@ -2,8 +2,10 @@
 
 **Category:** Build & Packaging
 **Applies to:** TypeScript libraries published to both npm and JSR (Deno registry)
-**Status:** Proven (FluentCards `node/` port, Issue #80)
-**Confidence:** medium
+**Status:** SUPERSEDED — see revision below
+**Confidence:** REVISION REQUIRED
+
+**⚠️ NOTICE (2026-05-04):** The pattern described below (build-jsr.mjs rewrite script) was based on incomplete understanding of Deno's sloppy-imports configuration. Post-implementation testing revealed that a workspace-root `deno.json` with `"unstable": ["sloppy-imports"]` allows JSR to consume TypeScript source with `.js` extensions directly, eliminating the need for the rewrite. See "REVISED PATTERN" section at the bottom.
 
 ---
 
@@ -129,3 +131,103 @@ Add `jsr-src/`. The directory is generated; never commit it.
 - [JSR slow types](https://jsr.io/docs/about-slow-types)
 - [Deno sloppy imports](https://docs.deno.com/runtime/reference/cli/unstable_flags/#--unstable-sloppy-imports)
 - FluentCards Issue #80 — real-world implementation
+
+---
+
+## REVISED PATTERN (2026-05-04) — RECOMMENDED
+
+**The above pattern (build-jsr.mjs) is no longer necessary.** Empirical testing revealed that JSR accepts `.js` extensions in TypeScript source when configured correctly.
+
+### Correct Solution: Workspace-Root deno.json
+
+**File structure:**
+```
+your-workspace/
+  deno.json                          # ← Workspace root config (CRITICAL)
+  packages/
+    your-package/
+      src/
+        index.ts                      # Uses .js extensions (for npm CJS build)
+        models.ts
+      dist/                           # npm build output (gitignored)
+      package.json                    # npm config
+      tsconfig.json                   # npm TypeScript config (module: CommonJS)
+      jsr.json                        # JSR config
+```
+
+**Workspace deno.json:**
+```json
+{
+  "unstable": ["sloppy-imports"]
+}
+```
+
+**Package jsr.json:**
+```json
+{
+  "name": "@your-scope/your-package",
+  "version": "0.0.0-placeholder",
+  "exports": "./src/index.ts",
+  "publish": {
+    "include": ["src/**/*.ts", "README.md", "LICENSE"],
+    "exclude": ["**/*.test.ts", "**/*.spec.ts"]
+  }
+}
+```
+
+**That's it.** No build scripts, no jsr-src/ directory, no negative globs, no --sloppy-imports per command.
+
+### Empirical Verification (Deno 2.7.14, 2026-05-04)
+
+**Test 1: JSR publish accepts source with .js extensions**
+```bash
+cd packages/your-package
+deno publish --dry-run --allow-dirty
+# ✅ Success: "Simulating publish of @your-scope/your-package..."
+```
+
+**Test 2: Deno tests run without --sloppy-imports flag**
+```bash
+deno test tests-deno/
+# ✅ ok | 39 passed | 0 failed (355ms)
+```
+
+**Test 3: Local samples can import from src/ directly**
+```typescript
+// samples/deno/example.ts
+import { AdaptiveCardBuilder } from '../../packages/your-package/src/index.ts';
+```
+```bash
+deno run samples/deno/example.ts
+# ✅ Executes without errors or flags
+```
+
+### Why This Works
+
+JSR's documentation states: "When a package.json is present in your package, modules MAY use 'sloppy imports'." The critical constraint (discovered through testing): the `"unstable": ["sloppy-imports"]` configuration **MUST be at the workspace root**, not in a package-level deno.json. When configured correctly, Deno's module resolver accepts `.js` extensions resolving to `.ts` files for both `deno publish` and `deno test`.
+
+### Migration from build-jsr Pattern
+
+1. Add `deno.json` at workspace root with `{"unstable": ["sloppy-imports"]}`
+2. Change `jsr.json` exports from `./jsr-src/index.ts` to `./src/index.ts`
+3. Delete `scripts/build-jsr.mjs`
+4. Remove `jsr-src/` from `.gitignore`
+5. Remove "Build JSR sources" steps from CI
+6. Remove `--sloppy-imports` flag from `deno test` commands
+7. Remove `"!jsr-src"` negative glob from `jsr.json` publish.exclude
+
+### Updated Success Criteria
+
+- ✅ npm consumers can install and use the package as before — zero breaking changes
+- ✅ `deno publish --dry-run` succeeds without build scripts
+- ✅ Deno consumers can `deno add jsr:@scope/package` after first published release
+- ✅ CI publishes to both npm and JSR on tagged releases
+- ✅ **Single `src/` directory is the source of truth — no generated directories**
+- ✅ **Local Deno samples work without import swapping**
+- ✅ **Deno tests run without per-command flags**
+
+### References for Revised Pattern
+
+- [Deno sloppy imports documentation](https://docs.deno.com/runtime/reference/cli/unstable_flags/#--unstable-sloppy-imports) — note workspace-root requirement
+- [JSR publishing with package.json present](https://jsr.io/docs/publishing-packages) — mentions sloppy imports are allowed when package.json exists
+- FluentCards Issue #80 architecture rethink: `.squad/decisions/inbox/keaton-issue-80-rethink.md`

@@ -12,16 +12,6 @@ import {
   ActionStyle,
 } from 'jsr:@adaptivecards/fluent';
 import type { TableColumnDefinition, TableRow } from 'jsr:@adaptivecards/fluent';
-// import {
-//   AdaptiveCardBuilder,
-//   TextSize,
-//   TextWeight,
-//   TextColor,
-//   ImageSize,
-//   HorizontalAlignment,
-//   ActionStyle,
-// } from '../../packages/fluent-cards/src/index.ts';
-// import type { TableColumnDefinition, TableRow } from '../../packages/fluent-cards/src/index.ts';
 
 /** Creates a card with rich text formatting. */
 export function createRichTextCard() {

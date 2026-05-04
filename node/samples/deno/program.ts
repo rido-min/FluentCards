@@ -4,8 +4,6 @@
 
 import { toJson, toObject, fromJson, validate, TextSize, TextWeight, TextColor, AdaptiveCardBuilder } from 'jsr:@adaptivecards/fluent';
 import type { AdaptiveCard } from 'jsr:@adaptivecards/fluent';
-// import { toJson, toObject, fromJson, validate, TextSize, TextWeight, TextColor, AdaptiveCardBuilder } from '../../packages/fluent-cards/src/index.ts';
-// import type { AdaptiveCard } from '../../packages/fluent-cards/src/index.ts';
 
 import { createWelcomeCard, createNotificationCard, createImageCard } from './basic_card_sample.ts';
 import { createContactForm, createSurveyForm, createRegistrationForm } from './form_card_sample.ts';

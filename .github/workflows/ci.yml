@@ -119,20 +119,15 @@ jobs:
         with:
           deno-version: v2.x
 
-      - name: Build JSR sources
-        if: matrix.os == 'ubuntu-latest'
-        working-directory: node/packages/fluent-cards
-        run: node scripts/build-jsr.mjs
-
       - name: Deno typecheck
         if: matrix.os == 'ubuntu-latest'
         working-directory: node/packages/fluent-cards
-        run: deno check jsr-src/index.ts
+        run: deno check src/index.ts
 
       - name: Deno test
         if: matrix.os == 'ubuntu-latest'
         working-directory: node/packages/fluent-cards
-        run: deno test tests-deno/ --sloppy-imports
+        run: deno test tests-deno/
 
       - name: JSR dry-run publish
         if: matrix.os == 'ubuntu-latest'
@@ -168,11 +163,6 @@ jobs:
           VERSION=$(node -p "require('./package.json').version")
           echo "Stamping JSR version: $VERSION"
           node -e "const fs=require('fs'); const jsr=JSON.parse(fs.readFileSync('jsr.json','utf8')); jsr.version='$VERSION'; fs.writeFileSync('jsr.json', JSON.stringify(jsr,null,2)+'\n');"
-
-      - name: Rebuild JSR sources before publish
-        if: matrix.os == 'ubuntu-latest' && startsWith(github.ref, 'refs/tags/')
-        working-directory: node/packages/fluent-cards
-        run: node scripts/build-jsr.mjs
 
       - name: Publish to JSR
         if: matrix.os == 'ubuntu-latest' && startsWith(github.ref, 'refs/tags/')

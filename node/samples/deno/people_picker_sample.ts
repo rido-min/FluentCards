@@ -3,7 +3,6 @@
 // To run: deno run people_picker_sample.ts
 
 import { AdaptiveCardBuilder } from 'jsr:@adaptivecards/fluent';
-// import { AdaptiveCardBuilder } from '../../packages/fluent-cards/src/index.ts';
 
 /** Creates a people picker card that searches users from Microsoft Graph. */
 export function createPeoplePickerCard() {

@@ -86,23 +86,24 @@ The Deno test suite validates the library in Deno runtime. Tests are located in 
 **Run Deno tests:**
 ```bash
 cd node/packages/fluent-cards
-deno test tests-deno/ --sloppy-imports
+deno test tests-deno/
 ```
 
-`--sloppy-imports` is required because the library source uses `.js` extensions in imports (for Node.js CommonJS compatibility), but Deno resolves them to `.ts` files at runtime.
+The workspace-root `node/deno.json` enables sloppy-imports, allowing Deno to resolve `.js` extensions (required by npm's CommonJS build) to `.ts` files at runtime.
 
 ## JSR Publishing
 
-For JSR publication, the source must use explicit `.ts` extensions (sloppy imports are not allowed by `deno publish`). A small build step rewrites `.js` → `.ts` extensions in `src/` and writes the result to `jsr-src/` (gitignored). `jsr.json` then exports `./jsr-src/index.ts`.
+For JSR publication, the library source (`src/`) is consumed directly by JSR — no build step needed. The workspace-root `node/deno.json` enables sloppy-imports, which allows JSR to accept the `.js` extensions in TypeScript source that npm's CommonJS build requires.
 
 **Validate JSR publication locally:**
 ```bash
 cd node/packages/fluent-cards
-node scripts/build-jsr.mjs       # writes jsr-src/
-deno publish --dry-run           # validates the package
+deno publish --dry-run --allow-dirty
 ```
 
-CI runs the build step automatically before `deno check` and `deno publish`.
+The `--allow-dirty` flag is needed because the codecov binary leaves the working tree dirty during CI. In local dev, you can omit it if your working tree is clean.
+
+CI runs validation automatically on every push and publishes to JSR on tagged releases.
 
 ## Project Layout
 

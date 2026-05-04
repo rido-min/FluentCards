@@ -1,9 +1,9 @@
 {
   "name": "@adaptivecards/fluent",
   "version": "0.0.0-placeholder",
-  "exports": "./jsr-src/index.ts",
+  "exports": "./src/index.ts",
   "publish": {
-    "include": ["jsr-src/**/*.ts", "README.md", "LICENSE"],
-    "exclude": ["**/*.test.ts", "**/*.spec.ts", "!jsr-src"]
+    "include": ["src/**/*.ts", "README.md", "LICENSE"],
+    "exclude": ["**/*.test.ts", "**/*.spec.ts"]
   }
 }

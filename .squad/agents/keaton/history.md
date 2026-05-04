@@ -76,10 +76,20 @@ Key findings:
 - **Status:** Planning completed 2026-05-04. Merged into decisions.md as active decision. Awaiting user input on 3 open questions before Fenster + Verbal execution begins.
 - Architecture plan: `.squad/decisions/inbox/keaton-issue-80-deno-plan.md` (merged to decisions.md on 2026-05-04)
 
-### 2026-05-04 — Issue #80: Post-Implementation Learnings (Critical Gotcha Not in Plan)
+### 2026-05-04 — Issue #80: Post-Implementation Learnings and Rethink
 
-Fenster's implementation revealed **JSR strict module resolution is non-negotiable** — JSR does NOT accept `.js` extensions in import paths, and `--no-check` does NOT bypass this validation. The original plan did not account for this constraint. 
+Fenster's implementation (PR #81) used `build-jsr.mjs` to rewrite `.js` → `.ts` extensions because JSR appeared to reject `.js` extensions even with `--sloppy-imports`. **Post-implementation investigation revealed this was a configuration error, not a JSR limitation.**
 
-**Lesson for future architecture proposals:** When planning dual-publication to both CommonJS (npm) and ESM (JSR) targets, account for the extension mismatch. The solution (build-jsr.mjs transforms extensions) works well but adds a build step that must run before any JSR operations.
+**CRITICAL EMPIRICAL FINDING (2026-05-04 architecture rethink):**
+- JSR DOES accept `.js` extensions in TypeScript source when `"unstable": ["sloppy-imports"]` is configured at the **workspace root** (`node/deno.json`), not the package level.
+- This configuration allows:
+  1. `deno publish --dry-run` to succeed with `jsr.json` pointing at `./src/index.ts` directly (no jsr-src/ rewrite)
+  2. `deno test tests-deno/` to run without `--sloppy-imports` flag
+  3. Local Deno samples to import from `../../packages/fluent-cards/src/index.ts` and execute without flags
+- All three test vectors passed empirically (Deno 2.7.14, 2026-05-04).
 
-**For future Deno/JSR projects:** This `.js` → `.ts` extension transformation via build script is now the established pattern and should be documented in reusable skill for team reference.
+**Revised recommendation:** Use workspace-root `deno.json` with sloppy-imports instead of the build-jsr.mjs rewrite. This eliminates the two-source-of-truth problem, removes 5 seams (build script, negative glob, --allow-dirty workaround, jsr-src/ directory, per-command --sloppy-imports), and allows samples to run locally without waiting for JSR publish.
+
+**Lesson for future JSR projects:** Always test workspace-root `deno.json` configuration before reaching for build-time transformations. Deno's documentation states sloppy-imports "can only be specified in the workspace root" — this is a hard requirement that was missed during PR #81 implementation.
+
+Full architecture comparison and migration plan: `.squad/decisions/inbox/keaton-issue-80-rethink.md`

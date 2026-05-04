@@ -1,10 +1,6 @@
 // Deno sample: Basic cards (welcome, notification, image)
 // 
 // To run: deno run basic_card_sample.ts
-//
-// Import strategy: JSR (production) or local (development)
-// - For published JSR package: use 'jsr:@adaptivecards/fluent'
-// - For local development: use '../../packages/fluent-cards/src/index.ts'
 import {
   AdaptiveCardBuilder,
   TextSize,
@@ -13,14 +9,6 @@ import {
   HorizontalAlignment,
   ImageSize,
 } from 'jsr:@adaptivecards/fluent';
-// import {
-//   AdaptiveCardBuilder,
-//   TextSize,
-//   TextWeight,
-//   TextColor,
-//   HorizontalAlignment,
-//   ImageSize,
-// } from '../../packages/fluent-cards/src/index.ts';
 
 /** Creates a simple welcome card. */
 export function createWelcomeCard() {

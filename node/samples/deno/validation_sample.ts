@@ -12,16 +12,6 @@ import {
   TextWeight,
 } from 'jsr:@adaptivecards/fluent';
 import type { AdaptiveCard, ValidationIssue } from 'jsr:@adaptivecards/fluent';
-// import {
-//   AdaptiveCardBuilder,
-//   validate,
-//   validateAndThrow,
-//   AdaptiveCardValidationError,
-//   ValidationSeverity,
-//   TextSize,
-//   TextWeight,
-// } from '../../packages/fluent-cards/src/index.ts';
-// import type { AdaptiveCard, ValidationIssue } from '../../packages/fluent-cards/src/index.ts';
 
 /** Runs all validation demonstrations. */
 export function runValidationSamples() {

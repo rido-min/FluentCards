@@ -26,21 +26,33 @@ deno run validation_sample.ts
 
 ## Import Strategy
 
-By default, samples import from the published JSR package:
+Samples use JSR imports unconditionally:
 
 ```typescript
 import { AdaptiveCardBuilder } from 'jsr:@adaptivecards/fluent';
 ```
 
-### Local Development
+### Local Development (Before First Publish)
 
-For local testing before the package is published, uncomment the local import path in each sample:
+An import map (`deno.json` in this directory) redirects the JSR import to the local source and enables sloppy-imports:
 
-```typescript
-// import { AdaptiveCardBuilder } from '../../packages/fluent-cards/src/index.ts';
+```json
+{
+  "unstable": ["sloppy-imports"],
+  "imports": {
+    "jsr:@adaptivecards/fluent": "../../packages/fluent-cards/src/index.ts"
+  }
+}
 ```
 
-This allows you to test changes to the library source without publishing.
+This means:
+- **No code changes needed** — samples work identically in local dev and after JSR publish
+- **Before publish:** Deno uses the local source via the import map
+- **After publish:** You can delete the import map (or just the `imports` field) and Deno will fetch from JSR
+
+The `sloppy-imports` setting allows Deno to resolve `.js` extensions (required by npm's CommonJS build) to `.ts` files at runtime.
+
+This eliminates the import-swap dance present in earlier versions.
 
 ## Sample Overview
 

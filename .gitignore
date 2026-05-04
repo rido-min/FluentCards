@@ -8,7 +8,6 @@
 ## Get latest from https://github.com/github/gitignore/blob/main/Dotnet.gitignore
 
 node/**/dist/
-node/**/jsr-src/
 node/**/coverage/
 
 .vs/
