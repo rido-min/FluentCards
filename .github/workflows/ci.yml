@@ -137,7 +137,7 @@ jobs:
       - name: JSR dry-run publish
         if: matrix.os == 'ubuntu-latest'
         working-directory: node/packages/fluent-cards
-        run: deno publish --dry-run
+        run: deno publish --dry-run --allow-dirty
 
       - name: Stamp version
         if: matrix.os == 'ubuntu-latest'
