@@ -72,3 +72,38 @@ Conducted comprehensive Deno/JSR readiness audit of TypeScript port for Keaton. 
 **Tests:** 12 test files use `node:test` + `node:assert/strict` — would need Deno test adapter or dual test suite for `deno test` compatibility. Does not block JSR publication (tests aren't published). Production library has no Node dependencies.
 
 **Migration effort:** Low — 2-4 hours for Phase 1 (JSR-ready). Library architecture is already Deno-compatible by design (zero deps, explicit extensions, ESM-only source). Full report in `.squad/decisions/inbox/fenster-issue-80-deno-audit.md` for Keaton's review. Audit merged to decisions.md on 2026-05-04 as active decision.
+
+### 2026-05-04 — JSR Publication Implementation (Issue #80)
+
+Implemented dual-publication support for npm and JSR (Deno registry) on branch `squad/80-deno-support`. Key constraint: **must NOT break npm CommonJS build**.
+
+**Architecture decision:** JSR consumes `src/*.ts` directly via `jsr.json`'s `exports` field. No compiled output for JSR. This avoids the `"type": "module"` trap that would break npm's CommonJS consumers.
+
+**Critical insight:** The two blockers from the audit (tsconfig module, package.json type) were **both avoided** by having JSR read source directly. npm build stays CommonJS, JSR gets native ESM by consuming `.ts` files.
+
+**Files created:**
+- `node/packages/fluent-cards/jsr.json` — JSR package config with scope `@adaptivecards/fluent`
+- `node/packages/fluent-cards/LICENSE` — Copied from root for JSR publication
+- `node/samples/deno/` — 7 canonical samples + program.ts (snake_case, `import.meta.main` pattern)
+- `node/samples/deno/README.md` — Deno sample documentation
+
+**Files modified:**
+- `.github/workflows/ci.yml` — Added Deno setup, `deno check`, dry-run publish (PRs), JSR publish (tags with version stamping)
+- `README.md` — Added TypeScript/Deno row to Language Ports table and Quick Start example
+- `AGENTS.md` — Documented Deno support pattern under `node/` section (dual-publication, constraints, sample naming)
+- `node/packages/fluent-cards/README.md` — Added Deno installation instructions and sample links
+
+**Validation:**
+- npm build: ✅ Clean (CommonJS unchanged)
+- npm test: ✅ All tests pass
+- npm typecheck: ✅ Clean
+- Deno dry-run: Skipped locally (CI will validate)
+- Commit SHA: `f27b4e280bb93242f58ee7db6c0ad28773cd612d`
+- Branch: `squad/80-deno-support` (pushed to origin)
+
+**Deferred:**
+- `DENO_DEPLOY_TOKEN` secret — rido must add to repo settings for CI JSR publish
+- Deno test suite — Verbal will add ~20 core tests in follow-up commit (AdaptiveCardBuilder, builders, toJson/fromJson, validate, round-trip)
+- PR creation — Coordinator opens after Verbal's tests merge
+
+**Hand-off to Verbal:** See `.squad/decisions/inbox/fenster-issue-80-impl-handoff.md` for test requirements.
