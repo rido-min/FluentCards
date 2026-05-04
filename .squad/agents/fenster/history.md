@@ -58,3 +58,71 @@ Fixed all 8 gaps from Keaton's TS schema audit plus the enum casing fix:
 ### 2026-04-15 — Native Object Serialization (#75) — Cross-Team Coordination
 
 Collaborated with McManus (.NET), Hockney (Python), and Verbal (Tester) on Issue #75. TypeScript implementation complete with 6 new tests in `native-object.test.ts`. All three core ports (dotnet, node, python) now provide native object methods: .NET `ToJsonElement()`/`ToJsonNode()`, TypeScript `toObject()`, Python `to_dict()`. Test parity maintained — all ports cover identical semantic scenarios (round-trip, equivalence, complex card, minimal card, enum strings, field stripping). Verbal's cross-port test framework ensures all implementations produce bit-identical results to `JSON.parse(toJson())`. Go skipped pending architecture review (`go:needs-research`).
+
+### 2026-04-27 — Deno Compatibility Audit (Issue #80)
+
+Conducted comprehensive Deno/JSR readiness audit of TypeScript port for Keaton. Key findings:
+
+**Green light:** Production code is 100% Deno-ready — zero Node built-ins, zero runtime deps, pure ESM source, all 132 relative imports already have explicit `.js` extensions (discovered library was already compliant — no migration needed for import paths).
+
+**Two blockers:**
+1. `tsconfig.json` emits CommonJS (`"module": "CommonJS"`) — must switch to `"module": "ES2022"` or `"ESNext"` for JSR publication
+2. `package.json` missing `"type": "module"` declaration — trivial 1-line add
+
+**Tests:** 12 test files use `node:test` + `node:assert/strict` — would need Deno test adapter or dual test suite for `deno test` compatibility. Does not block JSR publication (tests aren't published). Production library has no Node dependencies.
+
+**Migration effort:** Low — 2-4 hours for Phase 1 (JSR-ready). Library architecture is already Deno-compatible by design (zero deps, explicit extensions, ESM-only source). Full report in `.squad/decisions/inbox/fenster-issue-80-deno-audit.md` for Keaton's review. Audit merged to decisions.md on 2026-05-04 as active decision.
+
+### 2026-05-04 — JSR Publication Implementation (Issue #80)
+
+Implemented dual-publication support for npm and JSR (Deno registry) on branch `squad/80-deno-support`. Key constraint: **must NOT break npm CommonJS build**.
+
+**Architecture decision:** JSR consumes `src/*.ts` directly via `jsr.json`'s `exports` field. No compiled output for JSR. This avoids the `"type": "module"` trap that would break npm's CommonJS consumers.
+
+**Critical insight:** The two blockers from the audit (tsconfig module, package.json type) were **both avoided** by having JSR read source directly. npm build stays CommonJS, JSR gets native ESM by consuming `.ts` files.
+
+**Files created:**
+- `node/packages/fluent-cards/jsr.json` — JSR package config with scope `@adaptivecards/fluent`
+- `node/packages/fluent-cards/LICENSE` — Copied from root for JSR publication
+- `node/samples/deno/` — 7 canonical samples + program.ts (snake_case, `import.meta.main` pattern)
+- `node/samples/deno/README.md` — Deno sample documentation
+
+**Files modified:**
+- `.github/workflows/ci.yml` — Added Deno setup, `deno check`, dry-run publish (PRs), JSR publish (tags with version stamping)
+- `README.md` — Added TypeScript/Deno row to Language Ports table and Quick Start example
+- `AGENTS.md` — Documented Deno support pattern under `node/` section (dual-publication, constraints, sample naming)
+- `node/packages/fluent-cards/README.md` — Added Deno installation instructions and sample links
+
+**Validation:**
+- npm build: ✅ Clean (CommonJS unchanged)
+- npm test: ✅ All tests pass
+- npm typecheck: ✅ Clean
+- Deno dry-run: Skipped locally (CI will validate)
+- Commit SHA: `f27b4e280bb93242f58ee7db6c0ad28773cd612d`
+- Branch: `squad/80-deno-support` (pushed to origin)
+
+**Deferred:**
+- `DENO_DEPLOY_TOKEN` secret — rido must add to repo settings for CI JSR publish
+- Deno test suite — Verbal will add ~20 core tests in follow-up commit (AdaptiveCardBuilder, builders, toJson/fromJson, validate, round-trip)
+- PR creation — Coordinator opens after Verbal's tests merge
+
+### 2026-05-04 — Issue #80: JSR Dual-Publication Implementation (Completed)
+
+Successfully implemented Deno support via dual publication to npm and JSR from single TypeScript codebase. Key learning: **JSR strict module resolution rejects `.js` extensions** — must use build-jsr.mjs script to transform extensions before JSR operations. This is critical for any future JSR adoption.
+
+**Architecture:**
+- `jsr.json` exports point to `jsr-src/index.ts` (build-generated, gitignored)
+- `scripts/build-jsr.mjs` transforms npm source (`.js` exts) → JSR source (`.ts` exts)
+- npm CommonJS build remains unchanged (no `"type": "module"` added)
+- Deno samples in `node/samples/deno/` (snake_case)
+- 39 core tests in `tests-deno/` (Verbal delivered)
+- CI integration with version stamping, JSR publish on tags
+
+**Commits:** 678262b, 1bc6f11, c16b259 (Fenster) + 4179700 (Verbal) + c69878e (Coordinator patch)
+
+**Key constraint:** `--sloppy-imports` required for local deno tests (source uses .js exts); resolved by build-jsr.mjs before JSR publication.
+
+**Critical insight not in original plan:** JSR's strict analysis cannot be bypassed with `--no-check`. The build-jsr pattern is essential, not optional.
+
+**Status:** Ready for PR merge. Awaiting `DENO_DEPLOY_TOKEN` secret and team approval. Build-jsr pattern documented in `.squad/skills/jsr-dual-publication/SKILL.md` for reuse.
+

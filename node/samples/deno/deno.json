@@ -1,0 +1,6 @@
+{
+  "unstable": ["sloppy-imports"],
+  "imports": {
+    "jsr:@adaptivecards/fluent": "../../packages/fluent-cards/src/index.ts"
+  }
+}

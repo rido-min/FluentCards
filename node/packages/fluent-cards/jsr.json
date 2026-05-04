@@ -1,0 +1,9 @@
+{
+  "name": "@adaptivecards/fluent",
+  "version": "0.0.0-placeholder",
+  "exports": "./src/index.ts",
+  "publish": {
+    "include": ["src/**/*.ts", "README.md", "LICENSE"],
+    "exclude": ["**/*.test.ts", "**/*.spec.ts"]
+  }
+}

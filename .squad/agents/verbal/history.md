@@ -11,6 +11,10 @@
 
 <!-- Append new learnings below. Each entry is something lasting about the project. -->
 
+### 2026-05-04 — Issue #80: Deno Test Suite (Planning)
+
+Keaton and Fenster completed architecture planning + readiness audit for Deno support. **Incoming task:** Task 3 of 8-task work breakdown requires implementing Deno test suite (20+ core tests minimum) for JSR publication. Fenster will handle library config and samples; Verbal to implement `tests-deno/` with builder, serialization, and validation tests. Target: `deno test` compatibility to validate JSR package works in Deno runtime. Does not block JSR publication (tests not shipped) but recommended for production confidence. Test files will import from JSR (or relative path for local dev), use Deno's native test runner (`Deno.test` + `assertEquals` from `std/assert`), avoid Node.js built-ins. Estimated 4-6 hours Phase 2 effort. Open design question: Full 280-test parity vs minimal 20+ core?
+
 ### 2026-04-15 — Initial Test Suite Review
 
 - **.NET is the reference port** with 583 tests across 46 files. TypeScript has 102, Python 104, Go 63. The gap is ~5.6×.
@@ -69,3 +73,35 @@ Expanded `node/packages/fluent-cards/tests/schema-conformance.test.ts` from 21 t
 - **Python API difference caught**: `ActionBuilder.submit('Title')` not `as_submit().with_title('Title')` — Python uses a combined method. Always verify builder API per port.
 - Removed conflicting `NativeObjectSerializationTests.cs` from `Serialization/` subfolder (created by another agent) to avoid duplicate/competing test files.
 - **Edge case**: Python `to_dict()` uses `_clean()` which converts enums AND strips None, while `to_json()` uses `_strip_none()` only (enums handled by json.dumps). This means `to_dict()` and `json.loads(to_json())` should produce identical output — confirmed by equivalence test.
+
+### 2026-05-04 — Issue #80: Deno Test Suite Implementation
+
+- Created 39 tests across 3 files (`builder.test.ts`, `serialization.test.ts`, `validation.test.ts`) in `node/packages/fluent-cards/tests-deno/` to validate JSR-published library in Deno runtime.
+- **Deno test runner patterns learned:**
+  - `Deno.test('name', () => {...})` or `Deno.test({ name: '...', fn: () => {...} })` — both work
+  - Assertions from `jsr:@std/assert@^1` — `assertEquals`, `assertExists`, `assertThrows`
+  - `assertEquals` is deep by default (like Node's `assert.deepStrictEqual`)
+  - `assertThrows(fn, ErrorClass, 'message substring')` checks error type and message includes substring
+  - **Import strategy:** Tests use local relative imports (`../src/index.ts`) because JSR package not yet published. Production can use `jsr:@adaptivecards/fluent` after publish.
+- **Critical runtime flag:** `--sloppy-imports` required because library source uses `.js` extensions in imports (for Node.js/CommonJS compatibility), but Deno resolves them to `.ts` files at runtime. Without this flag, Deno throws "Module not found" errors.
+- **Type strictness differences from Node:**
+  - `fromJson` returns `AdaptiveCard | null` (not non-null) — tests must use `assertExists(parsed)` before accessing properties
+  - `AdaptiveCardValidationError.errors` (not `.issues`) — property name differs from validation function return
+  - `RichTextBlock.inlines` is `(string | TextRun)[]` — must type-narrow with `typeof inline === 'object'` before accessing `.type`
+- **Builder vs raw object for validation tests:** Node tests often use builders (which auto-generate IDs), but I initially used raw objects and hit missing ID errors. Switched to builder pattern for consistency.
+- **Error message capitalization:** `validateAndThrow` message is "Adaptive Card validation failed" (capital C), not "Adaptive card" — tests must match exact case.
+- **CI integration:** Added step after "Deno typecheck" and before "JSR dry-run publish" — ensures tests run on every PR. Step only runs on `ubuntu-latest` (matches Deno setup).
+- **Test coverage:** 13 builder tests (AdaptiveCard, TextBlock, Image, Container, ColumnSet, FactSet, RichTextBlock, ActionSet, InputText, complex chaining), 13 serialization tests (toJson/toObject/fromJson, round-trips, enum camelCase, undefined stripping), 13 validation tests (validate() returns issues, validateAndThrow() throws, 8 different error codes, path correctness). Total 39 tests exceeds 20 minimum.
+- **Node test suite still passes:** 298 Node tests pass after adding Deno tests — zero regressions.
+- Commit SHA: `4179700478eeed640efc6525d478283c5e06c60f`
+- Branch: `squad/80-deno-support` (pushed)
+
+### 2026-05-04 — Issue #80: JSR Strict Module Resolution Blocker (Coordinator Discovery)
+
+Post-test discovery by Coordinator: **JSR's static analysis cannot be bypassed and strictly rejects `.js` file extensions in import paths.** Initial implementation was publication-blocking. Solution: `scripts/build-jsr.mjs` script transforms npm source (with `.js` exts) to JSR source (with `.ts` exts) in a `jsr-src/` directory (gitignored). This script must run before any `deno check` or `deno publish` operation.
+
+**Key learning for test team:** The `--sloppy-imports` flag used in deno tests is a workaround for local development only — it does NOT solve the JSR publication problem. JSR always validates module resolution strictly. The build-jsr pattern is the proper solution and handles both the test sloppy-imports issue and the JSR publication issue.
+
+**Status:** Coordinator applied fix (commit c69878e) and validated locally: npm 298/298 tests pass, deno test 39/39 pass, deno publish --dry-run succeeds. Ready for PR.
+
+

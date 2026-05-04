@@ -14,6 +14,7 @@ A multi-language library for building [Adaptive Cards](https://adaptivecards.io/
 |----------|--------|---------|
 | C# / .NET 8 | [`dotnet/`](dotnet/) | [![NuGet](https://img.shields.io/nuget/v/FluentCards.svg)](https://www.nuget.org/packages/FluentCards) |
 | TypeScript / Node.js | [`node/`](node/) | [![npm](https://img.shields.io/badge/npm-fluent--cards-blue)](https://www.npmjs.com/package/fluent-cards) |
+| TypeScript / Deno | [`node/`](node/) | [![JSR](https://jsr.io/badges/@adaptivecards/fluent)](https://jsr.io/@adaptivecards/fluent) |
 | Python | [`python/`](python/) | [![PyPI](https://img.shields.io/pypi/v/fluent-cards.svg)](https://pypi.org/project/fluent-cards/) |
 | Go | [`go/`](go/) | [![Go Reference](https://pkg.go.dev/badge/github.com/rido-min/FluentCards/go/fluentcards.svg)](https://pkg.go.dev/github.com/rido-min/FluentCards/go/fluentcards) |
 
@@ -51,6 +52,30 @@ npm install fluent-cards
 
 ```typescript
 import { AdaptiveCardBuilder, TextSize, TextWeight, toJson } from 'fluent-cards';
+
+const card = AdaptiveCardBuilder.create()
+  .withVersion('1.5')
+  .addTextBlock(tb => tb
+    .withText('Hello, FluentCards!')
+    .withSize(TextSize.Large)
+    .withWeight(TextWeight.Bolder)
+    .withWrap(true))
+  .addAction(a => a
+    .openUrl('https://adaptivecards.io')
+    .withTitle('Learn More'))
+  .build();
+
+console.log(toJson(card));
+```
+
+### TypeScript / Deno
+
+```bash
+deno add jsr:@adaptivecards/fluent
+```
+
+```typescript
+import { AdaptiveCardBuilder, TextSize, TextWeight, toJson } from 'jsr:@adaptivecards/fluent';
 
 const card = AdaptiveCardBuilder.create()
   .withVersion('1.5')

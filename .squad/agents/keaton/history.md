@@ -61,3 +61,35 @@ Key findings:
 - Documentation: Decision merged into `.squad/decisions.md`, orchestration logs completed.
 - Team impact: Unblocks downstream consumers requiring Python 3.8/3.9.
 - Future guardrail: Documented that contributors must maintain `from __future__ import annotations` and avoid 3.9+ stdlib APIs.
+
+### 2025-01-23 — Issue #80 Architecture Plan: Deno Support via Dual Publication
+
+- Produced comprehensive architecture plan for adding Deno support to TypeScript port.
+- **Key decision:** Dual publication to npm + JSR from single `node/` codebase — not a new top-level port.
+- **Rationale:** Deno is a runtime target, not a new language per AGENTS.md "Adding a New Language Port" rules. TypeScript source is 100% Deno-compatible (zero Node.js APIs detected via grep audit). Dual publication minimizes maintenance burden, avoids sample drift, and aligns with JSR single-source-of-truth philosophy.
+- **Technical approach:** Add `jsr.json`, ESM build config (`tsconfig.jsr.json`), Deno samples in `node/samples/deno/` (snake_case, JSR imports), optional `deno test` suite, CI integration with version stamping.
+- **Sample parity strategy:** Deno entry points in `node/samples/deno/` call shared sample logic from `node/samples/` — no duplication of 7 canonical samples. AGENTS.md parity rules apply: changes to Node samples must update Deno entry points.
+- **Work breakdown:** 8 tasks for Fenster (TS Dev) and Verbal (Tester) covering config, samples, tests, CI, docs, secrets, manual publish test, validation.
+- **Open questions:** JSR scope name confirmation (`@rido-min/fluent-cards` vs `@fluent-cards/core`), Deno test scope (20+ core tests vs full 280 parity), publish cadence (sync with npm vs manual).
+- **Schema impact:** Zero — publication target change does not affect Adaptive Cards 1.6.0 conformance.
+- **Ecosystem precedent:** Modern TS libraries (Zod, Effect, tRPC) ship to both npm + JSR from single codebase; this is established pattern.
+- **Status:** Planning completed 2026-05-04. Merged into decisions.md as active decision. Awaiting user input on 3 open questions before Fenster + Verbal execution begins.
+- Architecture plan: `.squad/decisions/inbox/keaton-issue-80-deno-plan.md` (merged to decisions.md on 2026-05-04)
+
+### 2026-05-04 — Issue #80: Post-Implementation Learnings and Rethink
+
+Fenster's implementation (PR #81) used `build-jsr.mjs` to rewrite `.js` → `.ts` extensions because JSR appeared to reject `.js` extensions even with `--sloppy-imports`. **Post-implementation investigation revealed this was a configuration error, not a JSR limitation.**
+
+**CRITICAL EMPIRICAL FINDING (2026-05-04 architecture rethink):**
+- JSR DOES accept `.js` extensions in TypeScript source when `"unstable": ["sloppy-imports"]` is configured at the **workspace root** (`node/deno.json`), not the package level.
+- This configuration allows:
+  1. `deno publish --dry-run` to succeed with `jsr.json` pointing at `./src/index.ts` directly (no jsr-src/ rewrite)
+  2. `deno test tests-deno/` to run without `--sloppy-imports` flag
+  3. Local Deno samples to import from `../../packages/fluent-cards/src/index.ts` and execute without flags
+- All three test vectors passed empirically (Deno 2.7.14, 2026-05-04).
+
+**Revised recommendation:** Use workspace-root `deno.json` with sloppy-imports instead of the build-jsr.mjs rewrite. This eliminates the two-source-of-truth problem, removes 5 seams (build script, negative glob, --allow-dirty workaround, jsr-src/ directory, per-command --sloppy-imports), and allows samples to run locally without waiting for JSR publish.
+
+**Lesson for future JSR projects:** Always test workspace-root `deno.json` configuration before reaching for build-time transformations. Deno's documentation states sloppy-imports "can only be specified in the workspace root" — this is a hard requirement that was missed during PR #81 implementation.
+
+Full architecture comparison and migration plan: `.squad/decisions/inbox/keaton-issue-80-rethink.md`

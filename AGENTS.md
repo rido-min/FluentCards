@@ -60,7 +60,8 @@ Naming conventions by language:
 | Language | Convention | Example |
 |----------|------------|---------|
 | C# | PascalCase `.cs` | `BasicCardSample.cs` |
-| TypeScript | camelCase `.ts` | `basicCardSample.ts` |
+| TypeScript (Node) | camelCase `.ts` | `basicCardSample.ts` |
+| TypeScript (Deno) | snake_case `.ts` | `basic_card_sample.ts` |
 | Python | snake_case `.py` | `basic_card_sample.py` |
 | Go | snake_case `.go` | `basic_card_sample.go` |
 
@@ -121,6 +122,44 @@ npm install && npm test && npm run typecheck
 - Update or add tests for any behavior change.
 - Do not modify CI, dependency versions, or security settings unless asked.
 - Never print, log, or commit secrets.
+
+### Deno Support (JSR Publication)
+
+The TypeScript port supports **dual publication** to both npm and JSR (Deno registry). This is a publication target expansion, not a separate language port.
+
+**Architecture:**
+- Library source (`src/`) is 100% Deno-compatible (zero Node.js APIs, pure TypeScript) and is the single source of truth for both npm and JSR
+- npm build remains CommonJS (`package.json` and `tsconfig.json` unchanged)
+- Workspace-root `node/deno.json` enables `sloppy-imports` so JSR accepts the `.js` extensions that npm's CommonJS build requires
+- `jsr.json`'s `exports` points directly at `./src/index.ts` — no rewrite step needed
+- Samples for Deno live in `node/samples/deno/` (snake_case files)
+
+**Testing:**
+- Deno test suite: `node/packages/fluent-cards/tests-deno/` (39 core tests)
+- Uses Deno's native test runner (`Deno.test`) with `jsr:@std/assert`
+- Tests import from `../src/index.ts`
+- Run tests: `cd node/packages/fluent-cards && deno test tests-deno/`
+- Tests validate builder fluent chaining, serialization (toJson/toObject/fromJson), and validation
+
+**Publishing:**
+- CI publishes to both npm and JSR on tagged releases
+- Version stamping: `jsr.json` version field is synced with `package.json` during release
+- Local validation: `cd node/packages/fluent-cards && deno publish --dry-run --allow-dirty`
+- JSR publish requires repo secret `DENO_DEPLOY_TOKEN`
+
+**Important constraints:**
+- Do NOT add `"type": "module"` to `package.json` — would break npm CommonJS build
+- Do NOT change `tsconfig.json`'s `module` field — npm consumers depend on CommonJS output
+- The workspace-root `node/deno.json` MUST be at workspace level (not package level) for sloppy-imports to apply
+
+**Running Deno samples:**
+```bash
+cd node/samples/deno
+deno run program.ts  # runs all samples
+deno run basic_card_sample.ts  # run individual sample
+```
+
+Samples use JSR imports (`jsr:@adaptivecards/fluent`) unconditionally. A local import map (`node/samples/deno/deno.json`) redirects these to `../../packages/fluent-cards/src/index.ts` for local development. After first JSR publish, the map can be removed and samples will fetch from JSR.
 
 ---
 
