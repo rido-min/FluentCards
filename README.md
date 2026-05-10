@@ -16,6 +16,7 @@ A multi-language library for building [Adaptive Cards](https://adaptivecards.io/
 | TypeScript / Node.js | [`node/`](node/) | [![npm](https://img.shields.io/badge/npm-fluent--cards-blue)](https://www.npmjs.com/package/fluent-cards) |
 | Python | [`python/`](python/) | [![PyPI](https://img.shields.io/pypi/v/fluent-cards.svg)](https://pypi.org/project/fluent-cards/) |
 | Go | [`go/`](go/) | [![Go Reference](https://pkg.go.dev/badge/github.com/rido-min/FluentCards/go/fluentcards.svg)](https://pkg.go.dev/github.com/rido-min/FluentCards/go/fluentcards) |
+| Rust | [`rust/`](rust/) | [![crates.io](https://img.shields.io/crates/v/fluent-cards.svg)](https://crates.io/crates/fluent-cards) |
 
 ## Quick Start
 
@@ -116,6 +117,30 @@ card := fluentcards.NewAdaptiveCardBuilder().
 
 json, _ := fluentcards.ToJSON(card)
 fmt.Println(json)
+```
+
+### Rust
+
+```toml
+[dependencies]
+fluent-cards = "0.1"
+```
+
+```rust
+use fluent_cards::*;
+
+let card = AdaptiveCardBuilder::new()
+    .with_version("1.5")
+    .add_text_block(|tb| {
+        tb.with_text("Hello, FluentCards!")
+          .with_size(TextSize::Large)
+          .with_weight(TextWeight::Bolder)
+          .with_wrap(true);
+    })
+    .build();
+
+let json = to_json(&card).unwrap();
+println!("{json}");
 ```
 
 ## Documentation

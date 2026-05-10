@@ -1,0 +1,8 @@
+[package]
+name = "fluent-cards-samples"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+fluent-cards = { path = "../fluentcards" }
+serde_json = "1"

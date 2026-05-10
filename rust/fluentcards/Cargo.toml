@@ -1,0 +1,13 @@
+[package]
+name = "fluent-cards"
+version = "0.0.0-placeholder"
+edition = "2021"
+description = "Fluent builder library for Adaptive Cards 1.6.0"
+license = "MIT"
+repository = "https://github.com/rido-min/FluentCards"
+keywords = ["adaptive-cards", "fluent", "builder", "cards"]
+categories = ["web-programming"]
+
+[dependencies]
+serde = "1.0.228"
+serde_json = "1.0.149"

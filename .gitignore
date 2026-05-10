@@ -82,6 +82,7 @@ go/coverage.out
 go/coverage.html
 
 go/**/*.exe
+rust/target/
 # Squad: ignore runtime state (logs, inbox, sessions)
 .squad/orchestration-log/
 .squad/log/
