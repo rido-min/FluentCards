@@ -1,8 +1,16 @@
 # AGENTS.md
 
+## Project Overview
+
+FluentCards is a multi-language library providing a **fluent builder API** for [Adaptive Cards 1.6.0](https://adaptivecards.io/schemas/1.6.0/adaptive-card.json). Every language port mirrors the same schema, exposes the same builder pattern, and produces the same JSON output — just expressed in idiomatic code for each target.
+
+**MCP tools available:** `.copilot/mcp-config.json` configures `adaptive-cards-mcp` for schema validation, card generation, and accessibility checks.
+
+---
+
 ## Repo Structure
 
-FluentCards is a multi-language library. Each language port lives in its own top-level folder:
+Each language port lives in its own top-level folder:
 
 | Folder | Language | Status |
 |--------|----------|--------|
@@ -12,6 +20,53 @@ FluentCards is a multi-language library. Each language port lives in its own top
 | `go/` | Go 1.22+ | Stable |
 
 Shared assets (docs, screenshots, root README) live at the repository root.
+
+---
+
+## Universal Constraints (all ports)
+
+- Keep diffs minimal and scoped to the request — no drive-by refactors.
+- Update or add tests for any behavior change.
+- Do not modify CI, dependency versions, or security settings unless asked.
+- Never print, log, or commit secrets.
+- All tests must pass before considering work done.
+
+---
+
+## Builder Pattern Quick Reference
+
+The fluent builder pattern is the heart of every port. Here's how the same operations translate across languages:
+
+| Concern | dotnet | node | python | go |
+|---------|--------|------|--------|-----|
+| Entry point | `AdaptiveCardBuilder.Create()` | `adaptiveCard()` | `AdaptiveCardBuilder.create()` | `fluentcards.NewAdaptiveCardBuilder()` |
+| Set property | `.WithText("Hello")` | `.text("Hello")` | `.with_text("Hello")` | `.WithText("Hello")` |
+| Add child | `.AddTextBlock(...)` | `.addTextBlock(...)` | `.add_text_block(...)` | `.WithTextBlock(...)` |
+| Build | `.Build()` | `.build()` | `.build()` | `.Build()` |
+| Returns | `AdaptiveCard` object | plain JS object | plain `dict` | `map[string]any` |
+| Serialization | `JsonSerializer.Serialize(card)` | `JSON.stringify(card)` | `to_json(card)` | `fluentcards.ToJSON(card)` |
+
+### Cross-language naming conventions
+
+| Language | Files | Builder methods | Enums |
+|----------|-------|-----------------|-------|
+| C# | PascalCase `.cs` | `PascalCase` (e.g. `WithText`, `AddColumn`) | `PascalCase` (e.g. `TextSize.ExtraLarge`) |
+| TypeScript | camelCase `.ts` | `camelCase` (e.g. `withText`, `addColumn`) | `PascalCase` with camelCase values (e.g. `TextSize.ExtraLarge = 'extraLarge'`) |
+| Python | snake_case `.py` | `snake_case` (e.g. `with_text`, `add_column`) | `PascalCase` members (e.g. `TextSize.Large`). Do NOT use UPPER_CASE. |
+| Go | snake_case `.go` | `PascalCase` (e.g. `WithText`, `AddColumn`) | `TypeNameMemberName` (e.g. `TextSizeLarge`, `TextWeightBolder`) |
+
+---
+
+## Enum Naming Reference
+
+When adding a new string-enum property across all ports:
+
+| Language | Example `TextSize` | Example `TextWeight` |
+|----------|-------------------|----------------------|
+| dotnet | `TextSize.ExtraLarge` | `TextWeight.Bolder` |
+| node | `TextSize.ExtraLarge = 'extraLarge'` | `TextWeight.Bolder = 'bolder'` |
+| python | `TextSize.ExtraLarge` | `TextWeight.Bolder` |
+| go | `TextSizeExtraLarge` | `TextWeightBolder` |
 
 ---
 
@@ -37,6 +92,37 @@ When implementing a port for a new language, follow these steps:
 - All tests pass.
 - No new build warnings.
 - Changes scoped to the request — no drive-by refactors.
+
+---
+
+## Common Task: Add a New Adaptive Card Element
+
+When the spec introduces a new element (e.g. `Rating`, `Table`) or you need to add a missing one, touch these files in every applicable port:
+
+### dotnet
+- `src/Models/{Element}.cs` — model type with properties
+- `src/Builders/{Element}Builder.cs` — fluent builder
+- `src/FluentCardsJsonContext.cs` — add `[JsonSerializable]` entry
+- `tests/FluentCards.Tests/{Feature}Tests.cs` — builder + serialization tests
+
+### node
+- `packages/fluent-cards/src/models/{element}.ts` — interface / discriminated union member
+- `packages/fluent-cards/src/builders/{element}.ts` — fluent builder
+- `packages/fluent-cards/src/index.ts` — re-export
+- `packages/fluent-cards/tests/{feature}.test.ts` — builder + serialization tests
+
+### python
+- `src/fluent_cards/models/{element}.py` — dataclass / typed dict
+- `src/fluent_cards/builders/{element}_builder.py` — fluent builder
+- `src/fluent_cards/__init__.py` — update `__all__`
+- `tests/test_{feature}.py` — builder + serialization tests
+
+### go
+- `fluentcards/{element}.go` — struct type
+- `fluentcards/{element}_builder.go` — fluent builder
+- `fluentcards/{element}_test.go` — builder + serialization tests
+
+**Cross-port checklist:** add to all four ports unless the user explicitly scopes the work to a subset.
 
 ---
 
@@ -88,15 +174,26 @@ If it fails, fix the root cause and re-run before committing.
 - All public types and members must have XML doc comments (`<summary>`).
 - Tests use xunit. Test files are in `tests/FluentCards.Tests/` and named `{Feature}Tests.cs`.
 
-### Constraints (dotnet)
-- Keep diffs minimal and scoped to the request.
-- Update or add tests for any behavior change.
-- Do not modify CI, dependency versions, or security settings unless asked.
-- Never print, log, or commit secrets.
-
 ---
 
 ## node/
+
+### Workspace Layout
+
+`node/` is an npm workspace root. The actual published package lives inside it:
+
+```
+node/
+├── package.json                 # workspace root (private, "fluent-cards-workspace")
+├── packages/fluent-cards/       # the published package
+│   ├── package.json             # "name": "fluent-cards"
+│   ├── src/                     # library source
+│   ├── tests/                   # test files
+│   └── dist/                    # compiled JS output (gitignored, built by tsc)
+└── samples/                     # sample programs (separate workspace member)
+```
+
+Always work in `packages/fluent-cards/` for library changes. The root `package.json` is a thin workspace orchestrator — do not add source files or dependencies there.
 
 ### Verification
 ```
@@ -107,7 +204,7 @@ npm install && npm test && npm run typecheck
 ### Environment
 - TypeScript with strict mode enabled.
 - Node.js built-in test runner (`node:test`) with `tsx` for TypeScript support.
-- Library lives in `node/packages/fluent-cards/src/`. Tests live in `node/packages/fluent-cards/tests/`.
+- Library source lives in `node/packages/fluent-cards/src/`. Tests live in `node/packages/fluent-cards/tests/`.
 
 ### Guardrails
 - This library implements the **Adaptive Cards 1.6.0 specification**. All elements, properties, actions, and enums must conform to the schema.
@@ -115,12 +212,6 @@ npm install && npm test && npm run typecheck
 - Use interfaces + discriminated unions instead of class hierarchies; type narrowing via `element.type === 'TextBlock'`.
 - Use `undefined` for optional fields — `JSON.stringify` omits them automatically.
 - Builder methods return `this` for fluent chaining; `build()` returns a plain model object.
-
-### Constraints (node)
-- Keep diffs minimal and scoped to the request.
-- Update or add tests for any behavior change.
-- Do not modify CI, dependency versions, or security settings unless asked.
-- Never print, log, or commit secrets.
 
 ---
 
@@ -146,12 +237,6 @@ pytest
 - Validation is exposed via module-level `validate(card) -> list[ValidationIssue]` and `validate_and_throw(card)` — there is no `card.validate()` method.
 - Follow the builder pattern: `AdaptiveCardBuilder.create() → .with_x() / .add_x(lambda b: b...) → .build()`.
 - All lambdas passed to builder methods receive and return their own builder type (e.g., `add_text_block(lambda tb: tb.with_text(...).with_wrap(True))`).
-
-### Constraints (python)
-- Keep diffs minimal and scoped to the request.
-- Update or add tests for any behavior change.
-- Do not modify CI, dependency versions, or security settings unless asked.
-- Never print, log, or commit secrets.
 
 ---
 
@@ -181,9 +266,3 @@ go run .
 - Builder pattern: `NewAdaptiveCardBuilder() → .WithX() / .AddX(func(b *XBuilder) {...}) → .Build()`.
 - Use `defer` + `recover()` in samples to handle panics from `ValidateAndPanic` — re-panic on unexpected types.
 - Do not use `interface{}` — prefer `any` (Go 1.18+ alias).
-
-### Constraints (go)
-- Keep diffs minimal and scoped to the request.
-- Update or add tests for any behavior change.
-- Do not modify CI, dependency versions, or security settings unless asked.
-- Never print, log, or commit secrets.
